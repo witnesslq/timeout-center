@@ -15,17 +15,19 @@ public class DelayTaskDO {
 
   private Integer bizId;
 
-  private Integer status;
+  private Byte status;
 
-  private Integer closeReason;
+  private Byte closeReason;
 
-  private Integer runTime;
+  private Integer delayStartTime;
+
+  private Integer delayEndTime;
 
   private Integer delayTimes;
+
+  private String delayReason;
 
   private Integer createTime;
 
   private Integer updateTime;
-
-  private String delayReason;
 }

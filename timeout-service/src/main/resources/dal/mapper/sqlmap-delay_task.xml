@@ -3,16 +3,18 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.youzan.trade.timeout.dal.dao.DelayTaskDAO">
 
-  <resultMap id="BaseResultMap" type="com.youzan.trade.timeout.dal.dataobject.DelayTaskDO">
-    <result column="id" property="id" jdbcType="INTEGER"/>
-    <result column="biz_type" property="bizType" jdbcType="INTEGER"/>
-    <result column="biz_id" property="bizId" jdbcType="INTEGER"/>
-    <result column="status" property="status" jdbcType="TINYINT"/>
-    <result column="close_reason" property="closeReason" jdbcType="TINYINT"/>
-    <result column="run_time" property="runTime" jdbcType="INTEGER"/>
-    <result column="delay_times" property="delayTimes" jdbcType="INTEGER"/>
-    <result column="create_time" property="createTime" jdbcType="INTEGER"/>
-    <result column="update_time" property="updateTime" jdbcType="INTEGER"/>
+  <resultMap id="BaseResultMap" type="com.youzan.trade.timeout.dal.dataobject.DelayTaskDO" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="biz_type" property="bizType" jdbcType="INTEGER" />
+    <result column="biz_id" property="bizId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="close_reason" property="closeReason" jdbcType="TINYINT" />
+    <result column="delay_start_time" property="delayStartTime" jdbcType="INTEGER" />
+    <result column="delay_end_time" property="delayEndTime" jdbcType="INTEGER" />
+    <result column="delay_times" property="delayTimes" jdbcType="INTEGER" />
+    <result column="delay_reason" property="delayReason" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="INTEGER" />
   </resultMap>
 
   <sql id="tableName">
@@ -20,12 +22,15 @@
   </sql>
 
   <sql id="Base_Column_List" >
-    id, biz_type, biz_id, status, close_reason, run_time, delay_times, create_time, update_time
+    id, biz_type, biz_id, status, close_reason,
+    delay_start_time, delay_end_time, delay_times, delay_reason,
+    create_time, update_time
   </sql>
 
-  <select id="selectAll" resultMap="BaseResultMap">
-    SELECT id
+  <select id="selectListWithTimeout" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
     FROM <include refid="tableName"/>
+    WHERE delay_end_time &lt; #{timePoint}
   </select>
 
 </mapper>

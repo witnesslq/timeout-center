@@ -1,6 +1,7 @@
 package com.youzan.trade.timeout.dal.dao;
 
-import com.youzan.trade.dataobject.DelayTaskDO;
+
+import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +27,9 @@ public class DelayTaskDAOTest {
 
   @Test
   public void testSelectAll() throws Exception {
-    List<DelayTaskDO> delayTaskDOList = delayTaskDAO.selectAll();
+    //
+    int timePoint = 1445418000;
+    List<DelayTaskDO> delayTaskDOList = delayTaskDAO.selectListWithTimeout(timePoint);
 
     System.out.println();
   }

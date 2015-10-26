@@ -1,6 +1,7 @@
 package com.youzan.trade.timeout.dal.dao;
 
-import com.youzan.trade.dataobject.DelayTaskDO;
+
+import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 
 import java.util.List;
 
@@ -9,5 +10,6 @@ import java.util.List;
  */
 public interface DelayTaskDAO {
 
-  List<DelayTaskDO> selectAll();
+  List<DelayTaskDO> selectListWithTimeout(int timePoint);
+
 }
