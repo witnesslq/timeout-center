@@ -19,6 +19,7 @@ public class DelayTaskDataTransfer {
       return null;
     }
     DelayTask delayTask = new DelayTask();
+    delayTask.setId(delayTaskDO.getId());
     delayTask.setBizType(delayTaskDO.getBizType());
     delayTask.setBizId(delayTaskDO.getBizId());
     delayTask.setStatus(delayTaskDO.getStatus());
@@ -37,6 +38,7 @@ public class DelayTaskDataTransfer {
       return null;
     }
     DelayTaskDO delayTaskDO = new DelayTaskDO();
+    delayTaskDO.setId(delayTask.getId());
     delayTaskDO.setBizType(delayTask.getBizType());
     delayTaskDO.setBizId(delayTask.getBizId());
     delayTaskDO.setStatus(delayTask.getStatus());

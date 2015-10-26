@@ -8,13 +8,19 @@ import lombok.Data;
 @Data
 public class DelayTask {
 
+  /**
+   * 数据库主键
+   * 目前没有唯一键,更新操作时用主键作唯一标识
+   */
+  private Integer id;
+
   private Integer bizType;
 
   private Integer bizId;
 
-  private Byte status;
+  private Integer status;
 
-  private Byte closeReason;
+  private Integer closeReason;
 
   private Integer delayStartTime;
 

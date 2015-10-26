@@ -19,9 +19,13 @@ public class TaskHandlerImpl implements TaskHandler {
 
   @Override
   public void handle(DelayTask delayTask) {
+
+    System.out.println("handle task: " + delayTask);
+
     /**
      * 根据delayTask,判断如何进行外部调用
-     * 1. 调用成功, 则回写delay_task的status = 2, close_reason = ?, delay_times加1, update_time
+     * 1. 调用成功, 则回写delay_task的status = 20, close_reason = ?, delay_times加1, update_time
+     * 1.1 执行前提不存在, 则按调用成功的逻辑来处理
      *
      * 2. 调用失败,则回写delay_task, 令其delay_times加1, update_time, 更新delay_end_time(不同的策略)
      */

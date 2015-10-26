@@ -29,8 +29,35 @@
 
   <select id="selectListWithTimeout" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
-    FROM <include refid="tableName"/>
+    FROM <include refid="tableName" />
     WHERE delay_end_time &lt; #{timePoint}
   </select>
+
+  <select id="selectDelayTimesById" resultType="java.lang.Integer">
+    SELECT delay_times
+    FROM <include refid="tableName" />
+    WHERE id = #{taskId}
+  </select>
+
+  <update id="updateOnSuccess">
+    UPDATE <include refid="tableName" />
+    <set>
+      <if test="status != null">status = #{status},</if>
+      <if test="closeReason != null">close_reason = #{closeReason},</if>
+      delay_times = delay_times + 1,
+      <if test="updateTime != null">update_time = #{updateTime},</if>
+    </set>
+    WHERE id = #{id} AND status = 10
+  </update>
+
+  <update id="updateOnFailure">
+    UPDATE <include refid="tableName" />
+    <set>
+      delay_end_time =  delay_end_time + #{delayTimeIncrement},
+      delay_times = delay_times + 1,
+      update_time = #{updateTime}
+    </set>
+    WHERE id = #{taskId} AND status = 10
+  </update>
 
 </mapper>

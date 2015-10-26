@@ -15,9 +15,9 @@ public class DelayTaskDO {
 
   private Integer bizId;
 
-  private Byte status;
+  private Integer status;
 
-  private Byte closeReason;
+  private Integer closeReason;
 
   private Integer delayStartTime;
 

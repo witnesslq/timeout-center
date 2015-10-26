@@ -22,4 +22,20 @@ public interface DelayTaskService {
    * @return
    */
   List<DelayTask> getListWithTimeoutCurrently();
+
+  /**
+   * 执行成功, 更新超时任务
+   *
+   * @param taskId 超时任务唯一标识
+   * @return
+   */
+  boolean updateOnSuccess(int taskId);
+
+  /**
+   * 执行失败, 更新超时任务
+   *
+   * @param taskId 超时任务唯一标识
+   * @return
+   */
+  boolean updateOnFailure(int taskId);
 }

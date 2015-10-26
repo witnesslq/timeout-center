@@ -1,7 +1,10 @@
 package com.youzan.trade.timeout.dal.dao;
 
 
+import com.youzan.trade.timeout.constants.CloseReason;
+import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
+import com.youzan.trade.util.TimeUtils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,4 +36,31 @@ public class DelayTaskDAOTest {
 
     System.out.println();
   }
+
+  @Test
+  public void testSelectDelayTimesById() {
+    int taskId = 1;
+    int delayTimes = delayTaskDAO.selectDelayTimesById(taskId);
+  }
+
+  @Test
+  public void testUpdateOnSuccess() {
+    DelayTaskDO delayTaskDO = new DelayTaskDO();
+    delayTaskDO.setId(1);
+    delayTaskDO.setStatus(TaskStatus.CLOSED.code());
+    delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
+    delayTaskDO.setUpdateTime(TimeUtils.currentInSeconds());
+
+    int effectNum = delayTaskDAO.updateOnSuccess(delayTaskDO);
+  }
+
+  @Test
+  public void testUpdateOnFailure() {
+    int taskId = 2;
+    int delayTimeIncrement = 5 * 60;
+    int updateTime = 1445418001;
+
+    int effectNum = delayTaskDAO.updateOnFailure(taskId, delayTimeIncrement, updateTime);
+  }
+
 }

@@ -1,9 +1,12 @@
 package com.youzan.trade.timeout.service.impl;
 
+import com.youzan.trade.timeout.constants.CloseReason;
+import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.dal.dao.DelayTaskDAO;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.service.DelayTaskService;
+import com.youzan.trade.timeout.service.DelayTimeStrategy;
 import com.youzan.trade.timeout.transfer.DelayTaskDataTransfer;
 import com.youzan.trade.util.TimeUtils;
 
@@ -22,6 +25,9 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   @Resource
   private DelayTaskDAO delayTaskDAO;
 
+  @Resource
+  private DelayTimeStrategy delayTimeStrategy;
+
   @Override
   public List<DelayTask> getListWithTimeout(int timePoint) {
     return DelayTaskDataTransfer.transfer2TOList(delayTaskDAO.selectListWithTimeout(timePoint));
@@ -32,4 +38,25 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     int timePoint = TimeUtils.currentInSeconds();
     return getListWithTimeout(timePoint);
   }
+
+  @Override
+  public boolean updateOnSuccess(int taskId) {
+    DelayTaskDO delayTaskDO = new DelayTaskDO();
+    delayTaskDO.setId(taskId);
+    delayTaskDO.setStatus(TaskStatus.CLOSED.code());
+    delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
+    delayTaskDO.setUpdateTime(TimeUtils.currentInSeconds());
+
+    return delayTaskDAO.updateOnSuccess(delayTaskDO) == 1;
+  }
+
+  @Override
+  public boolean updateOnFailure(int taskId) {
+    int delayTimeIncrement = delayTimeStrategy.getDelayTime(delayTaskDAO.selectDelayTimesById(taskId));
+    return delayTaskDAO.updateOnFailure(taskId,
+                                 delayTimeIncrement,
+                                 TimeUtils.currentInSeconds()) == 1;
+
+  }
+
 }
