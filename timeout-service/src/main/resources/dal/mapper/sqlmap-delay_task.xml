@@ -6,13 +6,13 @@
   <resultMap id="BaseResultMap" type="com.youzan.trade.timeout.dal.dataobject.DelayTaskDO" >
     <result column="id" property="id" jdbcType="INTEGER" />
     <result column="biz_type" property="bizType" jdbcType="INTEGER" />
-    <result column="biz_id" property="bizId" jdbcType="INTEGER" />
+    <result column="biz_id" property="bizId" jdbcType="VARCHAR" />
+    <result column="biz_state" property="bizState" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="TINYINT" />
     <result column="close_reason" property="closeReason" jdbcType="TINYINT" />
     <result column="delay_start_time" property="delayStartTime" jdbcType="INTEGER" />
     <result column="delay_end_time" property="delayEndTime" jdbcType="INTEGER" />
     <result column="delay_times" property="delayTimes" jdbcType="INTEGER" />
-    <result column="delay_reason" property="delayReason" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="INTEGER" />
     <result column="update_time" property="updateTime" jdbcType="INTEGER" />
   </resultMap>
@@ -21,11 +21,30 @@
     delay_task
   </sql>
 
-  <sql id="Base_Column_List" >
-    id, biz_type, biz_id, status, close_reason,
-    delay_start_time, delay_end_time, delay_times, delay_reason,
+  <sql id="Base_Column_List">
+    id, biz_type, biz_id, biz_state, status, close_reason,
+    delay_start_time, delay_end_time, delay_times,
     create_time, update_time
   </sql>
+
+  <sql id="All_Column_List">
+    biz_type, biz_id, biz_state, status, close_reason,
+    delay_start_time, delay_end_time, delay_times,
+    create_time, update_time
+  </sql>
+
+  <insert id="insert">
+    INSERT INTO <include refid="tableName"/>
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <include refid="All_Column_List"/>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{bizType},#{bizId},#{bizState},#{status},#{closeReason},
+      #{delayStartTime},#{delayEndTime},#{delayTimes},
+      #{createTime},#{updateTime}
+    </trim>
+
+  </insert>
 
   <select id="selectListWithTimeout" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
@@ -58,6 +77,16 @@
       update_time = #{updateTime}
     </set>
     WHERE id = #{taskId} AND status = 10
+  </update>
+
+  <update id="closeTask">
+    UPDATE <include refid="tableName" />
+    <set>
+      status = #{status},
+      close_reason = #{closeReason},
+      update_time = #{updateTime}
+    </set>
+    WHERE biz_type = #{bizType} AND biz_id = #{bizId} AND status = 10
   </update>
 
 </mapper>

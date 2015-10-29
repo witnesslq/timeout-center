@@ -16,7 +16,9 @@ public class DelayTask {
 
   private Integer bizType;
 
-  private Integer bizId;
+  private String bizId;
+
+  private Integer bizState;
 
   private Integer status;
 
@@ -27,8 +29,6 @@ public class DelayTask {
   private Integer delayEndTime;
 
   private Integer delayTimes;
-
-  private String delayReason;
 
   private Integer createTime;
 

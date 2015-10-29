@@ -22,12 +22,12 @@ public class DelayTaskDataTransfer {
     delayTask.setId(delayTaskDO.getId());
     delayTask.setBizType(delayTaskDO.getBizType());
     delayTask.setBizId(delayTaskDO.getBizId());
+    delayTask.setBizState(delayTaskDO.getBizState());
     delayTask.setStatus(delayTaskDO.getStatus());
     delayTask.setCloseReason(delayTaskDO.getCloseReason());
     delayTask.setDelayStartTime(delayTaskDO.getDelayStartTime());
     delayTask.setDelayEndTime(delayTaskDO.getDelayEndTime());
     delayTask.setDelayTimes(delayTaskDO.getDelayTimes());
-    delayTask.setDelayReason(delayTaskDO.getDelayReason());
     delayTask.setCreateTime(delayTaskDO.getCreateTime());
     delayTask.setUpdateTime(delayTaskDO.getUpdateTime());
     return delayTask;
@@ -41,12 +41,12 @@ public class DelayTaskDataTransfer {
     delayTaskDO.setId(delayTask.getId());
     delayTaskDO.setBizType(delayTask.getBizType());
     delayTaskDO.setBizId(delayTask.getBizId());
+    delayTaskDO.setBizState(delayTask.getBizState());
     delayTaskDO.setStatus(delayTask.getStatus());
     delayTaskDO.setCloseReason(delayTask.getCloseReason());
     delayTaskDO.setDelayStartTime(delayTask.getDelayStartTime());
     delayTaskDO.setDelayEndTime(delayTask.getDelayEndTime());
     delayTaskDO.setDelayTimes(delayTask.getDelayTimes());
-    delayTaskDO.setDelayReason(delayTask.getDelayReason());
     delayTaskDO.setCreateTime(delayTask.getCreateTime());
     delayTaskDO.setUpdateTime(delayTask.getUpdateTime());
     return delayTaskDO;

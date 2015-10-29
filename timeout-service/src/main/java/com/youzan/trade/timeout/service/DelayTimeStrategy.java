@@ -13,4 +13,14 @@ public interface DelayTimeStrategy {
    * @return
    */
   int getDelayTime(int delayTimes);
+
+  /**
+   * 获取初始化超时时间
+   *
+   * @param bizType 业务类型
+   * @param bizId 业务场景唯一id
+   * @param bizState 业务所处状态
+   * @return
+   */
+  int getInitialDelayTime(int bizType, String bizId, int bizState);
 }

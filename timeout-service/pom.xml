@@ -21,7 +21,11 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-    </dependency >
+    </dependency>
+    <dependency>
+      <groupId>com.youzan</groupId>
+      <artifactId>nsq-client</artifactId>
+    </dependency>
     <!-- internal dependency -->
     <!--
     <dependency>

@@ -25,7 +25,7 @@ public class ExecutorImpl implements Executor {
   @Resource
   private TaskHandler taskHandler;
 
-  @Scheduled(cron = "0/5 * * * * ?")
+  @Scheduled(cron = "0 0 * * * ?")
   @Override
   public void execute() {
     System.out.println("execute");

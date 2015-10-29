@@ -12,6 +12,14 @@ import java.util.List;
  */
 public interface DelayTaskDAO {
 
+  /**
+   * 保存一条记录
+   *
+   * @param delayTaskDO
+   * @return
+   */
+  int insert(DelayTaskDO delayTaskDO);
+
   List<DelayTaskDO> selectListWithTimeout(int timePoint);
 
   /**
@@ -22,10 +30,17 @@ public interface DelayTaskDAO {
    */
   int selectDelayTimesById(int taskId);
 
+  /**
+   * 当
+   *
+   * @param delayTaskDO
+   * @return
+   */
   int updateOnSuccess(DelayTaskDO delayTaskDO);
 
   int updateOnFailure(@Param("taskId") int taskId,
                       @Param("delayTimeIncrement") int delayTimeIncrement,
                       @Param("updateTime") int updateTime);
 
+  int closeTask(DelayTaskDO delayTaskDO);
 }

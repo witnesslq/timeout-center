@@ -25,4 +25,10 @@ public class DelayTimeStrategyImpl implements DelayTimeStrategy {
       default: return TimeConstants.ONE_DAY_IN_SECONDS;
     }
   }
+
+  @Override
+  public int getInitialDelayTime(int bizType, String bizId, int bizState) {
+    return 7 * TimeConstants.ONE_DAY_IN_SECONDS;
+  }
+
 }

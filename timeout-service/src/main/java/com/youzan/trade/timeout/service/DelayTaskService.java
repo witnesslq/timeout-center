@@ -1,6 +1,7 @@
 package com.youzan.trade.timeout.service;
 
 import com.youzan.trade.timeout.model.DelayTask;
+import com.youzan.trade.timeout.model.Safe;
 
 import java.util.List;
 
@@ -8,6 +9,14 @@ import java.util.List;
  * @author apple created at: 15/10/23 上午11:53
  */
 public interface DelayTaskService {
+
+  /**
+   * 根据一条维权记录保存一个超时任务
+   *
+   * @param safe
+   * @return
+   */
+  boolean saveBySafe(Safe safe);
 
   /**
    * 获取某个时间点已经超时的任务
@@ -38,4 +47,13 @@ public interface DelayTaskService {
    * @return
    */
   boolean updateOnFailure(int taskId);
+
+  /**
+   * 根据业务类型和业务id关闭延时任务
+   *
+   * @param bizType
+   * @param bizId
+   * @return
+   */
+  boolean closeTaskAhead(int bizType, String bizId);
 }

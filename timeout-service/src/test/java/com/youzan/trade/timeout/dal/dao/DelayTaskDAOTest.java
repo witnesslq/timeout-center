@@ -1,6 +1,7 @@
 package com.youzan.trade.timeout.dal.dao;
 
 
+import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
@@ -26,6 +27,23 @@ public class DelayTaskDAOTest {
 
   @Resource
   private DelayTaskDAO delayTaskDAO;
+
+  @Test
+  public void testInsert() {
+    DelayTaskDO delayTaskDO = new DelayTaskDO();
+    delayTaskDO.setBizType(1);
+    delayTaskDO.setBizId("123");
+    delayTaskDO.setBizState(201);
+    delayTaskDO.setStatus(10);
+    delayTaskDO.setCloseReason(0);
+    delayTaskDO.setDelayStartTime(1445418000);
+    delayTaskDO.setDelayEndTime(1445418000 + 3600);
+    delayTaskDO.setDelayTimes(0);
+    delayTaskDO.setCreateTime(1445418123);
+    delayTaskDO.setUpdateTime(1445418456);
+
+    int effectNum = delayTaskDAO.insert(delayTaskDO);
+  }
 
 
   @Test
@@ -61,6 +79,18 @@ public class DelayTaskDAOTest {
     int updateTime = 1445418001;
 
     int effectNum = delayTaskDAO.updateOnFailure(taskId, delayTimeIncrement, updateTime);
+  }
+
+  @Test
+  public void testCloseTask() {
+    DelayTaskDO delayTaskDO = new DelayTaskDO();
+    delayTaskDO.setBizType(1);
+    delayTaskDO.setBizId("123");
+    delayTaskDO.setStatus(20);
+    delayTaskDO.setCloseReason(10);
+    delayTaskDO.setUpdateTime(1445418456);
+
+    int effectNum = delayTaskDAO.closeTask(delayTaskDO);
   }
 
 }

@@ -1,10 +1,15 @@
 package com.youzan.trade.timeout.service.impl;
 
+import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.CloseReason;
+import com.youzan.trade.timeout.constants.Constants;
+import com.youzan.trade.timeout.constants.SafeState;
+import com.youzan.trade.timeout.constants.SafeType;
 import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.dal.dao.DelayTaskDAO;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.timeout.model.DelayTask;
+import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.service.DelayTaskService;
 import com.youzan.trade.timeout.service.DelayTimeStrategy;
 import com.youzan.trade.timeout.transfer.DelayTaskDataTransfer;
@@ -27,6 +32,24 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Resource
   private DelayTimeStrategy delayTimeStrategy;
+
+  @Override
+  public boolean saveBySafe(Safe safe) {
+    DelayTaskDO delayTaskDO = new DelayTaskDO();
+    delayTaskDO.setBizType(BizType.SAFE.code());
+    delayTaskDO.setBizId(safe.getSafeNo());
+    delayTaskDO.setBizState(safe.getState());
+    delayTaskDO.setStatus(TaskStatus.ACTIVE.code());
+    delayTaskDO.setCloseReason(CloseReason.NOT_CLOSED.code());
+    delayTaskDO.setDelayStartTime(safe.getRecordTime());
+    delayTaskDO.setDelayEndTime(safe.getRecordTime() + delayTimeStrategy
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
+    delayTaskDO.setDelayTimes(Constants.INITIAL_DELAY_TIMES);
+    delayTaskDO.setCreateTime(TimeUtils.currentInSeconds());
+    delayTaskDO.setUpdateTime(Constants.INITIAL_UPDATE_TIME);
+
+    return delayTaskDAO.insert(delayTaskDO) == 1;
+  }
 
   @Override
   public List<DelayTask> getListWithTimeout(int timePoint) {
@@ -57,6 +80,19 @@ public class DelayTaskServiceImpl implements DelayTaskService {
                                  delayTimeIncrement,
                                  TimeUtils.currentInSeconds()) == 1;
 
+  }
+
+  @Override
+  public boolean closeTaskAhead(int bizType, String bizId) {
+    DelayTaskDO delayTaskDO = new DelayTaskDO();
+    delayTaskDO.setBizType(bizType);
+    delayTaskDO.setBizId(bizId);
+    delayTaskDO.setStatus(TaskStatus.CLOSED.code());
+    delayTaskDO.setCloseReason(CloseReason.AHEAD.code());
+    delayTaskDO.setUpdateTime(TimeUtils.currentInSeconds());
+
+    // 因为不确定对应的延时任务数量
+    return delayTaskDAO.closeTask(delayTaskDO) >= 0;
   }
 
 }
