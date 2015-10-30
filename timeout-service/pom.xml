@@ -27,12 +27,10 @@
       <artifactId>nsq-client</artifactId>
     </dependency>
     <!-- internal dependency -->
-    <!--
     <dependency>
       <groupId>com.youzan.platform</groupId>
       <artifactId>bootstrap</artifactId>
     </dependency>
-    -->
     <dependency>
       <groupId>com.youzan</groupId>
       <artifactId>common-model</artifactId>

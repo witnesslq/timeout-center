@@ -13,6 +13,8 @@
     <result column="delay_start_time" property="delayStartTime" jdbcType="INTEGER" />
     <result column="delay_end_time" property="delayEndTime" jdbcType="INTEGER" />
     <result column="delay_times" property="delayTimes" jdbcType="INTEGER" />
+    <result column="msg_status" property="msgStatus" jdbcType="TINYINT" />
+    <result column="msg_end_time" property="msgEndTime" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="INTEGER" />
     <result column="update_time" property="updateTime" jdbcType="INTEGER" />
   </resultMap>
@@ -23,13 +25,13 @@
 
   <sql id="Base_Column_List">
     id, biz_type, biz_id, biz_state, status, close_reason,
-    delay_start_time, delay_end_time, delay_times,
+    delay_start_time, delay_end_time, delay_times,msg_status,msg_end_time,
     create_time, update_time
   </sql>
 
   <sql id="All_Column_List">
     biz_type, biz_id, biz_state, status, close_reason,
-    delay_start_time, delay_end_time, delay_times,
+    delay_start_time, delay_end_time, delay_times,msg_status,msg_end_time,
     create_time, update_time
   </sql>
 
@@ -40,7 +42,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       #{bizType},#{bizId},#{bizState},#{status},#{closeReason},
-      #{delayStartTime},#{delayEndTime},#{delayTimes},
+      #{delayStartTime},#{delayEndTime},#{delayTimes},#{msgStatus},#{msgEndTime},
       #{createTime},#{updateTime}
     </trim>
 
@@ -49,7 +51,8 @@
   <select id="selectListWithTimeout" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
     FROM <include refid="tableName" />
-    WHERE delay_end_time &lt; #{timePoint}
+    WHERE status = 10 AND delay_end_time &lt; #{timePoint}
+    LIMIT 100
   </select>
 
   <select id="selectDelayTimesById" resultType="java.lang.Integer">
@@ -58,7 +61,7 @@
     WHERE id = #{taskId}
   </select>
 
-  <update id="updateOnSuccess">
+  <update id="close">
     UPDATE <include refid="tableName" />
     <set>
       <if test="status != null">status = #{status},</if>
@@ -69,7 +72,7 @@
     WHERE id = #{id} AND status = 10
   </update>
 
-  <update id="updateOnFailure">
+  <update id="updateOnRetry">
     UPDATE <include refid="tableName" />
     <set>
       delay_end_time =  delay_end_time + #{delayTimeIncrement},

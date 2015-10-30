@@ -3,8 +3,7 @@ package com.youzan.trade.timeout.service.impl;
 import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.constants.Constants;
-import com.youzan.trade.timeout.constants.SafeState;
-import com.youzan.trade.timeout.constants.SafeType;
+import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.dal.dao.DelayTaskDAO;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
@@ -30,8 +29,11 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   @Resource
   private DelayTaskDAO delayTaskDAO;
 
-  @Resource
+  @Resource(name = "delayTimeStrategyImpl")
   private DelayTimeStrategy delayTimeStrategy;
+
+  @Resource(name = "msgDelayTimeStrategyImpl")
+  private DelayTimeStrategy msgDelayTimeStrategy;
 
   @Override
   public boolean saveBySafe(Safe safe) {
@@ -45,6 +47,16 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     delayTaskDO.setDelayEndTime(safe.getRecordTime() + delayTimeStrategy
         .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
     delayTaskDO.setDelayTimes(Constants.INITIAL_DELAY_TIMES);
+
+    if (safe.isNeedMsg()) {
+      delayTaskDO.setMsgStatus(MsgStatus.ACTIVE.code());
+      delayTaskDO.setMsgEndTime(safe.getRecordTime() + msgDelayTimeStrategy
+          .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
+    } else {
+      delayTaskDO.setMsgStatus(MsgStatus.NONE.code());
+      delayTaskDO.setMsgEndTime(Constants.INITIAL_MSG_END_TIME);
+    }
+
     delayTaskDO.setCreateTime(TimeUtils.currentInSeconds());
     delayTaskDO.setUpdateTime(Constants.INITIAL_UPDATE_TIME);
 
@@ -63,22 +75,34 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
-  public boolean updateOnSuccess(int taskId) {
+  public boolean closeOnSuccess(int taskId) {
     DelayTaskDO delayTaskDO = new DelayTaskDO();
     delayTaskDO.setId(taskId);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
     delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
     delayTaskDO.setUpdateTime(TimeUtils.currentInSeconds());
 
-    return delayTaskDAO.updateOnSuccess(delayTaskDO) == 1;
+    return delayTaskDAO.close(delayTaskDO) == 1;
   }
 
   @Override
-  public boolean updateOnFailure(int taskId) {
-    int delayTimeIncrement = delayTimeStrategy.getDelayTime(delayTaskDAO.selectDelayTimesById(taskId));
-    return delayTaskDAO.updateOnFailure(taskId,
-                                 delayTimeIncrement,
-                                 TimeUtils.currentInSeconds()) == 1;
+  public boolean closeOnNoRetry(int taskId) {
+    DelayTaskDO delayTaskDO = new DelayTaskDO();
+    delayTaskDO.setId(taskId);
+    delayTaskDO.setStatus(TaskStatus.CLOSED.code());
+    delayTaskDO.setCloseReason(CloseReason.FAILURE_NO_RETRY.code());
+    delayTaskDO.setUpdateTime(TimeUtils.currentInSeconds());
+
+    return delayTaskDAO.close(delayTaskDO) == 1;
+  }
+
+  @Override
+  public boolean updateOnRetry(int taskId) {
+    int delayTimeIncrement = delayTimeStrategy.getNextDelayIncrement(
+        delayTaskDAO.selectDelayTimesById(taskId));
+    return delayTaskDAO.updateOnRetry(taskId,
+                                      delayTimeIncrement,
+                                      TimeUtils.currentInSeconds()) == 1;
 
   }
 

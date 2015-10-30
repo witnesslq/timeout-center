@@ -12,7 +12,7 @@ public interface DelayTimeStrategy {
    * @param delayTimes 任务已经超时的次数
    * @return
    */
-  int getDelayTime(int delayTimes);
+  int getNextDelayIncrement(int delayTimes);
 
   /**
    * 获取初始化超时时间

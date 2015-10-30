@@ -27,6 +27,10 @@ public class DelayTaskDO {
 
   private Integer delayTimes;
 
+  private Integer msgStatus;
+
+  private Integer msgEndTime;
+
   private Integer createTime;
 
   private Integer updateTime;

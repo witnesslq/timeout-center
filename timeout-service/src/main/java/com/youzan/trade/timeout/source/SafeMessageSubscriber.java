@@ -33,7 +33,7 @@ public class SafeMessageSubscriber {
       if (NSQEvent.READ.equals(event.getType())) {
         String message = event.getMessage();
 
-        System.out.println("SafeMessageSubscriber receive message: " + message);
+//        System.out.println("SafeMessageSubscriber receive message: " + message);
 
         if ( !safeProcessor.process(message) ) {
           throw new Exception("consuming message failed.");

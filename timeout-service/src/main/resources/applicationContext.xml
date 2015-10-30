@@ -37,7 +37,7 @@
     <!-- 先注释掉
     <import resource="classpath:util.xml"/>
     -->
-    <import resource="classpath:biz/beans-*.xml"/>
+    <import resource="classpath:biz/*/beans-*.xml"/>
 
 </beans>
 

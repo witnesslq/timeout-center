@@ -1,7 +1,6 @@
 package com.youzan.trade.timeout.dal.dao;
 
 
-import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
@@ -15,8 +14,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 import javax.annotation.Resource;
-
-import static org.junit.Assert.*;
 
 /**
  * @author apple created at: 15/10/22 下午9:51
@@ -39,6 +36,8 @@ public class DelayTaskDAOTest {
     delayTaskDO.setDelayStartTime(1445418000);
     delayTaskDO.setDelayEndTime(1445418000 + 3600);
     delayTaskDO.setDelayTimes(0);
+    delayTaskDO.setMsgStatus(0);
+    delayTaskDO.setMsgEndTime(1445418000 + 1000);
     delayTaskDO.setCreateTime(1445418123);
     delayTaskDO.setUpdateTime(1445418456);
 
@@ -69,7 +68,7 @@ public class DelayTaskDAOTest {
     delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
     delayTaskDO.setUpdateTime(TimeUtils.currentInSeconds());
 
-    int effectNum = delayTaskDAO.updateOnSuccess(delayTaskDO);
+    int effectNum = delayTaskDAO.close(delayTaskDO);
   }
 
   @Test
@@ -78,7 +77,7 @@ public class DelayTaskDAOTest {
     int delayTimeIncrement = 5 * 60;
     int updateTime = 1445418001;
 
-    int effectNum = delayTaskDAO.updateOnFailure(taskId, delayTimeIncrement, updateTime);
+    int effectNum = delayTaskDAO.updateOnRetry(taskId, delayTimeIncrement, updateTime);
   }
 
   @Test

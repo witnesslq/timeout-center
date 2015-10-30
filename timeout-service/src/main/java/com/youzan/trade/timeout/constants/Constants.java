@@ -9,4 +9,12 @@ public class Constants {
 
   public static final int INITIAL_UPDATE_TIME= 0;
 
+  public static final int INITIAL_MSG_END_TIME = 0;
+
+  public static final int SAFE_TASK_SUCCESS = 0;
+
+  public static final int SAFE_TASK_FAILURE_RETRY = 10001;
+
+  public static final int SAFE_TASK_FAILURE_NO_RETRY = 10002;
+
 }

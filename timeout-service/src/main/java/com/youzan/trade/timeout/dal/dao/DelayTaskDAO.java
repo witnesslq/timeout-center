@@ -36,11 +36,11 @@ public interface DelayTaskDAO {
    * @param delayTaskDO
    * @return
    */
-  int updateOnSuccess(DelayTaskDO delayTaskDO);
+  int close(DelayTaskDO delayTaskDO);
 
-  int updateOnFailure(@Param("taskId") int taskId,
-                      @Param("delayTimeIncrement") int delayTimeIncrement,
-                      @Param("updateTime") int updateTime);
+  int updateOnRetry(@Param("taskId") int taskId,
+                    @Param("delayTimeIncrement") int delayTimeIncrement,
+                    @Param("updateTime") int updateTime);
 
   int closeTask(DelayTaskDO delayTaskDO);
 }

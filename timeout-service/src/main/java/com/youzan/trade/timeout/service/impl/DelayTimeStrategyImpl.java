@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 /**
  * @author apple created at: 15/10/26 下午7:45
  */
-@Component
+@Component("delayTimeStrategyImpl")
 public class DelayTimeStrategyImpl implements DelayTimeStrategy {
 
   @Override
-  public int getDelayTime(int delayTimes) {
+  public int getNextDelayIncrement(int delayTimes) {
     // todo : checkArgument
     switch (delayTimes) {
       case 0 : return 5 * TimeConstants.ONE_MINUTE_IN_SECONDS;

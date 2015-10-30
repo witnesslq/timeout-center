@@ -1,5 +1,6 @@
 package com.youzan.trade.timeout.executor.impl;
 
+import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.executor.Executor;
 import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
@@ -22,22 +23,24 @@ public class ExecutorImpl implements Executor {
   @Resource
   private DelayTaskService delayTaskService;
 
-  @Resource
-  private TaskHandler taskHandler;
+  @Resource(name = "safeTaskHandlerImpl")
+  private TaskHandler safeTaskHandlerImpl;
 
-  @Scheduled(cron = "0 0 * * * ?")
+  // 每分钟启动一次
+  //@Scheduled(cron = "0 * * * * ?")
+  @Scheduled(cron = "0/5 * * * * ?")
   @Override
   public void execute() {
-    System.out.println("execute");
-
     List<DelayTask> delayTaskList = delayTaskService.getListWithTimeoutCurrently();
 
     if (CollectionUtils.isEmpty(delayTaskList)) {
       return ;
     }
 
-    delayTaskList.forEach(delayTask -> taskHandler.handle(delayTask));
-
-    System.out.println(delayTaskList.size());
+    delayTaskList.forEach(delayTask -> {
+      if (delayTask.getBizType() == BizType.SAFE.code()) {
+        safeTaskHandlerImpl.handle(delayTask);
+      }
+    });
   }
 }

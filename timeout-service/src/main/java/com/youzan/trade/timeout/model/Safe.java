@@ -1,6 +1,7 @@
 package com.youzan.trade.timeout.model;
 
 import com.youzan.trade.timeout.constants.SafeState;
+import com.youzan.trade.timeout.constants.SafeType;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
@@ -36,7 +37,28 @@ public class Safe {
   private Integer state;
 
   public Integer getRecordTime() {
+    if (state == null) {
+      return null;
+    }
+
     return SafeState.BUYER_START.code() == state ? addTime : updateTime;
   }
+
+  public boolean isNeedMsg() {
+    if (safeType == null || state == null) {
+      return false;
+    }
+
+    if (safeType == SafeType.REFUND_ONLY.code() && state == SafeState.BUYER_START.code()) {
+      return true;
+    }
+
+    if (safeType == SafeType.REFUND_RETURN.code() && state == SafeState.BUYER_SENT.code()) {
+      return true;
+    }
+
+    return false;
+  }
+
 
 }

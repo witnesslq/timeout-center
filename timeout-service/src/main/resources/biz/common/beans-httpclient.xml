@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean name="hostFactory" class="com.youzan.trade.common.httpclient.HostFactory">
+        <property name="apiHost" value="http://dev.api.koudaitong.com/"/>
+    </bean>
+
+    <bean name="client" class="com.youzan.trade.common.httpclient.Client" >
+        <property name="hostFactory" ref="hostFactory"/>
+        <property name="httpClientManager" ref="httpClientManager"/>
+    </bean>
+
+    <bean name="httpClientManager" class="com.youzan.trade.common.httpclient.HttpClientManager" init-method="init">
+        <property name="connectionTimeout" value="30"/>
+        <property name="socketTimeout" value="30"/>
+    </bean>
+</beans>

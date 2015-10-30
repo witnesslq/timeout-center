@@ -19,7 +19,7 @@ public interface DelayTaskService {
   boolean saveBySafe(Safe safe);
 
   /**
-   * 获取某个时间点已经超时的任务
+   * 获取某个时间点已经超时且没有完成的任务
    *
    * @return
    */
@@ -33,20 +33,30 @@ public interface DelayTaskService {
   List<DelayTask> getListWithTimeoutCurrently();
 
   /**
-   * 执行成功, 更新超时任务
+   * 执行成功, 关闭超时任务
    *
    * @param taskId 超时任务唯一标识
    * @return
    */
-  boolean updateOnSuccess(int taskId);
+  boolean closeOnSuccess(int taskId);
+
+  /**
+   * 执行失败, 关闭超时任务, 不再重试
+   * 比如因为state值已经发生变化
+   *
+   * @param taskId 超时任务唯一标识
+   * @return
+   */
+  boolean closeOnNoRetry(int taskId);
 
   /**
    * 执行失败, 更新超时任务
+   * 延续任务
    *
    * @param taskId 超时任务唯一标识
    * @return
    */
-  boolean updateOnFailure(int taskId);
+  boolean updateOnRetry(int taskId);
 
   /**
    * 根据业务类型和业务id关闭延时任务
