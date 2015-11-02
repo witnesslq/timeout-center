@@ -70,8 +70,17 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public List<DelayTask> getListWithTimeoutCurrently() {
-    int timePoint = TimeUtils.currentInSeconds();
-    return getListWithTimeout(timePoint);
+    return getListWithTimeout(TimeUtils.currentInSeconds());
+  }
+
+  @Override
+  public List<DelayTask> getListWithMsgTimeout(int timePoint) {
+    return DelayTaskDataTransfer.transfer2TOList(delayTaskDAO.selectListWithMsgTimeout(timePoint));
+  }
+
+  @Override
+  public List<DelayTask> getListWithMsgTimeoutCurrently() {
+    return getListWithMsgTimeout(TimeUtils.currentInSeconds());
   }
 
   @Override
@@ -107,6 +116,27 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
+  public boolean closeMsgOnSuccess(int taskId) {
+    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code(), TimeUtils.currentInSeconds())
+           == 1;
+  }
+
+  @Override
+  public boolean closeMsgOnNoRetry(int taskId) {
+    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code(), TimeUtils.currentInSeconds())
+           == 1;
+  }
+
+  @Override
+  public boolean updateMsgOnRetry(int taskId) {
+    int delayTimeIncrement =
+        msgDelayTimeStrategy.getNextDelayIncrement(delayTaskDAO.selectDelayTimesById(taskId));
+    return delayTaskDAO.updateOnRetry(taskId,
+                                      delayTimeIncrement,
+                                      TimeUtils.currentInSeconds()) == 1;
+  }
+
+  @Override
   public boolean closeTaskAhead(int bizType, String bizId) {
     DelayTaskDO delayTaskDO = new DelayTaskDO();
     delayTaskDO.setBizType(bizType);
@@ -116,7 +146,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     delayTaskDO.setUpdateTime(TimeUtils.currentInSeconds());
 
     // 因为不确定对应的延时任务数量
-    return delayTaskDAO.closeTask(delayTaskDO) >= 0;
+    return delayTaskDAO.closeTaskAhead(delayTaskDO) >= 0;
   }
 
 }

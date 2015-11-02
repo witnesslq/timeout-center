@@ -20,7 +20,21 @@ public interface DelayTaskDAO {
    */
   int insert(DelayTaskDO delayTaskDO);
 
+  /**
+   * 查询在某个时间点后已经超时的任务列表
+   *
+   * @param timePoint 某个时间点
+   * @return 任务列表
+   */
   List<DelayTaskDO> selectListWithTimeout(int timePoint);
+
+  /**
+   * 查询在某个时间点后消息任务已经超时的任务列表
+   *
+   * @param timePoint 某个时间点
+   * @return 任务列表
+   */
+  List<DelayTaskDO> selectListWithMsgTimeout(int timePoint);
 
   /**
    * 根据taskId查询任务已经超时的次数
@@ -38,9 +52,17 @@ public interface DelayTaskDAO {
    */
   int close(DelayTaskDO delayTaskDO);
 
+  int closeMsg(@Param("taskId") int taskId,
+               @Param("msgStatus") int msgStatus,
+               @Param("updateTime") int updateTime);
+
   int updateOnRetry(@Param("taskId") int taskId,
                     @Param("delayTimeIncrement") int delayTimeIncrement,
                     @Param("updateTime") int updateTime);
 
-  int closeTask(DelayTaskDO delayTaskDO);
+  int updateMsgOnRetry(@Param("taskId") int taskId,
+                       @Param("delayTimeIncrement") int delayTimeIncrement,
+                       @Param("updateTime") int updateTime);
+
+  int closeTaskAhead(DelayTaskDO delayTaskDO);
 }

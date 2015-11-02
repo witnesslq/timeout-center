@@ -55,11 +55,19 @@
     LIMIT 100
   </select>
 
+  <select id="selectListWithMsgTimeout" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM <include refid="tableName" />
+    WHERE status = 10 AND msg_status = 10 AND msg_end_time &lt; #{timePoint}
+    LIMIT 1000
+  </select>
+
   <select id="selectDelayTimesById" resultType="java.lang.Integer">
     SELECT delay_times
     FROM <include refid="tableName" />
     WHERE id = #{taskId}
   </select>
+
 
   <update id="close">
     UPDATE <include refid="tableName" />
@@ -82,7 +90,25 @@
     WHERE id = #{taskId} AND status = 10
   </update>
 
-  <update id="closeTask">
+  <update id="closeMsg">
+    UPDATE <include refid="tableName" />
+    <set>
+      msg_status = #{msgStatus},
+      update_time = #{updateTime}
+    </set>
+    WHERE id = #{taskId} AND status = 10 AND msg_status = 10
+  </update>
+
+  <update id="updateMsgOnRetry">
+    UPDATE <include refid="tableName" />
+    <set>
+      msg_end_time =  msg_end_time + #{delayTimeIncrement},
+      update_time = #{updateTime}
+    </set>
+    WHERE id = #{taskId} AND status = 10 AND msg_status = 10
+  </update>
+
+  <update id="closeTaskAhead">
     UPDATE <include refid="tableName" />
     <set>
       status = #{status},

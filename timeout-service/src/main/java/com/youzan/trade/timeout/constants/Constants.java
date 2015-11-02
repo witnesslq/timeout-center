@@ -17,4 +17,10 @@ public class Constants {
 
   public static final int SAFE_TASK_FAILURE_NO_RETRY = 10002;
 
+  public static final int SAFE_MSG_TASK_SUCCESS = 0;
+
+  public static final int SAFE_MSG_TASK_FAILURE_RETRY = 10001;
+
+  public static final int SAFE_MSG_TASK_FAILURE_NO_RETRY = 10002;
+
 }

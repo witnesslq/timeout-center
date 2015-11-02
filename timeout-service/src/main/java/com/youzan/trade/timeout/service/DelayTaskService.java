@@ -21,7 +21,8 @@ public interface DelayTaskService {
   /**
    * 获取某个时间点已经超时且没有完成的任务
    *
-   * @return
+   * @param timePoint 某个时间点
+   * @return 任务列表
    */
   List<DelayTask> getListWithTimeout(int timePoint);
 
@@ -31,6 +32,21 @@ public interface DelayTaskService {
    * @return
    */
   List<DelayTask> getListWithTimeoutCurrently();
+
+  /**
+   * 获取某个时间点消息任务已经超时且没有完成的任务
+   *
+   * @param timePoint 某个时间点
+   * @return 任务列表
+   */
+  List<DelayTask> getListWithMsgTimeout(int timePoint);
+
+  /**
+   * 获取当前时间消息任务已经超时且没有完成的任务
+   *
+   * @return 任务列表
+   */
+  List<DelayTask> getListWithMsgTimeoutCurrently();
 
   /**
    * 执行成功, 关闭超时任务
@@ -59,6 +75,32 @@ public interface DelayTaskService {
   boolean updateOnRetry(int taskId);
 
   /**
+   * 消息任务执行成功并关闭
+   *
+   * @param taskId 超时任务唯一标识
+   * @return
+   */
+  boolean closeMsgOnSuccess(int taskId);
+
+  /**
+   * 执行消息任务失败, 关闭消息任务, 不再重试
+   *
+   * @param taskId 超时任务唯一标识
+   * @return
+   */
+  boolean closeMsgOnNoRetry(int taskId);
+
+
+  /**
+   * 执行消息任务失败, 更新消息任务
+   * 延续消息任务
+   *
+   * @param taskId 超时任务唯一标识
+   * @return
+   */
+  boolean updateMsgOnRetry(int taskId);
+
+  /**
    * 根据业务类型和业务id关闭延时任务
    *
    * @param bizType
@@ -66,4 +108,6 @@ public interface DelayTaskService {
    * @return
    */
   boolean closeTaskAhead(int bizType, String bizId);
+
+
 }

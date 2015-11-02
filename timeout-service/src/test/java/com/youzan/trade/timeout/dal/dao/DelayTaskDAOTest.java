@@ -46,12 +46,16 @@ public class DelayTaskDAOTest {
 
 
   @Test
-  public void testSelectAll() throws Exception {
+  public void testSelectListWithTimeout() throws Exception {
     //
     int timePoint = 1445418000;
     List<DelayTaskDO> delayTaskDOList = delayTaskDAO.selectListWithTimeout(timePoint);
+  }
 
-    System.out.println();
+  @Test
+  public void testSelectListWithMsgTimeout() {
+    int timePoint = 1445418000;
+    List<DelayTaskDO> delayTaskDOList = delayTaskDAO.selectListWithMsgTimeout(timePoint);
   }
 
   @Test
@@ -89,7 +93,15 @@ public class DelayTaskDAOTest {
     delayTaskDO.setCloseReason(10);
     delayTaskDO.setUpdateTime(1445418456);
 
-    int effectNum = delayTaskDAO.closeTask(delayTaskDO);
+    int effectNum = delayTaskDAO.closeTaskAhead(delayTaskDO);
   }
 
+  @Test
+  public void testCloseMsg() throws Exception {
+    int taskId = 31;
+    int msgStatus = 20;
+    int updateTime = 1445418001;
+
+    int effectNum = delayTaskDAO.closeMsg(taskId, msgStatus, updateTime);
+  }
 }
