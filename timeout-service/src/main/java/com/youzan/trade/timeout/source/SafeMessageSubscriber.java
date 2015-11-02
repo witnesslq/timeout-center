@@ -3,14 +3,18 @@ package com.youzan.trade.timeout.source;
 import com.youzan.nsq.client.remoting.connector.CustomerConnector;
 import com.youzan.nsq.client.remoting.listener.ConnectorListener;
 import com.youzan.nsq.client.remoting.listener.NSQEvent;
+import com.youzan.trade.util.LogUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author apple created at: 15/10/28 下午6:06
  */
+@Slf4j
 public class SafeMessageSubscriber {
 
   private static String NSQ_HOST;
@@ -39,6 +43,8 @@ public class SafeMessageSubscriber {
       if (NSQEvent.READ.equals(event.getType())) {
         String message = event.getMessage();
 
+        LogUtils.info(log, "receive create message: {}", message);
+
         if ( !safeProcessor.process(message) ) {
           throw new Exception("consuming message failed.");
         }
@@ -54,6 +60,8 @@ public class SafeMessageSubscriber {
     ConnectorListener updateListener = event -> {
       if (NSQEvent.READ.equals(event.getType())) {
         String message = event.getMessage();
+
+        LogUtils.info(log, "receive update message: {}", message);
 
         if ( !safeProcessor.process(message) ) {
           throw new Exception("consuming message failed.");
