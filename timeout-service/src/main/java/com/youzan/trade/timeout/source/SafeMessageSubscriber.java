@@ -13,16 +13,15 @@ import javax.annotation.Resource;
 /**
  * @author apple created at: 15/10/28 下午6:06
  */
-@Component
 public class SafeMessageSubscriber {
 
-  public static final String NSQ_HOST = "192.168.66.202";
-  public static final int NSQ_PORT = 4161;
+  private static String NSQ_HOST;
+  private static int NSQ_PORT;
 
-  public static final String SAFE_CHANGE_TOPIC = "binglong_safe_change";
-  public static final String SAFE_CHANGE_CHANNEL = "timeout_safe_change";
+  private static String NSQ_TOPIC;
+  private static String NSQ_CHANNEL;
 
-  public CustomerConnector connector;
+  private CustomerConnector connector;
 
   @Resource
   private Processor safeProcessor;
@@ -41,7 +40,7 @@ public class SafeMessageSubscriber {
       }
     };
 
-    connector = new CustomerConnector(NSQ_HOST, NSQ_PORT, SAFE_CHANGE_TOPIC, SAFE_CHANGE_CHANNEL);
+    connector = new CustomerConnector(NSQ_HOST, NSQ_PORT, NSQ_TOPIC, NSQ_CHANNEL);
     connector.setSubListener(listener);
     connector.connect();
   }
@@ -49,5 +48,21 @@ public class SafeMessageSubscriber {
   @PreDestroy
   public void destroy() {
     connector.close();
+  }
+
+  public void setNsqHost(String nsqHost) {
+    NSQ_HOST = nsqHost;
+  }
+
+  public void setNsqPort(int nsqPort) {
+    NSQ_PORT = nsqPort;
+  }
+
+  public void setNsqTopic(String nsqTopic) {
+    NSQ_TOPIC = nsqTopic;
+  }
+
+  public void setNsqChannel(String nsqChannel) {
+    NSQ_CHANNEL = nsqChannel;
   }
 }

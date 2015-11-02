@@ -27,16 +27,13 @@
         <property name="ignoreResourceNotFound" value="true" />
         <property name="locations">
             <list>
-                <value>conf.properties</value>
-                <value>classpath*:jdbc.properties</value>
+              <value>file:${props.path}/conf.properties</value>
+              <value>file:${props.path}/jdbc.properties</value>
             </list>
         </property>
     </bean>
 
     <import resource="classpath:dal/persistence.xml"/>
-    <!-- 先注释掉
-    <import resource="classpath:util.xml"/>
-    -->
     <import resource="classpath:biz/*/beans-*.xml"/>
 
 </beans>

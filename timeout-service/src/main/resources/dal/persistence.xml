@@ -8,15 +8,6 @@
 
     <description>data-source config</description>
 
-    <!--<bean id="dataSourcePropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>classpath*:jdbc.properties</value>
-            </list>
-        </property>
-        <property name="ignoreUnresolvablePlaceholders" value="true" />
-    </bean>-->
-
     <bean id="log-filter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter">
         <property name="resultSetLogEnabled" value="false" />
         <property name="dataSourceLogEnabled" value="false" />

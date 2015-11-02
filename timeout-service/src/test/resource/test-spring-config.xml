@@ -16,7 +16,6 @@
     <context:component-scan base-package="com.youzan.trade"/>
 
     <import resource="classpath*:test-spring-dao.xml"/>
-    <import resource="classpath*:util.xml"/>
     <import resource="classpath*:biz/*/beans-*.xml"/>
 
     <context:property-placeholder location="classpath:env.properties,classpath:service.properties"/>
