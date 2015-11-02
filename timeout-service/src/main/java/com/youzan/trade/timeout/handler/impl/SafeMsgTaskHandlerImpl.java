@@ -32,8 +32,7 @@ public class SafeMsgTaskHandlerImpl implements TaskHandler {
       params.put("safe_no", delayTask.getBizId());
       params.put("state", delayTask.getBizState());
 
-    // todo : 消息任务的外部调用接口
-      BaseResult<SafeTaskResult> result = Client.call("",
+      BaseResult<SafeTaskResult> result = Client.call("trade.safe.timeout.sendMsg",
                                                       params,
                                                       new SafeTaskResult());
 
