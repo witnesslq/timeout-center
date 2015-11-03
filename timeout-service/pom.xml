@@ -35,11 +35,6 @@
       <groupId>com.youzan</groupId>
       <artifactId>common-model</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-    </dependency>
-
     <!-- apache commons -->
     <dependency>
       <groupId>commons-lang</groupId>
@@ -51,10 +46,6 @@
     </dependency>
     <!-- apache commons -->
 
-    <dependency>
-      <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>xstream</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -86,10 +77,6 @@
       <artifactId>druid</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>dom4j</groupId>
-      <artifactId>dom4j</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -221,12 +208,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
       <version>1.2.5.RELEASE</version>
-    </dependency>
-
-    <!--帐号中心dubbo -->
-    <dependency>
-      <groupId>com.youzan</groupId>
-      <artifactId>account-api</artifactId>
     </dependency>
 
     <dependency>
