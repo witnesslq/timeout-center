@@ -28,10 +28,6 @@ public class DelayTaskDAOTest {
 
   @Test
   public void testInsert() {
-
-    Date timePoint = new Date();
-    List<DelayTaskDO> delayTaskDOList = delayTaskDAO.selectListWithMsgTimeout(timePoint);
-
     DelayTaskDO delayTaskDO = new DelayTaskDO();
     delayTaskDO.setBizType(10);
     delayTaskDO.setBizId("123");
@@ -44,7 +40,6 @@ public class DelayTaskDAOTest {
     delayTaskDO.setMsgStatus(0);
     delayTaskDO.setMsgEndTime(TimeUtils.getDateBySeconds(1445418000 + 1000));
     delayTaskDO.setCreateTime(TimeUtils.getDateBySeconds(1445418123));
-    delayTaskDO.setUpdateTime(TimeUtils.getDateBySeconds(1445418456));
 
     int effectNum = delayTaskDAO.insert(delayTaskDO);
   }
