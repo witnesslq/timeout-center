@@ -1,14 +1,19 @@
 package com.youzan.trade.util;
 
+import java.util.Date;
+
 /**
  * @author Created by liwenjia@youzan.com on 2015/09/23 .
  */
 public class TimeUtils {
 
 
-  public static int currentInSeconds(){
+  public static int currentInSeconds() {
     long current = System.currentTimeMillis();
     return (int)(current/1000);
   }
 
+  public static Date getDateBySeconds(int seconds) {
+    return new Date(((long) seconds) * 1000);
+  }
 }

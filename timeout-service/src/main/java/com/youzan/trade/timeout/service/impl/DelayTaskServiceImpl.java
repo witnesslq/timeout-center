@@ -16,6 +16,8 @@ import com.youzan.trade.util.TimeUtils;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -43,44 +45,43 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     delayTaskDO.setBizState(safe.getState());
     delayTaskDO.setStatus(TaskStatus.ACTIVE.code());
     delayTaskDO.setCloseReason(CloseReason.NOT_CLOSED.code());
-    delayTaskDO.setDelayStartTime(safe.getRecordTime());
-    delayTaskDO.setDelayEndTime(safe.getRecordTime() + delayTimeStrategy
-        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
+    delayTaskDO.setDelayStartTime(TimeUtils.getDateBySeconds(safe.getRecordTime()));
+    delayTaskDO.setDelayEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + delayTimeStrategy
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
     delayTaskDO.setDelayTimes(Constants.INITIAL_DELAY_TIMES);
 
     if (safe.isNeedMsg()) {
       delayTaskDO.setMsgStatus(MsgStatus.ACTIVE.code());
-      delayTaskDO.setMsgEndTime(safe.getRecordTime() + msgDelayTimeStrategy
-          .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
+      delayTaskDO.setMsgEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + msgDelayTimeStrategy
+          .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
     } else {
       delayTaskDO.setMsgStatus(MsgStatus.NONE.code());
-      delayTaskDO.setMsgEndTime(Constants.INITIAL_MSG_END_TIME);
+      delayTaskDO.setMsgEndTime(TimeUtils.getDateBySeconds(Constants.INITIAL_MSG_END_TIME));
     }
 
-    delayTaskDO.setCreateTime(TimeUtils.currentInSeconds());
-    delayTaskDO.setUpdateTime(Constants.INITIAL_UPDATE_TIME);
+    delayTaskDO.setCreateTime(TimeUtils.getDateBySeconds(TimeUtils.currentInSeconds()));
 
     return delayTaskDAO.insert(delayTaskDO) == 1;
   }
 
   @Override
-  public List<DelayTask> getListWithTimeout(int timePoint) {
+  public List<DelayTask> getListWithTimeout(Date timePoint) {
     return DelayTaskDataTransfer.transfer2TOList(delayTaskDAO.selectListWithTimeout(timePoint));
   }
 
   @Override
   public List<DelayTask> getListWithTimeoutCurrently() {
-    return getListWithTimeout(TimeUtils.currentInSeconds());
+    return getListWithTimeout(Calendar.getInstance().getTime());
   }
 
   @Override
-  public List<DelayTask> getListWithMsgTimeout(int timePoint) {
+  public List<DelayTask> getListWithMsgTimeout(Date timePoint) {
     return DelayTaskDataTransfer.transfer2TOList(delayTaskDAO.selectListWithMsgTimeout(timePoint));
   }
 
   @Override
   public List<DelayTask> getListWithMsgTimeoutCurrently() {
-    return getListWithMsgTimeout(TimeUtils.currentInSeconds());
+    return getListWithMsgTimeout(Calendar.getInstance().getTime());
   }
 
   @Override
@@ -89,7 +90,6 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     delayTaskDO.setId(taskId);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
     delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
-    delayTaskDO.setUpdateTime(TimeUtils.currentInSeconds());
 
     return delayTaskDAO.close(delayTaskDO) == 1;
   }
@@ -100,7 +100,6 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     delayTaskDO.setId(taskId);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
     delayTaskDO.setCloseReason(CloseReason.FAILURE_NO_RETRY.code());
-    delayTaskDO.setUpdateTime(TimeUtils.currentInSeconds());
 
     return delayTaskDAO.close(delayTaskDO) == 1;
   }
@@ -109,31 +108,25 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   public boolean updateOnRetry(int taskId) {
     int delayTimeIncrement = delayTimeStrategy.getNextDelayIncrement(
         delayTaskDAO.selectDelayTimesById(taskId));
-    return delayTaskDAO.updateOnRetry(taskId,
-                                      delayTimeIncrement,
-                                      TimeUtils.currentInSeconds()) == 1;
+    return delayTaskDAO.updateOnRetry(taskId, delayTimeIncrement) == 1;
 
   }
 
   @Override
   public boolean closeMsgOnSuccess(int taskId) {
-    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code(), TimeUtils.currentInSeconds())
-           == 1;
+    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code()) == 1;
   }
 
   @Override
   public boolean closeMsgOnNoRetry(int taskId) {
-    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code(), TimeUtils.currentInSeconds())
-           == 1;
+    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code()) == 1;
   }
 
   @Override
   public boolean updateMsgOnRetry(int taskId) {
     int delayTimeIncrement =
         msgDelayTimeStrategy.getNextDelayIncrement(delayTaskDAO.selectDelayTimesById(taskId));
-    return delayTaskDAO.updateOnRetry(taskId,
-                                      delayTimeIncrement,
-                                      TimeUtils.currentInSeconds()) == 1;
+    return delayTaskDAO.updateMsgOnRetry(taskId, delayTimeIncrement) == 1;
   }
 
   @Override
@@ -143,7 +136,6 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     delayTaskDO.setBizId(bizId);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
     delayTaskDO.setCloseReason(CloseReason.AHEAD.code());
-    delayTaskDO.setUpdateTime(TimeUtils.currentInSeconds());
 
     // 因为不确定对应的延时任务数量
     return delayTaskDAO.closeTaskAhead(delayTaskDO) >= 0;

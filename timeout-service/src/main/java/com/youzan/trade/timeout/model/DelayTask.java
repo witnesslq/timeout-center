@@ -1,5 +1,7 @@
 package com.youzan.trade.timeout.model;
 
+import java.util.Date;
+
 import lombok.Data;
 
 /**
@@ -7,7 +9,6 @@ import lombok.Data;
  */
 @Data
 public class DelayTask {
-
   /**
    * 数据库主键
    * 目前没有唯一键,更新操作时用主键作唯一标识
@@ -24,13 +25,17 @@ public class DelayTask {
 
   private Integer closeReason;
 
-  private Integer delayStartTime;
+  private Date delayStartTime;
 
-  private Integer delayEndTime;
+  private Date delayEndTime;
 
   private Integer delayTimes;
 
-  private Integer createTime;
+  private Integer msgStatus;
 
-  private Integer updateTime;
+  private Date msgEndTime;
+
+  private Date createTime;
+
+  private Date updateTime;
 }

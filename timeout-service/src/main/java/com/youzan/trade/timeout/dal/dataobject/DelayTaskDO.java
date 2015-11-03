@@ -21,17 +21,17 @@ public class DelayTaskDO {
 
   private Integer closeReason;
 
-  private Integer delayStartTime;
+  private Date delayStartTime;
 
-  private Integer delayEndTime;
+  private Date delayEndTime;
 
   private Integer delayTimes;
 
   private Integer msgStatus;
 
-  private Integer msgEndTime;
+  private Date msgEndTime;
 
-  private Integer createTime;
+  private Date createTime;
 
-  private Integer updateTime;
+  private Date updateTime;
 }

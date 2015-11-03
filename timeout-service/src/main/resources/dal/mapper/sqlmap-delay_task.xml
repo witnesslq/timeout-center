@@ -4,19 +4,19 @@
 <mapper namespace="com.youzan.trade.timeout.dal.dao.DelayTaskDAO">
 
   <resultMap id="BaseResultMap" type="com.youzan.trade.timeout.dal.dataobject.DelayTaskDO" >
-    <result column="id" property="id" jdbcType="INTEGER" />
-    <result column="biz_type" property="bizType" jdbcType="INTEGER" />
-    <result column="biz_id" property="bizId" jdbcType="VARCHAR" />
-    <result column="biz_state" property="bizState" jdbcType="INTEGER" />
-    <result column="status" property="status" jdbcType="TINYINT" />
-    <result column="close_reason" property="closeReason" jdbcType="TINYINT" />
-    <result column="delay_start_time" property="delayStartTime" jdbcType="INTEGER" />
-    <result column="delay_end_time" property="delayEndTime" jdbcType="INTEGER" />
-    <result column="delay_times" property="delayTimes" jdbcType="INTEGER" />
-    <result column="msg_status" property="msgStatus" jdbcType="TINYINT" />
-    <result column="msg_end_time" property="msgEndTime" jdbcType="INTEGER" />
-    <result column="create_time" property="createTime" jdbcType="INTEGER" />
-    <result column="update_time" property="updateTime" jdbcType="INTEGER" />
+    <result column="id" property="id" />
+    <result column="biz_type" property="bizType" />
+    <result column="biz_id" property="bizId" />
+    <result column="biz_state" property="bizState" />
+    <result column="status" property="status" />
+    <result column="close_reason" property="closeReason" />
+    <result column="delay_start_time" property="delayStartTime" />
+    <result column="delay_end_time" property="delayEndTime" />
+    <result column="delay_times" property="delayTimes" />
+    <result column="msg_status" property="msgStatus" />
+    <result column="msg_end_time" property="msgEndTime" />
+    <result column="create_time" property="createTime" />
+    <result column="update_time" property="updateTime" />
   </resultMap>
 
   <sql id="tableName">
@@ -29,21 +29,21 @@
     create_time, update_time
   </sql>
 
-  <sql id="All_Column_List">
+  <sql id="Insert_Column_List">
     biz_type, biz_id, biz_state, status, close_reason,
     delay_start_time, delay_end_time, delay_times,msg_status,msg_end_time,
-    create_time, update_time
+    create_time
   </sql>
 
   <insert id="insert">
     INSERT INTO <include refid="tableName"/>
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <include refid="All_Column_List"/>
+      <include refid="Insert_Column_List"/>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       #{bizType},#{bizId},#{bizState},#{status},#{closeReason},
       #{delayStartTime},#{delayEndTime},#{delayTimes},#{msgStatus},#{msgEndTime},
-      #{createTime},#{updateTime}
+      #{createTime}
     </trim>
 
   </insert>
@@ -75,7 +75,7 @@
       <if test="status != null">status = #{status},</if>
       <if test="closeReason != null">close_reason = #{closeReason},</if>
       delay_times = delay_times + 1,
-      <if test="updateTime != null">update_time = #{updateTime},</if>
+      update_time = NOW()
     </set>
     WHERE id = #{id} AND status = 10
   </update>
@@ -83,9 +83,9 @@
   <update id="updateOnRetry">
     UPDATE <include refid="tableName" />
     <set>
-      delay_end_time =  delay_end_time + #{delayTimeIncrement},
+      delay_end_time = date_add(delay_end_time, interval #{delayTimeIncrement} second),
       delay_times = delay_times + 1,
-      update_time = #{updateTime}
+      update_time = NOW()
     </set>
     WHERE id = #{taskId} AND status = 10
   </update>
@@ -94,7 +94,7 @@
     UPDATE <include refid="tableName" />
     <set>
       msg_status = #{msgStatus},
-      update_time = #{updateTime}
+      update_time = NOW()
     </set>
     WHERE id = #{taskId} AND status = 10 AND msg_status = 10
   </update>
@@ -102,8 +102,8 @@
   <update id="updateMsgOnRetry">
     UPDATE <include refid="tableName" />
     <set>
-      msg_end_time =  msg_end_time + #{delayTimeIncrement},
-      update_time = #{updateTime}
+      msg_end_time = date_add(msg_end_time, interval #{delayTimeIncrement} second),
+      update_time = NOW()
     </set>
     WHERE id = #{taskId} AND status = 10 AND msg_status = 10
   </update>
@@ -113,7 +113,7 @@
     <set>
       status = #{status},
       close_reason = #{closeReason},
-      update_time = #{updateTime}
+      update_time = NOW()
     </set>
     WHERE biz_type = #{bizType} AND biz_id = #{bizId} AND status = 10
   </update>

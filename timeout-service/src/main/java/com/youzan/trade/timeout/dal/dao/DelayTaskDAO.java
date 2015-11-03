@@ -5,6 +5,7 @@ import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public interface DelayTaskDAO {
    * @param timePoint 某个时间点
    * @return 任务列表
    */
-  List<DelayTaskDO> selectListWithTimeout(int timePoint);
+  List<DelayTaskDO> selectListWithTimeout(Date timePoint);
 
   /**
    * 查询在某个时间点后消息任务已经超时的任务列表
@@ -34,7 +35,7 @@ public interface DelayTaskDAO {
    * @param timePoint 某个时间点
    * @return 任务列表
    */
-  List<DelayTaskDO> selectListWithMsgTimeout(int timePoint);
+  List<DelayTaskDO> selectListWithMsgTimeout(Date timePoint);
 
   /**
    * 根据taskId查询任务已经超时的次数
@@ -52,17 +53,13 @@ public interface DelayTaskDAO {
    */
   int close(DelayTaskDO delayTaskDO);
 
-  int closeMsg(@Param("taskId") int taskId,
-               @Param("msgStatus") int msgStatus,
-               @Param("updateTime") int updateTime);
+  int closeMsg(@Param("taskId") int taskId, @Param("msgStatus") int msgStatus);
 
   int updateOnRetry(@Param("taskId") int taskId,
-                    @Param("delayTimeIncrement") int delayTimeIncrement,
-                    @Param("updateTime") int updateTime);
+                    @Param("delayTimeIncrement") int delayTimeIncrement);
 
   int updateMsgOnRetry(@Param("taskId") int taskId,
-                       @Param("delayTimeIncrement") int delayTimeIncrement,
-                       @Param("updateTime") int updateTime);
+                       @Param("delayTimeIncrement") int delayTimeIncrement);
 
   int closeTaskAhead(DelayTaskDO delayTaskDO);
 }

@@ -28,6 +28,8 @@ public class DelayTaskDataTransfer {
     delayTask.setDelayStartTime(delayTaskDO.getDelayStartTime());
     delayTask.setDelayEndTime(delayTaskDO.getDelayEndTime());
     delayTask.setDelayTimes(delayTaskDO.getDelayTimes());
+    delayTask.setMsgStatus(delayTaskDO.getMsgStatus());
+    delayTask.setMsgEndTime(delayTaskDO.getMsgEndTime());
     delayTask.setCreateTime(delayTaskDO.getCreateTime());
     delayTask.setUpdateTime(delayTaskDO.getUpdateTime());
     return delayTask;
@@ -47,6 +49,8 @@ public class DelayTaskDataTransfer {
     delayTaskDO.setDelayStartTime(delayTask.getDelayStartTime());
     delayTaskDO.setDelayEndTime(delayTask.getDelayEndTime());
     delayTaskDO.setDelayTimes(delayTask.getDelayTimes());
+    delayTaskDO.setMsgStatus(delayTask.getMsgStatus());
+    delayTaskDO.setMsgEndTime(delayTask.getMsgEndTime());
     delayTaskDO.setCreateTime(delayTask.getCreateTime());
     delayTaskDO.setUpdateTime(delayTask.getUpdateTime());
     return delayTaskDO;

@@ -3,6 +3,7 @@ package com.youzan.trade.timeout.service;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Safe;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ public interface DelayTaskService {
    * @param timePoint 某个时间点
    * @return 任务列表
    */
-  List<DelayTask> getListWithTimeout(int timePoint);
+  List<DelayTask> getListWithTimeout(Date timePoint);
 
   /**
    * 获取当前已经超时的任务
@@ -39,7 +40,7 @@ public interface DelayTaskService {
    * @param timePoint 某个时间点
    * @return 任务列表
    */
-  List<DelayTask> getListWithMsgTimeout(int timePoint);
+  List<DelayTask> getListWithMsgTimeout(Date timePoint);
 
   /**
    * 获取当前时间消息任务已经超时且没有完成的任务
