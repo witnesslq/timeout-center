@@ -2,7 +2,7 @@
     <jmxConfigurator/>
 
     <property name="LOG_PATH" value="${trade.log.home}"/>
-    <property name="APP_NAME" value="Trade" />
+    <property name="APP_NAME" value="timeout-center" />
 
     <!--业务日志输出格式-->
     <property name="SERVICE_OUTPUT_PATTERN"
@@ -27,7 +27,7 @@
         <File>${LOG_PATH}/trade.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>${LOG_PATH}/trade-%d{yyyy-MM-dd}-%i.log.gz
+            <fileNamePattern>${LOG_PATH}/timeout-center-%d{yyyy-MM-dd}-%i.log.gz
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -64,25 +64,6 @@
         <appender-ref ref="BUSINESS"/>
     </logger>
 
-
-    <appender name="DUBBO" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${LOG_PATH}/dubbo.log</File>
-        <rollingPolicy
-                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- rollover daily -->
-            <fileNamePattern>${LOG_PATH}/dubbo-%d{yyyy-MM-dd}-%i.log.gz
-            </fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy
-                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <!-- or whenever the file size reaches 100MB -->
-                <maxFileSize>100MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <maxHistory>${MAXDAY}</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${FW_OUTPUT_PATTERN}</pattern>
-        </encoder>
-    </appender>
 
     <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${LOG_PATH}/sql.log</File>
@@ -135,10 +116,6 @@
         <appender-ref ref="BUSINESS"/>
     </logger>
 -->
-    <logger name="com.alibaba.dubbo" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="DUBBO"/>
-    </logger>
 
     <logger name="druid.sql.Statement" additivity="false">
         <level value="INFO"/>
