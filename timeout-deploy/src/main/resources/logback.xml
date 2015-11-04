@@ -24,7 +24,7 @@
     </appender>
 
     <appender name="BUSINESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${LOG_PATH}/trade.log</File>
+        <File>${LOG_PATH}/timeout-center.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
             <fileNamePattern>${LOG_PATH}/timeout-center-%d{yyyy-MM-dd}-%i.log.gz
