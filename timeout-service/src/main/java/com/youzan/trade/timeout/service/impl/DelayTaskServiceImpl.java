@@ -42,30 +42,8 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   private DelayTimeStrategy msgDelayTimeStrategy;
 
   @Override
-  public boolean saveBySafe(Safe safe) {
-    DelayTaskDO delayTaskDO = new DelayTaskDO();
-    delayTaskDO.setBizType(BizType.SAFE.code());
-    delayTaskDO.setBizId(safe.getSafeNo());
-    delayTaskDO.setBizState(safe.getState());
-    delayTaskDO.setStatus(TaskStatus.ACTIVE.code());
-    delayTaskDO.setCloseReason(CloseReason.NOT_CLOSED.code());
-    delayTaskDO.setDelayStartTime(TimeUtils.getDateBySeconds(safe.getRecordTime()));
-    delayTaskDO.setDelayEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + delayTimeStrategy
-        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
-    delayTaskDO.setDelayTimes(Constants.INITIAL_DELAY_TIMES);
-
-    if (safe.isNeedMsg()) {
-      delayTaskDO.setMsgStatus(MsgStatus.ACTIVE.code());
-      delayTaskDO.setMsgEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + msgDelayTimeStrategy
-          .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
-    } else {
-      delayTaskDO.setMsgStatus(MsgStatus.NONE.code());
-      delayTaskDO.setMsgEndTime(TimeUtils.getDateBySeconds(Constants.INITIAL_MSG_END_TIME));
-    }
-
-    delayTaskDO.setCreateTime(TimeUtils.getDateBySeconds(TimeUtils.currentInSeconds()));
-
-    return delayTaskDAO.insert(delayTaskDO) == 1;
+  public boolean save(DelayTask delayTask) {
+    return delayTaskDAO.insert(DelayTaskDataTransfer.transfer2DO(delayTask)) == 1;
   }
 
   @Override

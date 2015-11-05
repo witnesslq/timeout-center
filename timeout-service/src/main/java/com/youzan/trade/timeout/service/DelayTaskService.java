@@ -12,12 +12,12 @@ import java.util.List;
 public interface DelayTaskService {
 
   /**
-   * 根据一条维权记录保存一个超时任务
+   * 保存一个超时任务
    *
-   * @param safe
+   * @param delayTask
    * @return
    */
-  boolean saveBySafe(Safe safe);
+  boolean save(DelayTask delayTask);
 
   /**
    * 获取某个时间点已经超时且没有完成的任务

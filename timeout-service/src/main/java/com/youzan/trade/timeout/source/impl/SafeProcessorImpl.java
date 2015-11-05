@@ -1,11 +1,19 @@
 package com.youzan.trade.timeout.source.impl;
 
 import com.youzan.trade.timeout.constants.BizType;
+import com.youzan.trade.timeout.constants.CloseReason;
+import com.youzan.trade.timeout.constants.Constants;
+import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.SafeState;
 import com.youzan.trade.timeout.constants.SafeType;
+import com.youzan.trade.timeout.constants.TaskStatus;
+import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
+import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.service.DelayTaskService;
+import com.youzan.trade.timeout.service.DelayTimeStrategy;
 import com.youzan.trade.timeout.source.Processor;
+import com.youzan.trade.util.TimeUtils;
 
 import com.alibaba.fastjson.JSON;
 
@@ -24,6 +32,12 @@ public class SafeProcessorImpl implements Processor {
 
   @Resource
   private DelayTaskService delayTaskService;
+
+  @Resource(name = "delayTimeStrategyImpl")
+  private DelayTimeStrategy delayTimeStrategy;
+
+  @Resource(name = "msgDelayTimeStrategyImpl")
+  private DelayTimeStrategy msgDelayTimeStrategy;
 
   @Resource
   private TransactionTemplate defaultTxTemplate;
@@ -91,7 +105,29 @@ public class SafeProcessorImpl implements Processor {
   }
 
   private boolean processOnStart(Safe safe) {
-    return delayTaskService.saveBySafe(safe);
+    DelayTask delayTask = new DelayTask();
+    delayTask.setBizType(BizType.SAFE.code());
+    delayTask.setBizId(safe.getSafeNo());
+    delayTask.setBizState(safe.getState());
+    delayTask.setStatus(TaskStatus.ACTIVE.code());
+    delayTask.setCloseReason(CloseReason.NOT_CLOSED.code());
+    delayTask.setDelayStartTime(TimeUtils.getDateBySeconds(safe.getRecordTime()));
+    delayTask.setDelayEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + delayTimeStrategy
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
+    delayTask.setDelayTimes(Constants.INITIAL_DELAY_TIMES);
+
+    if (safe.isNeedMsg()) {
+      delayTask.setMsgStatus(MsgStatus.ACTIVE.code());
+      delayTask.setMsgEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + msgDelayTimeStrategy
+          .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
+    } else {
+      delayTask.setMsgStatus(MsgStatus.NONE.code());
+      delayTask.setMsgEndTime(TimeUtils.getDateBySeconds(Constants.INITIAL_MSG_END_TIME));
+    }
+
+    delayTask.setCreateTime(TimeUtils.getDateBySeconds(TimeUtils.currentInSeconds()));
+
+    return delayTaskService.save(delayTask);
   }
 
   private boolean processOnClose(Safe safe) {
