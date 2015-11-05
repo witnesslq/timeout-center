@@ -45,13 +45,13 @@ public class SafeProcessorImpl implements Processor {
 
       // 201
       if (SafeState.BUYER_START.code() == safe.getState()) {
-        return startTask(safe);
+        return processOnStart(safe);
       }
 
       // 203 + 202
       if (SafeState.SELLER_REJECTED.code() == safe.getState()
           || SafeState.BUYER_RESTART.code() == safe.getState()) {
-        return restartTask(safe);
+        return processOnRestart(safe);
       }
 
       // 205 + 204 + 249 + 250
@@ -59,7 +59,7 @@ public class SafeProcessorImpl implements Processor {
           || SafeState.INVOLVED.code() == safe.getState()
           || SafeState.CLOSED.code()   == safe.getState()
           || SafeState.FINISHED.code() == safe.getState()) {
-        return closeAllTasks(safe);
+        return processOnClose(safe);
       }
     }
 
@@ -67,7 +67,7 @@ public class SafeProcessorImpl implements Processor {
 
       // 201
       if (SafeState.BUYER_START.code() == safe.getState()) {
-        return startTask(safe);
+        return processOnStart(safe);
       }
 
       // 205 + 203 + 202 + 206 + 207
@@ -76,31 +76,31 @@ public class SafeProcessorImpl implements Processor {
           || SafeState.BUYER_RESTART.code() == safe.getState()
           || SafeState.BUYER_SENT.code() == safe.getState()
           || SafeState.SELLER_NOT_RECEIVED.code() == safe.getState()) {
-        return restartTask(safe);
+        return processOnRestart(safe);
       }
 
       // 204 + 249 + 250
       if (SafeState.INVOLVED.code() == safe.getState()
           || SafeState.CLOSED.code() == safe.getState()
           || SafeState.FINISHED.code() == safe.getState()) {
-        return closeAllTasks(safe);
+        return processOnClose(safe);
       }
     }
 
     return false;
   }
 
-  private boolean startTask(Safe safe) {
+  private boolean processOnStart(Safe safe) {
     return delayTaskService.saveBySafe(safe);
   }
 
-  private boolean closeAllTasks(Safe safe) {
+  private boolean processOnClose(Safe safe) {
     return delayTaskService.closeTaskByBizTypeAndBizId(BizType.SAFE.code(), safe.getSafeNo());
   }
 
-  private boolean restartTask(Safe safe) {
+  private boolean processOnRestart(Safe safe) {
     return defaultTxTemplate.execute(transactionStatus -> {
-      if ( !( closeAllTasks(safe) && startTask(safe) ) ) {
+      if ( !( processOnClose(safe) && processOnStart(safe) ) ) {
         transactionStatus.setRollbackOnly();
         return false;
       }
