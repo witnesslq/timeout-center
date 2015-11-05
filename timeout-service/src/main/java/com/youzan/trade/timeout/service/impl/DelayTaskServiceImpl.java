@@ -43,6 +43,8 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public boolean save(DelayTask delayTask) {
+    LogUtils.info(log, "保存一个延时任务: {}", delayTask);
+
     return delayTaskDAO.insert(DelayTaskDataTransfer.transfer2DO(delayTask)) == 1;
   }
 
@@ -125,6 +127,8 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public boolean closeTaskByBizTypeAndBizId(int bizType, String bizId) {
+    LogUtils.info(log, "根据业务类型和业务id关闭延时任务, bizType: {}, bizId: {}", bizType, bizId);
+
     DelayTaskDO delayTaskDO = new DelayTaskDO();
     delayTaskDO.setBizType(bizType);
     delayTaskDO.setBizId(bizId);
