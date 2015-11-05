@@ -53,13 +53,17 @@ public interface DelayTaskDAO {
    */
   int close(DelayTaskDO delayTaskDO);
 
-  int closeMsg(@Param("taskId") int taskId, @Param("msgStatus") int msgStatus);
+  int closeMsg(@Param("taskId") int taskId,
+               @Param("msgStatus") int msgStatus,
+               @Param("updateTime") Date updateTime);
 
   int updateOnRetry(@Param("taskId") int taskId,
-                    @Param("delayTimeIncrement") int delayTimeIncrement);
+                    @Param("delayTimeIncrement") int delayTimeIncrement,
+                    @Param("updateTime") Date updateTime);
 
   int updateMsgOnRetry(@Param("taskId") int taskId,
-                       @Param("delayTimeIncrement") int delayTimeIncrement);
+                       @Param("delayTimeIncrement") int delayTimeIncrement,
+                       @Param("updateTime") Date updateTime);
 
   int closeTaskAhead(DelayTaskDO delayTaskDO);
 }

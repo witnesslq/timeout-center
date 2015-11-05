@@ -76,6 +76,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     delayTaskDO.setId(taskId);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
     delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
+    delayTaskDO.setUpdateTime(TimeUtils.currentDate());
 
     return delayTaskDAO.close(delayTaskDO) == 1;
   }
@@ -88,6 +89,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     delayTaskDO.setId(taskId);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
     delayTaskDO.setCloseReason(CloseReason.FAILURE_NO_RETRY.code());
+    delayTaskDO.setUpdateTime(TimeUtils.currentDate());
 
     return delayTaskDAO.close(delayTaskDO) == 1;
   }
@@ -98,7 +100,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
     int delayTimeIncrement = delayTimeStrategy.getNextDelayIncrement(
         delayTaskDAO.selectDelayTimesById(taskId));
-    return delayTaskDAO.updateOnRetry(taskId, delayTimeIncrement) == 1;
+    return delayTaskDAO.updateOnRetry(taskId, delayTimeIncrement, TimeUtils.currentDate()) == 1;
 
   }
 
@@ -106,14 +108,14 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   public boolean closeMsgOnSuccess(int taskId) {
     LogUtils.info(log, "消息任务执行成功并关闭, taskId: {}", taskId);
 
-    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code()) == 1;
+    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code(), TimeUtils.currentDate()) == 1;
   }
 
   @Override
   public boolean closeMsgOnNoRetry(int taskId) {
     LogUtils.info(log, "执行消息任务失败, 关闭消息任务, 不再重试, taskId: {}", taskId);
 
-    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code()) == 1;
+    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code(), TimeUtils.currentDate()) == 1;
   }
 
   @Override
@@ -122,7 +124,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
     int delayTimeIncrement =
         msgDelayTimeStrategy.getNextDelayIncrement(delayTaskDAO.selectDelayTimesById(taskId));
-    return delayTaskDAO.updateMsgOnRetry(taskId, delayTimeIncrement) == 1;
+    return delayTaskDAO.updateMsgOnRetry(taskId, delayTimeIncrement, TimeUtils.currentDate()) == 1;
   }
 
   @Override
@@ -134,6 +136,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     delayTaskDO.setBizId(bizId);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
     delayTaskDO.setCloseReason(CloseReason.AHEAD.code());
+    delayTaskDO.setUpdateTime(TimeUtils.currentDate());
 
     // 因为不确定对应的延时任务数量
     return delayTaskDAO.closeTaskAhead(delayTaskDO) >= 0;

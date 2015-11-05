@@ -69,6 +69,7 @@ public class DelayTaskDAOTest {
     delayTaskDO.setId(74);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
     delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
+    delayTaskDO.setUpdateTime(new Date());
 
     int effectNum = delayTaskDAO.close(delayTaskDO);
   }
@@ -78,7 +79,7 @@ public class DelayTaskDAOTest {
     int taskId = 75;
     int delayTimeIncrement = 5 * 60;
 
-    int effectNum = delayTaskDAO.updateOnRetry(taskId, delayTimeIncrement);
+    int effectNum = delayTaskDAO.updateOnRetry(taskId, delayTimeIncrement, new Date());
   }
 
   @Test
@@ -88,6 +89,7 @@ public class DelayTaskDAOTest {
     delayTaskDO.setBizId("123");
     delayTaskDO.setStatus(20);
     delayTaskDO.setCloseReason(10);
+    delayTaskDO.setUpdateTime(new Date());
 
     int effectNum = delayTaskDAO.closeTaskAhead(delayTaskDO);
   }
@@ -97,7 +99,7 @@ public class DelayTaskDAOTest {
     int taskId = 75;
     int msgStatus = 20;
 
-    int effectNum = delayTaskDAO.closeMsg(taskId, msgStatus);
+    int effectNum = delayTaskDAO.closeMsg(taskId, msgStatus, new Date());
   }
 
   @Test
@@ -106,6 +108,7 @@ public class DelayTaskDAOTest {
     delayTaskDO.setId(57);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
     delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
+    delayTaskDO.setUpdateTime(new Date());
 
     int effectNum = delayTaskDAO.close(delayTaskDO);
   }

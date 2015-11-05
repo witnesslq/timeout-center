@@ -1,5 +1,6 @@
 package com.youzan.trade.util;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -15,5 +16,9 @@ public class TimeUtils {
 
   public static Date getDateBySeconds(int seconds) {
     return new Date(((long) seconds) * 1000);
+  }
+
+  public static Date currentDate() {
+    return Calendar.getInstance().getTime();
   }
 }
