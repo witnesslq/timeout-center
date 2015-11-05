@@ -16,7 +16,7 @@
     UPDATE <include refid="tableName" />
     <set>
       lock_status = 1,
-      update_time = NOW()
+      update_time = #{updateTime}
     </set>
     WHERE lock_id = #{lockId} AND lock_status = 0
   </update>
@@ -25,17 +25,19 @@
     UPDATE <include refid="tableName" />
     <set>
       lock_status = 1,
-      update_time = NOW()
+      update_time = #{currentTime}
     </set>
-    WHERE lock_id = #{lockId} AND date_add(update_time, interval #{internalMinutes} minute) &lt; NOW()
+    WHERE lock_id = #{lockId}
+    AND date_add(update_time, interval #{internalMinutes} minute) &lt; #{currentTime}
   </update>
 
   <update id="unlockByLockId">
     UPDATE <include refid="tableName" />
     <set>
       lock_status = 0,
-      update_time = NOW()
+      update_time = #{updateTime}
     </set>
     WHERE lock_id = #{lockId} AND lock_status = 1
   </update>
+
 </mapper>
