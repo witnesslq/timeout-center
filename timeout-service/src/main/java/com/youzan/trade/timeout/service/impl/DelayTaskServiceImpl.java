@@ -146,7 +146,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
-  public boolean closeTaskAhead(int bizType, String bizId) {
+  public boolean closeTaskByBizTypeAndBizId(int bizType, String bizId) {
     DelayTaskDO delayTaskDO = new DelayTaskDO();
     delayTaskDO.setBizType(bizType);
     delayTaskDO.setBizId(bizId);

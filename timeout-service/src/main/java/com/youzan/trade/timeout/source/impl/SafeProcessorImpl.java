@@ -95,7 +95,7 @@ public class SafeProcessorImpl implements Processor {
   }
 
   private boolean closeAllTasks(Safe safe) {
-    return delayTaskService.closeTaskAhead(BizType.SAFE.code(), safe.getSafeNo());
+    return delayTaskService.closeTaskByBizTypeAndBizId(BizType.SAFE.code(), safe.getSafeNo());
   }
 
   private boolean restartTask(Safe safe) {

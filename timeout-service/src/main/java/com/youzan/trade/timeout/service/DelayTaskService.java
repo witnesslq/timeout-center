@@ -108,7 +108,7 @@ public interface DelayTaskService {
    * @param bizId
    * @return
    */
-  boolean closeTaskAhead(int bizType, String bizId);
+  boolean closeTaskByBizTypeAndBizId(int bizType, String bizId);
 
 
 }
