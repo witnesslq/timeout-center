@@ -12,6 +12,7 @@ import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.service.DelayTaskService;
 import com.youzan.trade.timeout.service.DelayTimeStrategy;
 import com.youzan.trade.timeout.transfer.DelayTaskDataTransfer;
+import com.youzan.trade.util.LogUtils;
 import com.youzan.trade.util.TimeUtils;
 
 import org.springframework.stereotype.Service;
@@ -22,9 +23,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author apple created at: 15/10/23 下午3:19
  */
+@Slf4j
 @Service
 public class DelayTaskServiceImpl implements DelayTaskService {
 
@@ -86,6 +90,8 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public boolean closeOnSuccess(int taskId) {
+    LogUtils.info(log, "超时任务执行成功, 关闭超时任务, taskId: {}", taskId);
+
     DelayTaskDO delayTaskDO = new DelayTaskDO();
     delayTaskDO.setId(taskId);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
@@ -96,6 +102,8 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public boolean closeOnNoRetry(int taskId) {
+    LogUtils.info(log, "超时任务执行失败, 关闭超时任务, 不再重试, taskId: {}", taskId);
+
     DelayTaskDO delayTaskDO = new DelayTaskDO();
     delayTaskDO.setId(taskId);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
@@ -106,6 +114,8 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public boolean updateOnRetry(int taskId) {
+    LogUtils.info(log, "超时任务执行失败, 更新超时任务, taskId: {}", taskId);
+
     int delayTimeIncrement = delayTimeStrategy.getNextDelayIncrement(
         delayTaskDAO.selectDelayTimesById(taskId));
     return delayTaskDAO.updateOnRetry(taskId, delayTimeIncrement) == 1;
@@ -114,16 +124,22 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public boolean closeMsgOnSuccess(int taskId) {
+    LogUtils.info(log, "消息任务执行成功并关闭, taskId: {}", taskId);
+
     return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code()) == 1;
   }
 
   @Override
   public boolean closeMsgOnNoRetry(int taskId) {
+    LogUtils.info(log, "执行消息任务失败, 关闭消息任务, 不再重试, taskId: {}", taskId);
+
     return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code()) == 1;
   }
 
   @Override
   public boolean updateMsgOnRetry(int taskId) {
+    LogUtils.info(log, "执行消息任务失败, 更新消息任务, taskId: {}", taskId);
+
     int delayTimeIncrement =
         msgDelayTimeStrategy.getNextDelayIncrement(delayTaskDAO.selectDelayTimesById(taskId));
     return delayTaskDAO.updateMsgOnRetry(taskId, delayTimeIncrement) == 1;
