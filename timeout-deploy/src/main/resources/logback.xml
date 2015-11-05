@@ -5,8 +5,8 @@
     <property name="APP_NAME" value="timeout-center" />
 
     <!--业务日志输出格式-->
-    <property name="SERVICE_OUTPUT_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{TRACE_ID}] %-5level %logger{15} - %msg%n" />
+    <property name="BUSINESS_OUTPUT_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{15} - %msg%n" />
 
     <!--框架日志输出格式-->
     <property name="FW_OUTPUT_PATTERN"
@@ -40,7 +40,7 @@
             <maxHistory>${MAXDAY}</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
+            <pattern>${BUSINESS_OUTPUT_PATTERN}</pattern>
         </encoder>
     </appender>
 
@@ -58,7 +58,7 @@
             <!--<maxHistory>${MAXDAY}</maxHistory>-->
         <!--</rollingPolicy>-->
         <!--<encoder>-->
-            <!--<pattern>${SERVICE_OUTPUT_PATTERN}</pattern>-->
+            <!--<pattern>${BUSINESS_OUTPUT_PATTERN}</pattern>-->
         <!--</encoder>-->
     <!--</appender>-->
 
