@@ -12,9 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Client {
 
-  @Setter
   private static HttpClientManager httpClientManager;
-  @Setter
   private static HostFactory hostFactory;
 
   public void setHostFactory(HostFactory hostFactory) {
