@@ -19,9 +19,7 @@ import javax.annotation.Resource;
 /**
  * @author apple created at: 15/10/22 下午9:51
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:test-applicationContext.xml"})
-public class DelayTaskDAOTest {
+public class DelayTaskDAOTest extends BaseTest {
 
   @Resource
   private DelayTaskDAO delayTaskDAO;
