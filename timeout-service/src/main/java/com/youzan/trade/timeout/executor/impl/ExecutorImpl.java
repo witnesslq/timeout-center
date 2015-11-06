@@ -47,16 +47,17 @@ public class ExecutorImpl implements Executor {
 
     List<DelayTask> delayTaskList = delayTaskService.getListWithTimeoutCurrently();
 
-    if (CollectionUtils.isEmpty(delayTaskList)) {
-      return ;
+    if (!CollectionUtils.isEmpty(delayTaskList)) {
+      delayTaskList.forEach(delayTask -> {
+        if (delayTask.getBizType() == BizType.SAFE.code()) {
+          safeTaskHandlerImpl.handle(delayTask);
+        }
+      });
     }
 
-    delayTaskList.forEach(delayTask -> {
-      if (delayTask.getBizType() == BizType.SAFE.code()) {
-        safeTaskHandlerImpl.handle(delayTask);
-      }
-    });
-
+    /**
+     * 最后释放锁
+     */
     delayTaskLockService.unlockByLockId(LOCK_ID);
   }
 }

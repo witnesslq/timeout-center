@@ -47,16 +47,17 @@ public class MsgExecutorImpl implements Executor {
 
     List<DelayTask> delayTaskList = delayTaskService.getListWithMsgTimeoutCurrently();
 
-    if (CollectionUtils.isEmpty(delayTaskList)) {
-      return ;
+    if (!CollectionUtils.isEmpty(delayTaskList)) {
+      delayTaskList.forEach(delayTask -> {
+        if (delayTask.getBizType() == BizType.SAFE.code()) {
+          safeMsgTaskHandlerImpl.handle(delayTask);
+        }
+      });
     }
 
-    delayTaskList.forEach(delayTask -> {
-      if (delayTask.getBizType() == BizType.SAFE.code()) {
-        safeMsgTaskHandlerImpl.handle(delayTask);
-      }
-    });
-
+    /**
+     * 最后释放锁
+     */
     delayTaskLockService.unlockByLockId(LOCK_ID);
   }
 }
