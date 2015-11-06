@@ -13,10 +13,6 @@
 
   <artifactId>timeout-service</artifactId>
 
-  <properties>
-    <unitils.version>3.4.2</unitils.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework</groupId>
