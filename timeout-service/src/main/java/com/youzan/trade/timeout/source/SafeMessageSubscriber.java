@@ -17,14 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SafeMessageSubscriber {
 
-  private static String NSQ_HOST;
-  private static int NSQ_PORT;
+  private String NSQ_HOST;
+  private int NSQ_PORT;
 
-  private static String NSQ_TOPIC_CREATE;
-  private static String NSQ_CHANNEL_CREATE;
+  private String NSQ_TOPIC_CREATE;
+  private String NSQ_CHANNEL_CREATE;
 
-  private static String NSQ_TOPIC_UPDATE;
-  private static String NSQ_CHANNEL_UPDATE;
+  private String NSQ_TOPIC_UPDATE;
+  private String NSQ_CHANNEL_UPDATE;
 
   private CustomerConnector updateConnector;
   private CustomerConnector createConnector;

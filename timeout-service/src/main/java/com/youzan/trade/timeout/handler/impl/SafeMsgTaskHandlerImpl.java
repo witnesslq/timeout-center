@@ -36,11 +36,6 @@ public class SafeMsgTaskHandlerImpl implements TaskHandler {
                                                       params,
                                                       new SafeTaskResult());
 
-      if (result == null) {
-        handleOnRetry(delayTask);
-        return ;
-      }
-
       if (ResponseCode.SUCC != result.getCode()) {
         handleOnRetry(delayTask);
         return ;
