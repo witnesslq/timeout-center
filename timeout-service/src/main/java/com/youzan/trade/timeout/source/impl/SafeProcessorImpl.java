@@ -3,6 +3,7 @@ package com.youzan.trade.timeout.source.impl;
 import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.constants.Constants;
+import com.youzan.trade.timeout.constants.DelayState;
 import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.SafeState;
 import com.youzan.trade.timeout.constants.SafeType;
@@ -51,6 +52,11 @@ public class SafeProcessorImpl implements Processor {
     Safe safe = JSON.parseObject(message, Safe.class);
 
     if (safe == null) {
+      return true;
+    }
+
+    if (safe.getDelayState() == null ||
+        safe.getDelayState() == DelayState.NOTNEEDED.code()) {
       return true;
     }
 

@@ -16,6 +16,10 @@ import lombok.Data;
 @Data
 public class Safe {
 
+  /** 超时标识, 1:需要超时, 0:不需要超时 */
+  @JSONField(name = "delay_state")
+  private Integer delayState;
+
   /** 投诉编号 */
   @JSONField(name = "safe_no")
   private String safeNo;
