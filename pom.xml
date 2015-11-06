@@ -50,13 +50,6 @@
                 <version>${bootstrap.version}</version>
                 <!--<scope>provided</scope>-->
             </dependency>
-            <dependency>
-                <groupId>com.youzan</groupId>
-                <artifactId>common-model</artifactId>
-                <version>${common-model.version}</version>
-            </dependency>
-            <!-- internal dependency -->
-
             <!-- apache commons -->
             <dependency>
                 <groupId>commons-lang</groupId>
