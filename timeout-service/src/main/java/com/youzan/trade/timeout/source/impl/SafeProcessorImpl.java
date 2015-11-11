@@ -55,12 +55,12 @@ public class SafeProcessorImpl implements Processor {
       return true;
     }
 
+    // 过滤不需要的维权任务
     if (safe.getDelayState() == null ||
         safe.getDelayState() == DelayState.NOTNEEDED.code()) {
       return true;
     }
 
-    // 我要退款，但不退货
     if (SafeType.REFUND_ONLY.code() == safe.getSafeType()) {
       switch (SafeState.getSafeStateByCode(safe.getState())) {
         case BUYER_START          : return processOnStart(safe);          // 201
