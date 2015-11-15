@@ -34,7 +34,7 @@ public class ExecutorImpl implements Executor {
   private TaskHandler safeTaskHandlerImpl;
 
   // 每分钟启动一次
-  @Scheduled(cron = "0 * * * * ?")
+  @Scheduled(cron = "${safe.task.cron}")
   @Override
   public void execute() {
     /**

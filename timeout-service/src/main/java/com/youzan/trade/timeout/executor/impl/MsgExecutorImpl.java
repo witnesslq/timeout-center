@@ -34,7 +34,7 @@ public class MsgExecutorImpl implements Executor {
   private TaskHandler safeMsgTaskHandlerImpl;
 
   // 每小时启动一次
-  @Scheduled(cron = "0 0 * * * ?")
+  @Scheduled(cron = "${safe.msg.task.cron}")
   @Override
   public void execute() {
     /**
