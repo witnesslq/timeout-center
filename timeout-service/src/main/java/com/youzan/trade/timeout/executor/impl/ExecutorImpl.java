@@ -45,19 +45,21 @@ public class ExecutorImpl implements Executor {
       return;
     }
 
-    List<DelayTask> delayTaskList = delayTaskService.getListWithTimeoutCurrently();
+    try {
+      List<DelayTask> delayTaskList = delayTaskService.getListWithTimeoutCurrently();
 
-    if (!CollectionUtils.isEmpty(delayTaskList)) {
-      delayTaskList.forEach(delayTask -> {
-        if (delayTask.getBizType() == BizType.SAFE.code()) {
-          safeTaskHandlerImpl.handle(delayTask);
-        }
-      });
+      if (!CollectionUtils.isEmpty(delayTaskList)) {
+        delayTaskList.forEach(delayTask -> {
+          if (delayTask.getBizType() == BizType.SAFE.code()) {
+            safeTaskHandlerImpl.handle(delayTask);
+          }
+        });
+      }
+    } finally {
+      /**
+       * 最后释放锁
+       */
+      delayTaskLockService.unlockByLockId(LOCK_ID);
     }
-
-    /**
-     * 最后释放锁
-     */
-    delayTaskLockService.unlockByLockId(LOCK_ID);
   }
 }
