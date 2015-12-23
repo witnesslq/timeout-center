@@ -20,8 +20,11 @@
     <context:component-scan base-package="com.youzan.trade"/>
 
     <context:annotation-config />
-    <task:annotation-driven scheduler="qbScheduler" mode="proxy"/>
+    <task:annotation-driven executor="threadPoolTaskExecutor" scheduler="qbScheduler" mode="proxy"/>
     <task:scheduler id="qbScheduler" pool-size="10"/>
+
+    <!-- 线程池的配置 -->
+    <task:executor id="threadPoolTaskExecutor" pool-size="8-32" queue-capacity="1000" keep-alive="60" rejection-policy="CALLER_RUNS"/>
 
     <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true" />
