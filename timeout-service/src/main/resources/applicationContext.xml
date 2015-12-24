@@ -13,12 +13,17 @@
   <context:component-scan base-package="com.youzan.trade"/>
   <context:annotation-config/>
 
-  <task:annotation-driven executor="threadPoolTaskExecutor" scheduler="threadPoolTaskScheduler"
+  <task:annotation-driven executor="orderFinishThreadPoolTaskExecutor"
+                          scheduler="threadPoolTaskScheduler"
                           mode="proxy"/>
   <task:scheduler id="threadPoolTaskScheduler" pool-size="10"/>
-  <!-- 线程池的配置 -->
-  <task:executor id="threadPoolTaskExecutor" pool-size="32-128" queue-capacity="5000"
+  <!-- 处理订单完成的线程池的配置 -->
+  <task:executor id="orderFinishThreadPoolTaskExecutor" pool-size="32-128" queue-capacity="5000"
                  keep-alive="240"
+                 rejection-policy="CALLER_RUNS"/>
+  <!-- 处理维权的线程池的配置 -->
+  <task:executor id="safeThreadPoolTaskExecutor" pool-size="4-8" queue-capacity="3000"
+                 keep-alive="60"
                  rejection-policy="CALLER_RUNS"/>
 
   <bean id="propertyPlaceholderConfigurer"
