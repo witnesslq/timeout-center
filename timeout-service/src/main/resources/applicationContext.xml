@@ -17,7 +17,8 @@
                           mode="proxy"/>
   <task:scheduler id="threadPoolTaskScheduler" pool-size="10"/>
   <!-- 线程池的配置 -->
-  <task:executor id="threadPoolTaskExecutor" pool-size="8-32" queue-capacity="1000" keep-alive="60"
+  <task:executor id="threadPoolTaskExecutor" pool-size="32-128" queue-capacity="5000"
+                 keep-alive="240"
                  rejection-policy="CALLER_RUNS"/>
 
   <bean id="propertyPlaceholderConfigurer"
