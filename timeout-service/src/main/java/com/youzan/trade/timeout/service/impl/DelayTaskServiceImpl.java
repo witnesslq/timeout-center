@@ -59,6 +59,12 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
+  public List<DelayTask> getListWithBizTypeAndTimeout(int bizType, Date timePoint, int maxSize) {
+    return DelayTaskDataTransfer
+        .transfer2TOList(delayTaskDAO.selectListWithBizTypeAndTimeout(bizType, timePoint, maxSize));
+  }
+
+  @Override
   public List<DelayTask> getListWithMsgTimeout(Date timePoint) {
     return DelayTaskDataTransfer.transfer2TOList(delayTaskDAO.selectListWithMsgTimeout(timePoint));
   }

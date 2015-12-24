@@ -30,9 +30,20 @@ public interface DelayTaskService {
   /**
    * 获取当前已经超时的任务
    *
-   * @return
+   * @return 任务列表
    */
   List<DelayTask> getListWithTimeoutCurrently();
+
+  /**
+   * 获取某个业务在某个时间点后已经超时的任务列表
+   * 按业务域区分
+   *
+   * @param bizType 业务类型
+   * @param timePoint 某个时间点
+   * @param maxSize 返回任务数的最大值
+   * @return 任务列表
+   */
+  List<DelayTask> getListWithBizTypeAndTimeout(int bizType, Date timePoint, int maxSize);
 
   /**
    * 获取某个时间点消息任务已经超时且没有完成的任务
