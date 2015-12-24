@@ -11,6 +11,7 @@ import com.youzan.trade.timeout.service.DelayTaskService;
 
 import com.google.common.collect.Maps;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -26,6 +27,7 @@ public class SafeMsgTaskHandlerImpl implements TaskHandler {
   @Resource
   private DelayTaskService delayTaskService;
 
+  @Async("safeThreadPoolTaskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
       Map<String, Object> params = Maps.newHashMap();
