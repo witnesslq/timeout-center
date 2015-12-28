@@ -80,6 +80,16 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
+  public List<DelayTask> getListWithBizTypeAndMsgTimeout(int bizType, Date timePoint, int maxSize) {
+    return null;
+  }
+
+  @Override
+  public List<DelayTask> getListWithBizTypeAndMsgTimeoutCurrently(int bizType, int maxSize) {
+    return getListWithBizTypeAndMsgTimeout(bizType, Calendar.getInstance().getTime(), maxSize);
+  }
+
+  @Override
   public boolean closeOnSuccess(int taskId) {
     LogUtils.info(log, "超时任务执行成功, 关闭超时任务, taskId: {}", taskId);
 
