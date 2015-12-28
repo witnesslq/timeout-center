@@ -32,7 +32,6 @@ public class SafeExecutorImpl extends AbstractExecutor {
   @Resource(name = "safeTaskHandlerImpl")
   private TaskHandler taskHandler;
 
-  // 每分钟启动一次
   @Scheduled(cron = "${safe.task.cron}")
   public void start() {
     execute(LOCK_ID, taskHandler);

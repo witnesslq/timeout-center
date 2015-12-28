@@ -30,7 +30,6 @@ public class SafeMsgExecutorImpl extends AbstractExecutor {
   @Resource(name = "safeMsgTaskHandlerImpl")
   private TaskHandler taskHandler;
 
-  // 每小时启动一次
   @Scheduled(cron = "${safe.msg.task.cron}")
   public void start() {
     execute(LOCK_ID, taskHandler);
