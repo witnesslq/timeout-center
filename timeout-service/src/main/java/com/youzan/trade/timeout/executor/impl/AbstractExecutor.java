@@ -2,7 +2,12 @@ package com.youzan.trade.timeout.executor.impl;
 
 import com.youzan.trade.timeout.executor.Executor;
 import com.youzan.trade.timeout.handler.TaskHandler;
+import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.service.DelayTaskLockService;
+
+import org.apache.commons.collections.CollectionUtils;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -34,5 +39,13 @@ public abstract class AbstractExecutor implements Executor {
     }
   }
 
-  protected abstract void doExecute(TaskHandler taskHandler);
+  private void doExecute(TaskHandler taskHandler) {
+    List<DelayTask> delayTaskList = getTaskList();
+
+    if (!CollectionUtils.isEmpty(delayTaskList)) {
+      delayTaskList.forEach(delayTask -> taskHandler.handle(delayTask));
+    }
+  }
+
+  protected abstract List<DelayTask> getTaskList();
 }

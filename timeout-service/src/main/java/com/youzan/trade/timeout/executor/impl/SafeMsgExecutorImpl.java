@@ -37,15 +37,7 @@ public class SafeMsgExecutorImpl extends AbstractExecutor {
   }
 
   @Override
-  protected void doExecute(TaskHandler taskHandler) {
-    List<DelayTask> delayTaskList = getTaskList();
-
-    if (!CollectionUtils.isEmpty(delayTaskList)) {
-      delayTaskList.forEach(delayTask -> taskHandler.handle(delayTask));
-    }
-  }
-
-  private List<DelayTask> getTaskList() {
+  protected List<DelayTask> getTaskList() {
     return delayTaskService.getListWithBizTypeAndMsgTimeoutCurrently(BizType.SAFE.code(), maxSize);
   }
 
