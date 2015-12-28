@@ -67,6 +67,17 @@ public class DelayTaskDAOTest extends BaseTest {
   }
 
   @Test
+  public void testSelectListWithBizTypeAndMsgTimeout() throws Exception {
+    int bizType = 10;
+    Date timePoint = new Date(115, 7, 1);
+    int maxSize = 2;
+
+    List<DelayTaskDO> delayTaskDOs =
+        delayTaskDAO.selectListWithBizTypeAndMsgTimeout(bizType, timePoint, maxSize);
+    Assert.assertEquals(2, delayTaskDOs.size());
+  }
+
+  @Test
   public void testSelectDelayTimesById() {
     int taskId = 74;
     int delayTimes = delayTaskDAO.selectDelayTimesById(taskId);
