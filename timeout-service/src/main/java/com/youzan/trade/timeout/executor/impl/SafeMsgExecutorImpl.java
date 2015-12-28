@@ -51,17 +51,21 @@ public class SafeMsgExecutorImpl extends AbstractExecutor {
     }
 
     try {
-      List<DelayTask> delayTaskList =
-          delayTaskService.getListWithBizTypeAndMsgTimeoutCurrently(BizType.SAFE.code(), maxSize);
-
-      if (!CollectionUtils.isEmpty(delayTaskList)) {
-        delayTaskList.forEach(delayTask -> taskHandler.handle(delayTask));
-      }
+      doExecute();
     } finally {
       /**
        * 最后释放锁
        */
       delayTaskLockService.unlockByLockId(lockId);
+    }
+  }
+
+  private void doExecute() {
+    List<DelayTask> delayTaskList =
+        delayTaskService.getListWithBizTypeAndMsgTimeoutCurrently(BizType.SAFE.code(), maxSize);
+
+    if (!CollectionUtils.isEmpty(delayTaskList)) {
+      delayTaskList.forEach(delayTask -> taskHandler.handle(delayTask));
     }
   }
 
