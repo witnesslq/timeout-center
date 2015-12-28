@@ -4,7 +4,6 @@ import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.LockIdConstants;
 import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
-import com.youzan.trade.timeout.service.DelayTaskLockService;
 import com.youzan.trade.timeout.service.DelayTaskService;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -36,11 +35,11 @@ public class SafeExecutorImpl extends AbstractExecutor {
   // 每分钟启动一次
   @Scheduled(cron = "${safe.task.cron}")
   public void start() {
-    execute(LOCK_ID);
+    execute(LOCK_ID, taskHandler);
   }
 
   @Override
-  protected void doExecute() {
+  protected void doExecute(TaskHandler taskHandler) {
     List<DelayTask> delayTaskList = delayTaskService.getListWithBizTypeAndTimeoutCurrently(
         BizType.SAFE.code(), maxSize);
 

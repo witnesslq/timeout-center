@@ -1,6 +1,7 @@
 package com.youzan.trade.timeout.executor.impl;
 
 import com.youzan.trade.timeout.executor.Executor;
+import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.service.DelayTaskLockService;
 
 import javax.annotation.Resource;
@@ -14,7 +15,7 @@ public abstract class AbstractExecutor implements Executor {
   private DelayTaskLockService delayTaskLockService;
 
   @Override
-  public void execute(int lockId) {
+  public void execute(int lockId, TaskHandler taskHandler) {
     /**
      * 先尝试获取锁
      * 如果获取不到,则什么都不做
@@ -24,7 +25,7 @@ public abstract class AbstractExecutor implements Executor {
     }
 
     try {
-      doExecute();
+      doExecute(taskHandler);
     } finally {
       /**
        * 最后释放锁
@@ -33,5 +34,5 @@ public abstract class AbstractExecutor implements Executor {
     }
   }
 
-  protected abstract void doExecute();
+  protected abstract void doExecute(TaskHandler taskHandler);
 }
