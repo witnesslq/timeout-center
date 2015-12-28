@@ -24,6 +24,8 @@ public class SafeMsgExecutorImpl implements Executor {
 
   private static final int LOCK_ID = LockIdConstants.SAFE_MSG_EXECUTOR_LOCK_ID;
 
+  private final int maxSize = 1000;
+
   @Resource
   private DelayTaskService delayTaskService;
 
@@ -46,14 +48,11 @@ public class SafeMsgExecutorImpl implements Executor {
     }
 
     try {
-      List<DelayTask> delayTaskList = delayTaskService.getListWithMsgTimeoutCurrently();
+      List<DelayTask> delayTaskList =
+          delayTaskService.getListWithBizTypeAndMsgTimeoutCurrently(BizType.SAFE.code(), maxSize);
 
       if (!CollectionUtils.isEmpty(delayTaskList)) {
-        delayTaskList.forEach(delayTask -> {
-          if (delayTask.getBizType() == BizType.SAFE.code()) {
-            safeMsgTaskHandlerImpl.handle(delayTask);
-          }
-        });
+        delayTaskList.forEach(delayTask -> safeMsgTaskHandlerImpl.handle(delayTask));
       }
     } finally {
       /**
