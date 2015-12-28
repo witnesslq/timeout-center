@@ -46,6 +46,7 @@ public class SafeMessageSubscriber {
         LogUtils.info(log, "receive create message: {}", message);
 
         if ( !safeProcessor.process(message) ) {
+          //处理失败抛出异常，NSQClient捕获后会将消息重新添加到NSQ中便于下次重新消费处理
           throw new Exception("consuming message failed.");
         }
       }
@@ -64,6 +65,7 @@ public class SafeMessageSubscriber {
         LogUtils.info(log, "receive update message: {}", message);
 
         if ( !safeProcessor.process(message) ) {
+          //处理失败抛出异常，NSQClient捕获后会将消息重新添加到NSQ中便于下次重新消费处理
           throw new Exception("consuming message failed.");
         }
       }
@@ -76,7 +78,16 @@ public class SafeMessageSubscriber {
 
   @PreDestroy
   public void destroy() {
-    updateConnector.close();
+    try {
+      updateConnector.close();
+    } catch (Exception e) {
+      LogUtils.error(log, "Close updateConnector failed.", e);
+    }
+    try {
+      createConnector.close();
+    } catch (Exception e) {
+      LogUtils.error(log, "Close createConnector failed.", e);
+    }
   }
 
   public void setNsqHost(String nsqHost) {
