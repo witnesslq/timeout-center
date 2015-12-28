@@ -30,9 +30,6 @@ public class SafeExecutorImpl extends AbstractExecutor {
   @Resource
   private DelayTaskService delayTaskService;
 
-  @Resource
-  private DelayTaskLockService delayTaskLockService;
-
   @Resource(name = "safeTaskHandlerImpl")
   private TaskHandler taskHandler;
 
@@ -43,26 +40,7 @@ public class SafeExecutorImpl extends AbstractExecutor {
   }
 
   @Override
-  public void execute(int lockId) {
-    /**
-     * 先尝试获取锁
-     * 如果获取不到,则什么都不做
-     */
-    if (!delayTaskLockService.lockByLockId(lockId)) {
-      return;
-    }
-
-    try {
-      doExecute();
-    } finally {
-      /**
-       * 最后释放锁
-       */
-      delayTaskLockService.unlockByLockId(lockId);
-    }
-  }
-
-  private void doExecute() {
+  protected void doExecute() {
     List<DelayTask> delayTaskList = delayTaskService.getListWithBizTypeAndTimeoutCurrently(
         BizType.SAFE.code(), maxSize);
 
