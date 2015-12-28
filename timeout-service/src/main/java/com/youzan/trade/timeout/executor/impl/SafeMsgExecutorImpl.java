@@ -2,7 +2,6 @@ package com.youzan.trade.timeout.executor.impl;
 
 import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.LockIdConstants;
-import com.youzan.trade.timeout.executor.Executor;
 import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.service.DelayTaskLockService;
@@ -33,7 +32,7 @@ public class SafeMsgExecutorImpl extends AbstractExecutor {
   private DelayTaskLockService delayTaskLockService;
 
   @Resource(name = "safeMsgTaskHandlerImpl")
-  private TaskHandler safeMsgTaskHandlerImpl;
+  private TaskHandler taskHandler;
 
   // 每小时启动一次
   @Scheduled(cron = "${safe.msg.task.cron}")
@@ -56,7 +55,7 @@ public class SafeMsgExecutorImpl extends AbstractExecutor {
           delayTaskService.getListWithBizTypeAndMsgTimeoutCurrently(BizType.SAFE.code(), maxSize);
 
       if (!CollectionUtils.isEmpty(delayTaskList)) {
-        delayTaskList.forEach(delayTask -> safeMsgTaskHandlerImpl.handle(delayTask));
+        delayTaskList.forEach(delayTask -> taskHandler.handle(delayTask));
       }
     } finally {
       /**
