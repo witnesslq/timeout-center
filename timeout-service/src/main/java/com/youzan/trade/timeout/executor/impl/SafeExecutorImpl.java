@@ -40,11 +40,14 @@ public class SafeExecutorImpl extends AbstractExecutor {
 
   @Override
   protected void doExecute(TaskHandler taskHandler) {
-    List<DelayTask> delayTaskList = delayTaskService.getListWithBizTypeAndTimeoutCurrently(
-        BizType.SAFE.code(), maxSize);
+    List<DelayTask> delayTaskList = getTaskList();
 
     if (!CollectionUtils.isEmpty(delayTaskList)) {
       delayTaskList.forEach(delayTask -> taskHandler.handle(delayTask));
     }
+  }
+
+  private List<DelayTask> getTaskList() {
+    return delayTaskService.getListWithBizTypeAndTimeoutCurrently(BizType.SAFE.code(), maxSize);
   }
 }
