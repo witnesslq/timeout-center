@@ -37,16 +37,16 @@ public class SafeMsgExecutorImpl extends AbstractExecutor {
   // 每小时启动一次
   @Scheduled(cron = "${safe.msg.task.cron}")
   public void start() {
-    execute();
+    execute(LOCK_ID);
   }
 
   @Override
-  public void execute() {
+  public void execute(int lockId) {
     /**
      * 先尝试获取锁
      * 如果获取不到,则什么都不做
      */
-    if (!delayTaskLockService.lockByLockId(LOCK_ID)) {
+    if (!delayTaskLockService.lockByLockId(lockId)) {
       return;
     }
 
@@ -61,7 +61,7 @@ public class SafeMsgExecutorImpl extends AbstractExecutor {
       /**
        * 最后释放锁
        */
-      delayTaskLockService.unlockByLockId(LOCK_ID);
+      delayTaskLockService.unlockByLockId(lockId);
     }
   }
 
