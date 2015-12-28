@@ -20,7 +20,7 @@ import javax.annotation.Resource;
  * @author apple created at: 15/10/30 下午7:39
  */
 @Component("msgExecutorImpl")
-public class SafeMsgExecutorImpl implements Executor {
+public class SafeMsgExecutorImpl extends AbstractExecutor {
 
   private static final int LOCK_ID = LockIdConstants.SAFE_MSG_EXECUTOR_LOCK_ID;
 
@@ -37,6 +37,10 @@ public class SafeMsgExecutorImpl implements Executor {
 
   // 每小时启动一次
   @Scheduled(cron = "${safe.msg.task.cron}")
+  public void start() {
+    execute();
+  }
+
   @Override
   public void execute() {
     /**
@@ -61,4 +65,6 @@ public class SafeMsgExecutorImpl implements Executor {
       delayTaskLockService.unlockByLockId(LOCK_ID);
     }
   }
+
+
 }

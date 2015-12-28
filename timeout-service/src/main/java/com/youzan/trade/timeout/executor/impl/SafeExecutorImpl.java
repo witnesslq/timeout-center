@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  * @author apple created at: 15/10/26 上午9:22
  */
 @Component("executorImpl")
-public class SafeExecutorImpl implements Executor {
+public class SafeExecutorImpl extends AbstractExecutor {
 
   private static final int LOCK_ID = LockIdConstants.SAFE_EXECUTOR_LOCK_ID;
 
@@ -39,6 +39,10 @@ public class SafeExecutorImpl implements Executor {
 
   // 每分钟启动一次
   @Scheduled(cron = "${safe.task.cron}")
+  public void start() {
+    execute();
+  }
+
   @Override
   public void execute() {
     /**
