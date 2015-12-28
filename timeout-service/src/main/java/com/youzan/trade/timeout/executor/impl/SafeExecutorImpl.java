@@ -17,12 +17,16 @@ import java.util.List;
 import javax.annotation.Resource;
 
 /**
+ * 维权业务的超时任务
+ * 
  * @author apple created at: 15/10/26 上午9:22
  */
 @Component("executorImpl")
-public class ExecutorImpl implements Executor {
+public class SafeExecutorImpl implements Executor {
 
   private static final int LOCK_ID = LockIdConstants.SAFE_EXECUTOR_LOCK_ID;
+
+  private final int maxSize = 100;
 
   @Resource
   private DelayTaskService delayTaskService;
@@ -46,14 +50,11 @@ public class ExecutorImpl implements Executor {
     }
 
     try {
-      List<DelayTask> delayTaskList = delayTaskService.getListWithTimeoutCurrently();
+      List<DelayTask> delayTaskList = delayTaskService.getListWithBizTypeAndTimeoutCurrently(
+          BizType.SAFE.code(), maxSize);
 
       if (!CollectionUtils.isEmpty(delayTaskList)) {
-        delayTaskList.forEach(delayTask -> {
-          if (delayTask.getBizType() == BizType.SAFE.code()) {
-            safeTaskHandlerImpl.handle(delayTask);
-          }
-        });
+        delayTaskList.forEach(delayTask -> safeTaskHandlerImpl.handle(delayTask));
       }
     } finally {
       /**

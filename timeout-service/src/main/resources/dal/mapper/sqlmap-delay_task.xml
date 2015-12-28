@@ -55,6 +55,13 @@
     LIMIT 100
   </select>
 
+  <select id="selectListWithBizTypeAndTimeout" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM <include refid="tableName" />
+    WHERE biz_type = #{bizType} AND status = 10 AND delay_end_time &lt; #{timePoint}
+    LIMIT #{maxSize}
+  </select>
+
   <select id="selectListWithMsgTimeout" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
     FROM <include refid="tableName" />
@@ -62,12 +69,18 @@
     LIMIT 1000
   </select>
 
+  <select id="selectListWithBizTypeAndMsgTimeout" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM <include refid="tableName" />
+    WHERE biz_type = #{bizType} AND status = 10 AND msg_status = 10 AND msg_end_time &lt; #{timePoint}
+    LIMIT #{maxSize}
+  </select>
+
   <select id="selectDelayTimesById" resultType="java.lang.Integer">
     SELECT delay_times
     FROM <include refid="tableName" />
     WHERE id = #{taskId}
   </select>
-
 
   <update id="close">
     UPDATE <include refid="tableName" />
