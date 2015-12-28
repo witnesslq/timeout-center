@@ -17,12 +17,12 @@ import java.util.List;
 import javax.annotation.Resource;
 
 /**
- * @author apple created at: 15/10/26 上午9:22
+ * @author apple created at: 15/10/30 下午7:39
  */
-@Component("executorImpl")
-public class ExecutorImpl implements Executor {
+@Component("msgExecutorImpl")
+public class SafeMsgExecutorImpl implements Executor {
 
-  private static final int LOCK_ID = LockIdConstants.SAFE_EXECUTOR_LOCK_ID;
+  private static final int LOCK_ID = LockIdConstants.SAFE_MSG_EXECUTOR_LOCK_ID;
 
   @Resource
   private DelayTaskService delayTaskService;
@@ -30,11 +30,11 @@ public class ExecutorImpl implements Executor {
   @Resource
   private DelayTaskLockService delayTaskLockService;
 
-  @Resource(name = "safeTaskHandlerImpl")
-  private TaskHandler safeTaskHandlerImpl;
+  @Resource(name = "safeMsgTaskHandlerImpl")
+  private TaskHandler safeMsgTaskHandlerImpl;
 
-  // 每分钟启动一次
-  @Scheduled(cron = "${safe.task.cron}")
+  // 每小时启动一次
+  @Scheduled(cron = "${safe.msg.task.cron}")
   @Override
   public void execute() {
     /**
@@ -46,12 +46,12 @@ public class ExecutorImpl implements Executor {
     }
 
     try {
-      List<DelayTask> delayTaskList = delayTaskService.getListWithTimeoutCurrently();
+      List<DelayTask> delayTaskList = delayTaskService.getListWithMsgTimeoutCurrently();
 
       if (!CollectionUtils.isEmpty(delayTaskList)) {
         delayTaskList.forEach(delayTask -> {
           if (delayTask.getBizType() == BizType.SAFE.code()) {
-            safeTaskHandlerImpl.handle(delayTask);
+            safeMsgTaskHandlerImpl.handle(delayTask);
           }
         });
       }
