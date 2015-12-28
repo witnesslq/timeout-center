@@ -51,6 +51,18 @@ public interface DelayTaskDAO {
   List<DelayTaskDO> selectListWithMsgTimeout(Date timePoint);
 
   /**
+   * 查询某个业务在某个时间点后消息任务已经超时且没有完成的任务列表
+   *
+   * @param bizType 业务类型
+   * @param timePoint 某个时间点
+   * @param maxSize 返回记录数的最大值
+   * @return 任务列表
+   */
+  List<DelayTaskDO> selectListWithBizTypeAndMsgTimeout(@Param("bizType") int bizType,
+                                                    @Param("timePoint") Date timePoint,
+                                                    @Param("maxSize") int maxSize);
+
+  /**
    * 根据taskId查询任务已经超时的次数
    *
    * @param taskId
