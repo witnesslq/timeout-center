@@ -2,10 +2,8 @@ package com.youzan.trade.timeout.executor.impl;
 
 import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.LockIdConstants;
-import com.youzan.trade.timeout.executor.Executor;
 import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
-import com.youzan.trade.timeout.service.DelayTaskLockService;
 import com.youzan.trade.timeout.service.DelayTaskService;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -22,7 +20,7 @@ import javax.annotation.Resource;
  * @author apple created at: 15/10/26 上午9:22
  */
 @Component("executorImpl")
-public class SafeExecutorImpl implements Executor {
+public class SafeExecutorImpl extends AbstractExecutor {
 
   private static final int LOCK_ID = LockIdConstants.SAFE_EXECUTOR_LOCK_ID;
 
@@ -31,36 +29,16 @@ public class SafeExecutorImpl implements Executor {
   @Resource
   private DelayTaskService delayTaskService;
 
-  @Resource
-  private DelayTaskLockService delayTaskLockService;
-
   @Resource(name = "safeTaskHandlerImpl")
-  private TaskHandler safeTaskHandlerImpl;
+  private TaskHandler taskHandler;
 
-  // 每分钟启动一次
   @Scheduled(cron = "${safe.task.cron}")
+  public void start() {
+    execute(LOCK_ID, taskHandler);
+  }
+
   @Override
-  public void execute() {
-    /**
-     * 先尝试获取锁
-     * 如果获取不到,则什么都不做
-     */
-    if (!delayTaskLockService.lockByLockId(LOCK_ID)) {
-      return;
-    }
-
-    try {
-      List<DelayTask> delayTaskList = delayTaskService.getListWithBizTypeAndTimeoutCurrently(
-          BizType.SAFE.code(), maxSize);
-
-      if (!CollectionUtils.isEmpty(delayTaskList)) {
-        delayTaskList.forEach(delayTask -> safeTaskHandlerImpl.handle(delayTask));
-      }
-    } finally {
-      /**
-       * 最后释放锁
-       */
-      delayTaskLockService.unlockByLockId(LOCK_ID);
-    }
+  protected List<DelayTask> getTaskList() {
+    return delayTaskService.getListWithBizTypeAndTimeoutCurrently(BizType.SAFE.code(), maxSize);
   }
 }
