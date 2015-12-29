@@ -14,6 +14,7 @@ import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.service.DelayTaskService;
 import com.youzan.trade.timeout.service.DelayTimeStrategy;
 import com.youzan.trade.timeout.source.Processor;
+import com.youzan.trade.util.LogUtils;
 import com.youzan.trade.util.TimeUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -23,12 +24,15 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 维权消息处理器
  *
  * @author apple created at: 15/10/28 上午10:02
  */
 @Component(value = "safeProcessorImpl")
+@Slf4j
 public class SafeProcessorImpl implements Processor {
 
   @Resource
@@ -52,6 +56,7 @@ public class SafeProcessorImpl implements Processor {
     Safe safe = JSON.parseObject(message, Safe.class);
 
     if (safe == null) {
+      LogUtils.error(log, "Invalid safe message={}", message);
       return true;
     }
 
