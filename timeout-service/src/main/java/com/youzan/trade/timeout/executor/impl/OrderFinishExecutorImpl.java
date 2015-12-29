@@ -2,6 +2,7 @@ package com.youzan.trade.timeout.executor.impl;
 
 import com.youzan.trade.timeout.model.DelayTask;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,6 +14,9 @@ import java.util.List;
  */
 @Component
 public class OrderFinishExecutorImpl extends AbstractExecutor {
+
+  @Value("${order.finish.scan.once.max.size}")
+  private int maxSize;
 
   @Override
   protected List<DelayTask> getTaskList() {
