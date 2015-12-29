@@ -1,10 +1,14 @@
 package com.youzan.trade.timeout.executor.impl;
 
+import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.model.DelayTask;
+import com.youzan.trade.timeout.service.DelayTaskService;
 
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * 订单发货后变成交易完成发送消息的延时任务
@@ -14,8 +18,13 @@ import java.util.List;
 @Component
 public class OrderFinishMsgExecutorImpl extends AbstractExecutor {
 
+  private final int maxSize = 1000;
+
+  @Resource
+  private DelayTaskService delayTaskService;
+
   @Override
   protected List<DelayTask> getTaskList() {
-    return null;
+    return delayTaskService.getListWithBizTypeAndMsgTimeoutCurrently(BizType.OrderDelivered.code(), maxSize);
   }
 }
