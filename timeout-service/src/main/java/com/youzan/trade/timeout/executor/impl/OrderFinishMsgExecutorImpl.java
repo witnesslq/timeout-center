@@ -4,6 +4,7 @@ import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.service.DelayTaskService;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,7 +19,8 @@ import javax.annotation.Resource;
 @Component
 public class OrderFinishMsgExecutorImpl extends AbstractExecutor {
 
-  private final int maxSize = 1000;
+  @Value("${order.finish.msg.scan.once.max.size}")
+  private int maxSize;
 
   @Resource
   private DelayTaskService delayTaskService;
