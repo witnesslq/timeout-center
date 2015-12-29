@@ -17,7 +17,7 @@ import javax.annotation.Resource;
  * @author apple created at: 15/12/29 下午11:08
  */
 @Component
-public class OrderFinishMsgExecutorImpl extends AbstractExecutor {
+public class OrderDeliveredMsgExecutorImpl extends AbstractExecutor {
 
   @Value("${order.finish.msg.scan.once.max.size}")
   private int maxSize;

@@ -17,7 +17,7 @@ import javax.annotation.Resource;
  * @author apple created at: 15/12/29 下午11:02
  */
 @Component
-public class OrderFinishExecutorImpl extends AbstractExecutor {
+public class OrderDeliveredExecutorImpl extends AbstractExecutor {
 
   @Value("${order.finish.scan.once.max.size}")
   private int maxSize;
@@ -27,6 +27,7 @@ public class OrderFinishExecutorImpl extends AbstractExecutor {
 
   @Override
   protected List<DelayTask> getTaskList() {
-    return delayTaskService.getListWithBizTypeAndTimeoutCurrently(BizType.OrderDelivered.code(), maxSize);
+    return delayTaskService.getListWithBizTypeAndTimeoutCurrently(BizType.OrderDelivered.code(),
+                                                                  maxSize);
   }
 }

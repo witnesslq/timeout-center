@@ -1,7 +1,5 @@
 package com.youzan.trade.timeout.constants;
 
-import com.youzan.trade.timeout.executor.impl.OrderFinishExecutorImpl;
-
 import lombok.AllArgsConstructor;
 
 /**
