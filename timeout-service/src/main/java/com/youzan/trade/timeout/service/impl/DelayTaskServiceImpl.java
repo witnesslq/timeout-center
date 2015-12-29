@@ -1,6 +1,5 @@
 package com.youzan.trade.timeout.service.impl;
 
-import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.constants.Constants;
 import com.youzan.trade.timeout.constants.MsgStatus;
@@ -140,6 +139,21 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
     // 因为不确定对应的延时任务数量
     return delayTaskDAO.closeTaskAhead(delayTaskDO) >= 0;
+  }
+
+  @Override
+  public boolean suspendTask(DelayTask task) {
+    return false;
+  }
+
+  @Override
+  public boolean resumeTask(DelayTask task) {
+    return false;
+  }
+
+  @Override
+  public boolean enlargeTask(DelayTask task) {
+    return false;
   }
 
 }
