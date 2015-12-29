@@ -19,7 +19,7 @@ import javax.annotation.Resource;
  * 
  * @author apple created at: 15/10/26 上午9:22
  */
-@Component("executorImpl")
+@Component
 public class SafeExecutorImpl extends AbstractExecutor {
 
   private static final int LOCK_ID = LockIdConstants.SAFE_EXECUTOR_LOCK_ID;
