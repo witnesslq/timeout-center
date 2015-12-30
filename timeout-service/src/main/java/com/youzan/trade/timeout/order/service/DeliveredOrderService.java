@@ -5,7 +5,10 @@ import com.youzan.trade.timeout.entities.Order;
 /**
  * @author Created by liwenjia@youzan.com on 2015/12/29 .
  */
-public interface ExpressedOrderService {
+public interface DeliveredOrderService {
 
-  public boolean addToDelayTask(Order order);
+  /***
+   *
+   * */
+  boolean addToDelayTask(Order order);
 }

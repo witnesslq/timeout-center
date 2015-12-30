@@ -2,7 +2,7 @@ package com.youzan.trade.timeout.source.impl;
 
 import com.youzan.platform.util.json.JsonUtil;
 import com.youzan.trade.timeout.entities.Order;
-import com.youzan.trade.timeout.order.service.ExpressedOrderService;
+import com.youzan.trade.timeout.order.service.DeliveredOrderService;
 import com.youzan.trade.timeout.source.Processor;
 import com.youzan.trade.util.LogUtils;
 
@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ExpressedOrderProcessorImpl implements Processor {
 
   @Resource
-  ExpressedOrderService expressedOrderService;
+  DeliveredOrderService expressedOrderService;
 
   @Override
   public boolean process(String message) {
