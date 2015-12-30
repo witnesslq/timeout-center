@@ -6,7 +6,7 @@ import com.youzan.trade.common.httpclient.constant.ResponseCode;
 import com.youzan.trade.timeout.constants.Constants;
 import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
-import com.youzan.trade.timeout.model.SafeTaskResult;
+import com.youzan.trade.timeout.model.TaskResult;
 import com.youzan.trade.timeout.service.DelayTaskService;
 
 import com.google.common.collect.Maps;
@@ -34,9 +34,9 @@ public class SafeMsgTaskHandlerImpl implements TaskHandler {
       params.put("safe_no", delayTask.getBizId());
       params.put("state", delayTask.getBizState());
 
-      BaseResult<SafeTaskResult> result = Client.call("trade.safe.timeout.sendMsg",
+      BaseResult<TaskResult> result = Client.call("trade.safe.timeout.sendMsg",
                                                       params,
-                                                      new SafeTaskResult());
+                                                      new TaskResult());
 
       if (ResponseCode.SUCC != result.getCode()) {
         handleOnRetry(delayTask);
