@@ -17,11 +17,11 @@
                           scheduler="threadPoolTaskScheduler"
                           mode="proxy"/>
   <task:scheduler id="threadPoolTaskScheduler" pool-size="10"/>
-  <!-- 处理订单完成的线程池的配置 -->
-  <task:executor id="orderDeliveredThreadPoolTaskExecutor" pool-size="32-128" queue-capacity="5000"
+  <!-- 处理订单已发货的延时任务的线程池的配置 -->
+  <task:executor id="orderDeliveredThreadPoolTaskExecutor" pool-size="16-32" queue-capacity="5000"
                  keep-alive="240"
                  rejection-policy="CALLER_RUNS"/>
-  <!-- 处理维权的线程池的配置 -->
+  <!-- 处理维权的延时任务的线程池的配置 -->
   <task:executor id="safeThreadPoolTaskExecutor" pool-size="4-8" queue-capacity="3000"
                  keep-alive="60"
                  rejection-policy="CALLER_RUNS"/>
