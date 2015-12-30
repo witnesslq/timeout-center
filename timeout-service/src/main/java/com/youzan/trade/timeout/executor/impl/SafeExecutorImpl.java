@@ -7,6 +7,7 @@ import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.service.DelayTaskService;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,8 @@ public class SafeExecutorImpl extends AbstractExecutor {
 
   private static final int LOCK_ID = LockIdConstants.SAFE_EXECUTOR_LOCK_ID;
 
-  private final int maxSize = 100;
+  @Value("${safe.scan.once.max.size}")
+  private int maxSize;
 
   @Resource
   private DelayTaskService delayTaskService;
