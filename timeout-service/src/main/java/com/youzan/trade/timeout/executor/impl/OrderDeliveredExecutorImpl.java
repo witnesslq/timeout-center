@@ -1,10 +1,13 @@
 package com.youzan.trade.timeout.executor.impl;
 
 import com.youzan.trade.timeout.constants.BizType;
+import com.youzan.trade.timeout.constants.LockIdConstants;
+import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.service.DelayTaskService;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,11 +22,18 @@ import javax.annotation.Resource;
 @Component
 public class OrderDeliveredExecutorImpl extends AbstractExecutor {
 
-  @Value("${order.finish.scan.once.max.size}")
+  @Value("${order.delivered.scan.once.max.size}")
   private int maxSize;
 
   @Resource
   private DelayTaskService delayTaskService;
+
+  private TaskHandler taskHandler;
+
+  @Scheduled(cron = "${order.delivered.task.cron}")
+  public void start() {
+    execute(LockIdConstants.ORDER_DELIVERED_EXECUTOR_LOCK_ID, taskHandler);
+  }
 
   @Override
   protected List<DelayTask> getTaskList() {
