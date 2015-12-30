@@ -28,6 +28,8 @@ public abstract class AbstractTaskHandler implements TaskHandler {
     delayTaskService.updateOnRetry(delayTask.getId());
   }
 
+  protected abstract String getCallPath();
+
   protected void handleDelayTaskByResultCode(DelayTask delayTask, Integer resultCode) {
     switch (resultCode) {
       case Constants.TASK_SUCCESS:

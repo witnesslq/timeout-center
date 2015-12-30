@@ -19,14 +19,16 @@ import java.util.Map;
 @Component("safeTaskHandlerImpl")
 public class SafeTaskHandlerImpl extends AbstractTaskHandler {
 
+
+  private String callPath = "trade.safe.timeout.execute";
+
   @Async("safeThreadPoolTaskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
     Map<String, Object> params = Maps.newHashMap();
-    params.put("safe_no", delayTask.getBizId());
-    params.put("state", delayTask.getBizState());
+    generateParamsByDelayTask(delayTask, params);
 
-    BaseResult<TaskResult> result = Client.call("trade.safe.timeout.execute",
+    BaseResult<TaskResult> result = Client.call(getCallPath(),
                                                     params,
                                                     new TaskResult());
 
@@ -35,6 +37,16 @@ public class SafeTaskHandlerImpl extends AbstractTaskHandler {
     }
 
     handleDelayTaskByResultCode(delayTask, result.getData().getResultCode());
+  }
+
+  private void generateParamsByDelayTask(DelayTask delayTask, Map<String, Object> params) {
+    params.put("safe_no", delayTask.getBizId());
+    params.put("state", delayTask.getBizState());
+  }
+
+  @Override
+  protected String getCallPath() {
+    return this.callPath;
   }
 
 }
