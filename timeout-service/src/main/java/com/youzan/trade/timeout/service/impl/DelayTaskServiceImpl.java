@@ -142,6 +142,16 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
+  public DelayTask getTaskByBizIdAndBizType(String bizId, int bizType) {
+    LogUtils.info(log, "根据业务类型和业务ID获取任务，bizType: {},bizId: {}", bizType, bizId);
+    List<DelayTaskDO> delayTaskDOs = delayTaskDAO.getTaskByBizIdAndBizType(bizId, bizType);
+    if (delayTaskDOs != null && delayTaskDOs.size() > 0) {
+      return DelayTaskDataTransfer.transfer2TO(delayTaskDOs.get(0));
+    }
+    return null;
+  }
+
+  @Override
   public boolean suspendTask(DelayTask task) {
     return false;
   }
@@ -152,8 +162,9 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
-  public boolean enlargeTask(DelayTask task) {
+  public boolean enlargeTask(DelayTask task, int expendTime) {
     return false;
   }
+
 
 }

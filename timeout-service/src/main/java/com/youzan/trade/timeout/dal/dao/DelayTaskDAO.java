@@ -22,6 +22,15 @@ public interface DelayTaskDAO {
   int insert(DelayTaskDO delayTaskDO);
 
   /**
+   * 根据业务id及业务类型获取唯一任务记录
+   * @param bizId
+   * @param bizType
+   * @return
+   */
+  List<DelayTaskDO> getTaskByBizIdAndBizType(@Param("bizId") String bizId, @Param("bizType") int bizType);
+
+
+  /**
    * 查询在某个时间点后已经超时的任务列表
    *
    * @param timePoint 某个时间点
