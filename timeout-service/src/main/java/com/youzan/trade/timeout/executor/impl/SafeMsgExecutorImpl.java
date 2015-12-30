@@ -6,7 +6,6 @@ import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.service.DelayTaskService;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,12 +15,12 @@ import java.util.List;
 import javax.annotation.Resource;
 
 /**
+ * 维权业务发送消息的超时任务
+ *
  * @author apple created at: 15/10/30 下午7:39
  */
 @Component
 public class SafeMsgExecutorImpl extends AbstractExecutor {
-
-  private static final int LOCK_ID = LockIdConstants.SAFE_MSG_EXECUTOR_LOCK_ID;
 
   @Value("${safe.msg.scan.once.max.size}")
   private int maxSize;
@@ -34,7 +33,7 @@ public class SafeMsgExecutorImpl extends AbstractExecutor {
 
   @Scheduled(cron = "${safe.msg.task.cron}")
   public void start() {
-    execute(LOCK_ID, taskHandler);
+    execute(LockIdConstants.SAFE_MSG_EXECUTOR_LOCK_ID, taskHandler);
   }
 
   @Override
