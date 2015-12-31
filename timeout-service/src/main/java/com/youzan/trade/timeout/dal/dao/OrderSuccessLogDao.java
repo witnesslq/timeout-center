@@ -19,9 +19,6 @@ public interface OrderSuccessLogDAO {
    * ***/
   OrderSuccessLogDAO getLatestOrderSuccessLogByOrderNo(Order order);
 
-  /***
-   * 更新记录
-   * */
   boolean updateOrderSuccesLog(OrderSuccessLogDO orderSuccessDO);
 
   boolean insetOrderSuccessLog(OrderSuccessLog orderSuccessLo);

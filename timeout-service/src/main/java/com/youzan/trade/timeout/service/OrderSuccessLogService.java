@@ -10,7 +10,7 @@ public interface OrderSuccessLogService {
 
   OrderSuccessLog getLatestOrderSuccessLogByOrderNo(Order order);
 
-  boolean updateOrderSuccesLog(OrderSuccessLog orderSuccessLog);
+  boolean updateOrderSuccessLog(OrderSuccessLog orderSuccessLog);
 
   boolean insetOrderSuccessLog(OrderSuccessLog orderSuccessLo);
 
