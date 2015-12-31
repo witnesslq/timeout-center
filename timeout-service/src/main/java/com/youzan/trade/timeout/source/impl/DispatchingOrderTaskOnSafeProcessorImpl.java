@@ -72,6 +72,10 @@ public class DispatchingOrderTaskOnSafeProcessorImpl implements Processor {
       case SUSPENDED:
         //中断
         return delayTaskService.suspendTask(orderTask);
+      case CLOSED:
+        //关闭
+        LogUtils.info(log, "超时任务提前关闭", orderTask.getId());
+        return delayTaskService.closeOnNoRetry(orderTask.getId());
       default:
         LogUtils.warn(log, "No need to process orderTask.safeNo={}", safe.getSafeNo());
         return true;

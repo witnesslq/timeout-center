@@ -153,7 +153,27 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public boolean suspendTask(DelayTask task) {
+    if (task == null) {
+      LogUtils.warn(log, "");
+    }
+
+    LogUtils.info(log, "根据业务类型和业务ID获取任务，bizType: {},bizId: {}", task.getBizType(), task.getBizId());
+
+    if(isSuspendable(task)){
+      task.setStatus(TaskStatus.SUSPENDED.code());
+      //TODO set suspend time with current time
+    }
     return false;
+  }
+
+  /**
+   * 判断任务是否可以被中断。
+   * 只有处于激活状态的任务可以被中断
+   * @param task
+   * @return
+   */
+  private boolean isSuspendable(DelayTask task) {
+    return task != null && task.getStatus() != null && TaskStatus.ACTIVE.code() == task.getStatus();
   }
 
   @Override
