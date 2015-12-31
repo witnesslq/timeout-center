@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.youzan.trade.timeout.dal.dao.OrderSuccessLogDAO">
+
+  <resultMap id="BaseResultMap" type="com.youzan.trade.timeout.dal.dataobject.OrderSuccessLogDO" >
+    <result column="id" property="id" />
+    <result column="order_no" property="orderNo" />
+    <result column="kdt_id" property="kdtId" />
+    <result column="create_time" property="createTime" />
+    <result column="finish_time" property="finishTime" />
+    <result column="remain_time" property="remainTime" />
+  </resultMap>
+
+  <sql id="tableName">
+    order_success_log
+  </sql>
+
+  <sql id="Base_Column_List">
+    id, order_no, kdt_id, create_time, finish_time, remain_time
+  </sql>
+
+  <sql id="Insert_Column_List">
+    order_no, kdt_id, create_time, finish_time, remain_time
+  </sql>
+
+  <insert id="insert">
+    INSERT INTO <include refid="tableName"/>
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <include refid="Insert_Column_List"/>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{orderNo},#{kdtId},#{createTime},#{finishTime},#{remainTime}
+    </trim>
+
+  </insert>
+
+  <select id="getLastOrderSuccessLogByOrderNo" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM <include refid="tableName" />
+    WHERE order_no=#{orderNo}
+  </select>
+
+
+  <update id="updateFinishTimeByOrderNo">
+    UPDATE <include refid="tableName" />
+    <set>
+      finish_time = #{finishTime}
+    </set>
+    WHERE order_no = #{orderNo}
+  </update>
+
+
+</mapper>
