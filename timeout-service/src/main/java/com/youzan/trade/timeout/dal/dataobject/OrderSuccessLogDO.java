@@ -6,18 +6,35 @@ import lombok.Data;
  * @author Created by liwenjia@youzan.com on 2015/12/29 .
  */
 @Data
-public class OrderSuccessDO {
+public class OrderSuccessLogDO {
 
-  Integer id;
-  String orderNo;
-  Integer kdtId;
-  Integer createTime;
   /**
-   * 记录期间最后一条维权记录结束时间
-   **/
+   * 主键Id
+   */
+  Integer id;
+
+  /**
+   * 订单号
+   */
+  String orderNo;
+
+  /**
+   * 店铺ID
+   */
+  Integer kdtId;
+
+  /**
+   * 维权创建时间
+   */
+  Integer createTime;
+
+  /**
+   * 维权结束时间
+   */
   Integer finishTime;
+
   /**
    * 剩余时间
-   **/
+   */
   Integer remainTime;
 }

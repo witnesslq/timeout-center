@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.youzan:hawk-common:1.0.7-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/youzan/hawk-common/1.0.7-SNAPSHOT/hawk-common-1.0.7-20150908.024116-17.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/youzan/hawk-common/1.0.7-SNAPSHOT/hawk-common-1.0.7-20150908.024116-17-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/youzan/hawk-common/1.0.7-SNAPSHOT/hawk-common-1.0.7-20150908.024116-17-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

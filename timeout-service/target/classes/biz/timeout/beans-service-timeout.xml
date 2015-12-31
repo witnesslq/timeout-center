@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<!--
+  <bean name="safeMessageSubscriber" class="com.youzan.trade.timeout.source.SafeMessageSubscriber">
+    <property name="nsqHost" value="${nsq.host}"/>
+    <property name="nsqPort" value="${nsq.port}"/>
+    <property name="nsqTopicCreate" value="${nsq.topic.create}"/>
+    <property name="nsqChannelCreate" value="${nsq.channel.create}"/>
+    <property name="nsqTopicUpdate" value="${nsq.topic.update}"/>
+    <property name="nsqChannelUpdate" value="${nsq.channel.update}"/>
+  </bean>-->
+</beans>
