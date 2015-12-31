@@ -111,6 +111,11 @@ public interface DelayTaskService {
   boolean closeTaskByBizTypeAndBizId(int bizType, String bizId);
 
   /**
+   * 根据bizId及bizType获取唯一任务
+   * **/
+  DelayTask getTaskByBizIdAndBizType(String bizId,int bizType);
+
+  /**
    * 中断任务
    * @param task 具体任务信息
    * **/
@@ -126,7 +131,8 @@ public interface DelayTaskService {
   /**
    * 延长任务时间
    * @param task 具体任务
+   * @param expendTime 延长时间
    * **/
-  boolean enlargeTask(DelayTask task);
+  boolean enlargeTask(DelayTask task,int expendTime);
 
 }

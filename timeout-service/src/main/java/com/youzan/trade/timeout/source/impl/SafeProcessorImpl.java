@@ -22,6 +22,8 @@ import com.alibaba.fastjson.JSON;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import lombok.extern.slf4j.Slf4j;
@@ -123,14 +125,12 @@ public class SafeProcessorImpl implements Processor {
     delayTask.setStatus(TaskStatus.ACTIVE.code());
     delayTask.setCloseReason(CloseReason.NOT_CLOSED.code());
     delayTask.setDelayStartTime(TimeUtils.getDateBySeconds(safe.getRecordTime()));
-    delayTask.setDelayEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + delayTimeStrategy
-        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
+    delayTask.setDelayEndTime(calDelayEndTime(safe));
     delayTask.setDelayTimes(Constants.INITIAL_DELAY_TIMES);
 
     if (safe.isNeedMsg()) {
       delayTask.setMsgStatus(MsgStatus.ACTIVE.code());
-      delayTask.setMsgEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + msgDelayTimeStrategy
-          .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
+      delayTask.setMsgEndTime(calMsgEndTime(safe));
     } else {
       delayTask.setMsgStatus(MsgStatus.NONE.code());
       delayTask.setMsgEndTime(TimeUtils.getDateBySeconds(Constants.INITIAL_MSG_END_TIME));
@@ -139,6 +139,16 @@ public class SafeProcessorImpl implements Processor {
     delayTask.setCreateTime(TimeUtils.getDateBySeconds(TimeUtils.currentInSeconds()));
 
     return delayTaskService.save(delayTask);
+  }
+
+  private Date calDelayEndTime(Safe safe) {
+    return TimeUtils.getDateBySeconds(safe.getRecordTime() + delayTimeStrategy
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
+  }
+
+  private Date calMsgEndTime(Safe safe) {
+    return TimeUtils.getDateBySeconds(safe.getRecordTime() + msgDelayTimeStrategy
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
   }
 
   private boolean processOnClose(Safe safe) {
