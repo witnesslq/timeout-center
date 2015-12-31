@@ -1,5 +1,6 @@
 package com.youzan.trade.timeout.service;
 
+import com.youzan.trade.timeout.dal.dataobject.OrderSuccessLogDO;
 import com.youzan.trade.timeout.entities.Order;
 import com.youzan.trade.timeout.model.OrderSuccessLog;
 
@@ -8,10 +9,10 @@ import com.youzan.trade.timeout.model.OrderSuccessLog;
  */
 public interface OrderSuccessLogService {
 
-  OrderSuccessLog getLatestOrderSuccessLogByOrderNo(Order order);
+  OrderSuccessLog getLatestOrderSuccessLogByOrderNo(String orderNo);
 
-  boolean updateOrderSuccessLog(OrderSuccessLog orderSuccessLog);
+  boolean updateFinishTime(String OrderNo, int finishTime);
 
-  boolean insetOrderSuccessLog(OrderSuccessLog orderSuccessLo);
+  boolean addOrderSuccessLog(Order order, int safeTime);
 
 }
