@@ -62,55 +62,34 @@ public class SafeProcessorImpl implements Processor {
       return true;
     }
 
+    // 过滤不需要的维权任务
     if (safe.getDelayState() == null ||
         safe.getDelayState() == DelayState.NOTNEEDED.code()) {
       return true;
     }
 
-    // 我要退款，但不退货
     if (SafeType.REFUND_ONLY.code() == safe.getSafeType()) {
+      switch (SafeState.getSafeStateByCode(safe.getState())) {
+        case BUYER_START          : return processOnStart(safe);          // 201
+        case BUYER_RESTART        : return processOnRestart(safe);        // 202
+        case SELLER_REJECTED      : return processOnRestart(safe);        // 203
+        case INVOLVED             : return processOnClose(safe);          // 204
+        case SELLER_ACCEPTED      : return processOnClose(safe);          // 205
+        case CLOSED               : return processOnClose(safe);          // 249
+        case FINISHED             : return processOnClose(safe);          // 250
 
-      // 201
-      if (SafeState.BUYER_START.code() == safe.getState()) {
-        return processOnStart(safe);
       }
-
-      // 203 + 202
-      if (SafeState.SELLER_REJECTED.code() == safe.getState()
-          || SafeState.BUYER_RESTART.code() == safe.getState()) {
-        return processOnRestart(safe);
-      }
-
-      // 205 + 204 + 249 + 250
-      if (SafeState.SELLER_ACCEPTED.code() == safe.getState()
-          || SafeState.INVOLVED.code() == safe.getState()
-          || SafeState.CLOSED.code()   == safe.getState()
-          || SafeState.FINISHED.code() == safe.getState()) {
-        return processOnClose(safe);
-      }
-    }
-
-    if (SafeType.REFUND_RETURN.code() == safe.getSafeType()) {
-
-      // 201
-      if (SafeState.BUYER_START.code() == safe.getState()) {
-        return processOnStart(safe);
-      }
-
-      // 205 + 203 + 202 + 206 + 207
-      if (SafeState.SELLER_ACCEPTED.code() == safe.getState()
-          || SafeState.SELLER_REJECTED.code() == safe.getState()
-          || SafeState.BUYER_RESTART.code() == safe.getState()
-          || SafeState.BUYER_SENT.code() == safe.getState()
-          || SafeState.SELLER_NOT_RECEIVED.code() == safe.getState()) {
-        return processOnRestart(safe);
-      }
-
-      // 204 + 249 + 250
-      if (SafeState.INVOLVED.code() == safe.getState()
-          || SafeState.CLOSED.code() == safe.getState()
-          || SafeState.FINISHED.code() == safe.getState()) {
-        return processOnClose(safe);
+    } else if (SafeType.REFUND_RETURN.code() == safe.getSafeType()) {
+      switch (SafeState.getSafeStateByCode(safe.getState())) {
+        case BUYER_START          : return processOnStart(safe);          // 201
+        case BUYER_RESTART        : return processOnRestart(safe);        // 202
+        case SELLER_REJECTED      : return processOnRestart(safe);        // 203
+        case INVOLVED             : return processOnClose(safe);          // 204
+        case SELLER_ACCEPTED      : return processOnRestart(safe);        // 205
+        case BUYER_SENT           : return processOnRestart(safe);        // 206
+        case SELLER_NOT_RECEIVED  : return processOnRestart(safe);        // 207
+        case CLOSED               : return processOnClose(safe);          // 249
+        case FINISHED             : return processOnClose(safe);          // 250
       }
     }
 

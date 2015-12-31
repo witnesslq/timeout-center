@@ -25,4 +25,19 @@ public enum SafeState {
   public int code() {
     return this.code;
   }
+
+  /**
+   * 根据维权状态获取一个枚举
+   *
+   * @param safeStateCode 维权状态
+   * @return 枚举
+   */
+  public static SafeState getSafeStateByCode(int safeStateCode) {
+    for (SafeState entry : values()) {
+      if (entry.code == safeStateCode) {
+        return entry;
+      }
+    }
+    return null;
+  }
 }

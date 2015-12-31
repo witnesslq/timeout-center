@@ -27,8 +27,8 @@
         </property>
     </bean>
 
-    <import resource="classpath:dal/persistence.xml"/>
-    <import resource="classpath:biz/*/beans-*.xml"/>
+    <!--<import resource="classpath:dal/persistence.xml"/>-->
+    <!--<import resource="classpath:biz/*/beans-*.xml"/>-->
 
 </beans>
 

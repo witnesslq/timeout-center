@@ -8,7 +8,7 @@ import lombok.Data;
  * @author apple created at: 15/10/29 下午3:54
  */
 @Data
-public class SafeTaskResult {
+public class TaskResult {
 
   @JsonProperty("ret_code")
   private Integer resultCode;

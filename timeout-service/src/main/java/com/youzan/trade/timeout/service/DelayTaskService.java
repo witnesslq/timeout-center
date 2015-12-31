@@ -30,9 +30,30 @@ public interface DelayTaskService {
   /**
    * 获取当前已经超时的任务
    *
-   * @return
+   * @return 任务列表
    */
   List<DelayTask> getListWithTimeoutCurrently();
+
+  /**
+   * 获取某个业务在某个时间点后已经超时的任务列表
+   * 按业务域区分
+   *
+   * @param bizType 业务类型
+   * @param timePoint 某个时间点
+   * @param maxSize 返回任务数的最大值
+   * @return 任务列表
+   */
+  List<DelayTask> getListWithBizTypeAndTimeout(int bizType, Date timePoint, int maxSize);
+
+  /**
+   * 获取某个业务当前已经超时的任务列表
+   * 按业务域区分
+   *
+   * @param bizType 业务类型
+   * @param maxSize 返回任务数的最大值
+   * @return 任务列表
+   */
+  List<DelayTask> getListWithBizTypeAndTimeoutCurrently(int bizType, int maxSize);
 
   /**
    * 获取某个时间点消息任务已经超时且没有完成的任务
@@ -48,6 +69,27 @@ public interface DelayTaskService {
    * @return 任务列表
    */
   List<DelayTask> getListWithMsgTimeoutCurrently();
+
+  /**
+   * 获取某个业务在某个时间点后消息任务已经超时且没有完成的任务列表
+   * 按业务域区分
+   *
+   * @param bizType 业务类型
+   * @param timePoint 某个时间点
+   * @param maxSize 返回任务数的最大值
+   * @return 任务列表
+   */
+  List<DelayTask> getListWithBizTypeAndMsgTimeout(int bizType, Date timePoint, int maxSize);
+
+  /**
+   * 获取某个业务当前消息任务已经超时且没有完成的任务列表
+   * 按业务域区分
+   *
+   * @param bizType 业务类型
+   * @param maxSize 返回任务数的最大值
+   * @return 任务列表
+   */
+  List<DelayTask> getListWithBizTypeAndMsgTimeoutCurrently(int bizType, int maxSize);
 
   /**
    * 执行成功, 关闭超时任务
