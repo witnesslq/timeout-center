@@ -20,7 +20,7 @@
   <!-- 默认的线程池的配置 -->
   <task:executor id="defaultThreadPoolTaskExecutor" pool-size="16-32" queue-capacity="8000"
                  keep-alive="240"
-                 rejection-policy="CALLER_RUNS"/>
+                 rejection-policy="DISCARD" />
 
   <bean id="propertyPlaceholderConfigurer"
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
