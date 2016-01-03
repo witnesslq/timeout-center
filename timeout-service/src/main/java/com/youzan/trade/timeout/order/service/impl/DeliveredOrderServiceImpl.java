@@ -108,21 +108,21 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     return task;
   }
 
-  private Date calDelayEndTime(Order order) {
+  protected Date calDelayEndTime(Order order) {
     int time = order.getExpressTime() + delayTimeStrategy
         .getInitialDelayTimeByOrderType(
             BizType.DELIVERED_ORDER.code(), order.getOrderType());
     return TimeUtils.getDateBySeconds(time);
   }
 
-  private Date calMsgEndTime(Order order) {
+  protected Date calMsgEndTime(Order order) {
     int time = order.getExpressTime() + msgDelayTimeStrategy
         .getInitialDelayTimeByOrderType(
             BizType.DELIVERED_ORDER.code(), order.getOrderType());
     return TimeUtils.getDateBySeconds(time);
   }
 
-  private boolean isSent(Order order) {
+  protected boolean isSent(Order order) {
     return Objects.equals(OrderState.SENT.getState(), order.getOrderState());
   }
 }

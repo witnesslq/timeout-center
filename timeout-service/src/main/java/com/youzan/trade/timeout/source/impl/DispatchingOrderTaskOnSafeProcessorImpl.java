@@ -94,7 +94,7 @@ public class DispatchingOrderTaskOnSafeProcessorImpl implements Processor {
   /**
    * 根据维权记录当前状态来判断orderTask可以处于的状态
    */
-  private TaskStatus inferOrderTaskStatusOnSafe(Safe safe) {
+  protected TaskStatus inferOrderTaskStatusOnSafe(Safe safe) {
 
     if (safe.getState() == null || SafeState.getSafeStateByCode(safe.getState()) == null) {
       LogUtils.error(log, "Invalid safe state={},safeNo={}", safe.getState(), safe.getSafeNo());
