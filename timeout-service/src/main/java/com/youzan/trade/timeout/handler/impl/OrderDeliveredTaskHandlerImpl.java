@@ -19,7 +19,7 @@ import java.util.Map;
 @Component("orderDeliveredTaskHandlerImpl")
 public class OrderDeliveredTaskHandlerImpl extends AbstractTaskHandler {
 
-  private String callPath = "trade.safe.timeout.execute";
+  private String callPath = "trade.order.countDown.completeOrder";
 
   @Async("orderDeliveredThreadPoolTaskExecutor")
   @Override
