@@ -22,7 +22,7 @@ public class SafeTaskHandlerImpl extends AbstractTaskHandler {
 
   private String callPath = "trade.safe.timeout.execute";
 
-  @Async("safeThreadPoolTaskExecutor")
+  @Async("defaultThreadPoolTaskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
     Map<String, Object> params = Maps.newHashMap();

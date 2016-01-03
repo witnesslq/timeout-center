@@ -27,7 +27,7 @@ public class SafeMsgTaskHandlerImpl implements TaskHandler {
   @Resource
   private DelayTaskService delayTaskService;
 
-  @Async("safeThreadPoolTaskExecutor")
+  @Async("defaultThreadPoolTaskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
       Map<String, Object> params = Maps.newHashMap();

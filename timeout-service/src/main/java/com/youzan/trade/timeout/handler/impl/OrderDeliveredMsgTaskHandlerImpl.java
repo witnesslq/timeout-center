@@ -7,6 +7,7 @@ import com.youzan.trade.timeout.model.TaskResult;
 
 import com.google.common.collect.Maps;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -24,6 +25,7 @@ public class OrderDeliveredMsgTaskHandlerImpl extends AbstractTaskHandler {
     return this.callPath;
   }
 
+  @Async("defaultThreadPoolTaskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
     Map<String, Object> params = Maps.newHashMap();

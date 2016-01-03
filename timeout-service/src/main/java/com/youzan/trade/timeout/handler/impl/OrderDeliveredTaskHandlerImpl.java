@@ -20,7 +20,7 @@ public class OrderDeliveredTaskHandlerImpl extends AbstractTaskHandler {
 
   private String callPath = "trade.order.countDown.completeOrder";
 
-  @Async("orderDeliveredThreadPoolTaskExecutor")
+  @Async("defaultThreadPoolTaskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
     Map<String, Object> params = Maps.newHashMap();
