@@ -1,8 +1,6 @@
 package com.youzan.trade.timeout.dal.dao;
 
 import com.youzan.trade.timeout.dal.dataobject.OrderSuccessLogDO;
-import com.youzan.trade.timeout.entities.Order;
-import com.youzan.trade.timeout.model.OrderSuccessLog;
 
 import org.apache.ibatis.annotations.Param;
 

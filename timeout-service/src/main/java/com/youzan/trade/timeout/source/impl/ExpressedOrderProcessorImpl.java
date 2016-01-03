@@ -1,7 +1,7 @@
 package com.youzan.trade.timeout.source.impl;
 
 import com.youzan.platform.util.json.JsonUtil;
-import com.youzan.trade.timeout.entities.Order;
+import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.order.service.DeliveredOrderService;
 import com.youzan.trade.timeout.source.Processor;
 import com.youzan.trade.util.LogUtils;

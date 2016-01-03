@@ -1,4 +1,4 @@
-package com.youzan.trade.timeout.model.nsq;
+package com.youzan.trade.common.nsq;
 
 import com.youzan.nsq.client.remoting.connector.CustomerConnector;
 import com.youzan.nsq.client.remoting.listener.ConnectorListener;

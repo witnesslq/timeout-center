@@ -1,22 +1,33 @@
 package com.youzan.trade.timeout.service.impl;
 
+import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.dal.dao.OrderSuccessLogDAO;
 import com.youzan.trade.timeout.dal.dataobject.OrderSuccessLogDO;
-import com.youzan.trade.timeout.entities.Order;
+import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.model.OrderSuccessLog;
+import com.youzan.trade.timeout.service.DelayTimeStrategy;
 import com.youzan.trade.timeout.service.OrderSuccessLogService;
 import com.youzan.trade.timeout.transfer.OrderSuccessLogTransfer;
 import com.youzan.trade.util.TimeUtils;
+
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
 /**
  * Created by hupp on 15/12/29.
  */
+@Component
 public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
+
+
 
   @Resource
   private OrderSuccessLogDAO orderSuccessLogDAO;
+
+  //TODO
+  @Resource(name = "")
+  DelayTimeStrategy delayTimeStrategy;
 
   @Override
   public OrderSuccessLog getLatestOrderSuccessLogByOrderNo(String orderNo) {
@@ -39,7 +50,7 @@ public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
     }
     OrderSuccessLog orderSuccessLog = getLatestOrderSuccessLogByOrderNo(order.getOrderNo());
     if (orderSuccessLog == null || orderSuccessLog.getFinishTime() != null) {
-      int delayTime = 111;//普通和批发的t+?
+      int delayTime = delayTimeStrategy.getInitialDelayTime(BizType.DELIVERED_ORDER.code(),order,);//普通和批发的t+?
       int remainTime = order.getExpressTime() + delayTime - safeTime;
       OrderSuccessLog buildOrderSuccessLog = buildOrderSuccessLog(order, remainTime);
       return orderSuccessLogDAO.insert(

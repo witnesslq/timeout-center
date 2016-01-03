@@ -1,4 +1,4 @@
-package com.youzan.trade.timeout.entities;
+package com.youzan.trade.timeout.model;
 
 import lombok.Data;
 

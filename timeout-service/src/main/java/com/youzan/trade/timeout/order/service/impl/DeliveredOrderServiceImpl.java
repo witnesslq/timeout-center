@@ -7,7 +7,7 @@ import com.youzan.trade.timeout.constants.Constants;
 import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.OrderState;
 import com.youzan.trade.timeout.constants.TaskStatus;
-import com.youzan.trade.timeout.entities.Order;
+import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.order.service.DeliveredOrderService;
 import com.youzan.trade.timeout.service.DelayTaskService;
