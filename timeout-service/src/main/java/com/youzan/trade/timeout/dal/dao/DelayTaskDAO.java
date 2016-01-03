@@ -99,5 +99,24 @@ public interface DelayTaskDAO {
                        @Param("delayTimeIncrement") int delayTimeIncrement,
                        @Param("updateTime") Date updateTime);
 
+  int updateSuspendTime(@Param("taskId")int taskId,
+                        @Param("status")int status,
+                        @Param("suspendTime")Date suspendTime,
+                        @Param("updateTime")Date updateTime);
+
+  /**
+   *
+   * @param taskId
+   * @param status
+   * @param delayTaskEndTime
+   * @param delayMsgEndTime 如果没有消息任务，该字段可能为空
+   * @return
+   */
+  int updateStatusAndEndTime(@Param("taskId") int taskId,
+                             @Param("status") int status,
+                             @Param("delayEndTime") Date delayTaskEndTime,
+                             @Param("msgEndTime")Date delayMsgEndTime,
+                             @Param("updateTime")Date updateTime);
+
   int closeTaskAhead(DelayTaskDO delayTaskDO);
 }

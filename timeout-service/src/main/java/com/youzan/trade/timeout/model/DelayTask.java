@@ -29,6 +29,8 @@ public class DelayTask {
 
   private Date delayEndTime;
 
+  private Date suspendTime;
+
   private Integer delayTimes;
 
   private Integer msgStatus;

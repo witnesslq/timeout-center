@@ -92,7 +92,7 @@ public class DispatchingOrderTaskOnSafeProcessorImpl implements Processor {
   }
 
   /**
-   * 根据维权记录当前状态来判断orderTask可以处于的状态 TODO
+   * 根据维权记录当前状态来判断orderTask可以处于的状态
    */
   private TaskStatus inferOrderTaskStatusOnSafe(Safe safe) {
 

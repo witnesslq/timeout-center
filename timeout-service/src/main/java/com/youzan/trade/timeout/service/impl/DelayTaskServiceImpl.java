@@ -1,13 +1,11 @@
 package com.youzan.trade.timeout.service.impl;
 
 import com.youzan.trade.timeout.constants.CloseReason;
-import com.youzan.trade.timeout.constants.Constants;
 import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.dal.dao.DelayTaskDAO;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.timeout.model.DelayTask;
-import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.service.DelayTaskService;
 import com.youzan.trade.timeout.service.DelayTimeStrategy;
 import com.youzan.trade.timeout.transfer.DelayTaskDataTransfer;
@@ -175,15 +173,17 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public boolean suspendTask(DelayTask task) {
-    if (task == null) {
-      LogUtils.warn(log, "");
-    }
+    LogUtils.info(log, "[Suspend Task]，taskId={},fromStatus={}", task.getId(), task.getStatus());
 
-    LogUtils.info(log, "根据业务类型和业务ID获取任务，bizType: {},bizId: {}", task.getBizType(), task.getBizId());
-
-    if(isSuspendable(task)){
-      task.setStatus(TaskStatus.SUSPENDED.code());
-      //TODO set suspend time with current time
+    if (isSuspendable(task)) {
+      LogUtils.info(log, "[Suspend Task]，taskId={},toStatus={}", task.getId(),
+                    TaskStatus.SUSPENDED.code());
+      return 0 < delayTaskDAO
+          .updateSuspendTime(task.getId(),
+                             TaskStatus.SUSPENDED.code(),
+                             TimeUtils.currentDate(),
+                             TimeUtils.currentDate()
+          );
     }
     return false;
   }
@@ -200,7 +200,49 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public boolean resumeTask(DelayTask task) {
+    LogUtils.info(log, "[Resume Task]taskId={},fromStatus={},fromEndTime={},fromMsgEndTime={}",
+                  task.getId(), task.getStatus(), task.getDelayEndTime(), task.getMsgEndTime());
+    if (isResumable(task)) {
+      if (refreshEndTime(task)) {
+        LogUtils.info(log, "[Resume Task]taskId={},toStatus={},toEndTime={},toMsgEndTime={}",
+                      task.getId(), TaskStatus.ACTIVE.code(), task.getDelayEndTime(),
+                      task.getMsgEndTime());
+        return 0 < delayTaskDAO.updateStatusAndEndTime(task.getId(), TaskStatus.ACTIVE.code(),
+                                                       task.getDelayEndTime(),
+                                                       task.getMsgEndTime(),
+                                                       TimeUtils.currentDate());
+      }
+    }
     return false;
+  }
+
+  private boolean refreshEndTime(DelayTask task) {
+    long current = System.currentTimeMillis();
+    Date startTime = task.getDelayStartTime();
+    Date suspendTime = task.getSuspendTime();
+    Date endTime = task.getDelayEndTime();
+    Date msgEndTime = task.getMsgEndTime();
+    if (suspendTime == null || startTime == null || endTime == null) {
+      LogUtils.error(log,
+                     "Invalid suspended task.suspend/startTime/endTime shouldn't be blank.taskId={},start={},end={},suspend={}",
+                     task.getId(), startTime, endTime, suspendTime);
+      return false;
+    }
+    Date refreshedEndTime = TimeUtils.plusMilliSecond(endTime, current - suspendTime.getTime());
+    task.setDelayEndTime(refreshedEndTime);
+    if (msgEndTime != null) {
+      Date refreshMsgEndTime = TimeUtils.plusMilliSecond(msgEndTime,
+                                                         current - suspendTime.getTime());
+      task.setMsgEndTime(refreshMsgEndTime);
+    }
+    return true;
+  }
+
+  /**
+   * 判断任务是否可以被恢复
+   */
+  private boolean isResumable(DelayTask task) {
+    return task.getStatus() == TaskStatus.SUSPENDED.code();
   }
 
   @Override

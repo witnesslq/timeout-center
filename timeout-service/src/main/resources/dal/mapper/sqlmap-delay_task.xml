@@ -12,6 +12,7 @@
     <result column="close_reason" property="closeReason" />
     <result column="delay_start_time" property="delayStartTime" />
     <result column="delay_end_time" property="delayEndTime" />
+    <result column="suspend_time" property="suspendTime" />
     <result column="delay_times" property="delayTimes" />
     <result column="msg_status" property="msgStatus" />
     <result column="msg_end_time" property="msgEndTime" />
@@ -125,6 +126,29 @@
       update_time = #{updateTime}
     </set>
     WHERE id = #{taskId} AND status = 10 AND msg_status = 10
+  </update>
+
+  <update id="updateSuspendTime">
+    UPDATE
+    <include refid="tableName"/>
+    <set>
+      status = #{status},
+      suspend_time = #{suspendTime},
+      update_time = #{updateTime}
+    </set>
+    WHERE id = #{taskId} AND status = 10
+  </update>
+
+  <update id="updateStatusAndEndTime">
+    UPDATE
+    <include refid="tableName"/>
+    <set>
+      status = #{status},
+      delay_end_time = #{delayEndTime},
+      <if test="msgEndTime != null">msg_end_time = #{msgEndTime},</if>
+      update_time = #{updateTime}
+    </set>
+    WHERE id = #{taskId}
   </update>
 
   <update id="closeTaskAhead">

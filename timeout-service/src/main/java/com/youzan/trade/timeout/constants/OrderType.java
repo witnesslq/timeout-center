@@ -13,7 +13,6 @@ import lombok.Getter;
  */
 public enum OrderType {
 
-  // TODO 名词取自php,中文释义可能有误发现请修改
   NORMAL(0, "普通订单"),
   GIFT(1, "我要送人"),
   PEERPAY(2, "代付"),
