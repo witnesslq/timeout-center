@@ -8,7 +8,6 @@ import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.SafeState;
 import com.youzan.trade.timeout.constants.SafeType;
 import com.youzan.trade.timeout.constants.TaskStatus;
-import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.service.DelayTaskService;

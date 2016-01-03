@@ -11,7 +11,7 @@ import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.order.service.DeliveredOrderService;
 import com.youzan.trade.timeout.service.DelayTaskService;
-import com.youzan.trade.timeout.service.DelayTimeStrategy;
+import com.youzan.trade.timeout.service.impl.AbstractOrderRelatedDelayTimeStrategy;
 import com.youzan.trade.util.LogUtils;
 import com.youzan.trade.util.TimeUtils;
 
@@ -32,11 +32,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DeliveredOrderServiceImpl implements DeliveredOrderService {
 
-  @Resource(name = "deliveredOrderDelayTimeStrategyImpl")
-  private DelayTimeStrategy delayTimeStrategy;
+  @Resource(name = "autoCompleteTaskDelayTimeStrategyImpl")
+  private AbstractOrderRelatedDelayTimeStrategy delayTimeStrategy;
 
-  @Resource(name = "deliveredOrderMsgDelayTimeStrategyImpl")
-  private DelayTimeStrategy msgDelayTimeStrategy;
+  @Resource(name = "autoCompleteTaskMsgDelayTaskTimeStrategyImpl")
+  private AbstractOrderRelatedDelayTimeStrategy msgDelayTimeStrategy;
 
   @Resource
   DelayTaskService delayTaskService;
@@ -110,15 +110,15 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
 
   private Date calDelayEndTime(Order order) {
     int time = order.getExpressTime() + delayTimeStrategy
-        .getInitialDelayTime(
-            BizType.DELIVERED_ORDER.code(), order.getOrderNo(), order.getOrderState());
+        .getInitialDelayTimeByOrderType(
+            BizType.DELIVERED_ORDER.code(), order.getOrderType());
     return TimeUtils.getDateBySeconds(time);
   }
 
   private Date calMsgEndTime(Order order) {
     int time = order.getExpressTime() + msgDelayTimeStrategy
-        .getInitialDelayTime(BizType.DELIVERED_ORDER.code(), order.getOrderNo(),
-                             order.getOrderState());
+        .getInitialDelayTimeByOrderType(
+            BizType.DELIVERED_ORDER.code(), order.getOrderType());
     return TimeUtils.getDateBySeconds(time);
   }
 

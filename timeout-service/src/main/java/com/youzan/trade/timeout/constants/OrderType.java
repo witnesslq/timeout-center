@@ -25,7 +25,8 @@ public enum OrderType {
   PINJIAN(9, "品鉴"),
   REBATE(15, "返利"),
   FX_QUANYUANDIAN(51, "全员开店"),
-  FX_DEPOSIT(52, "保证金");
+  FX_DEPOSIT(52, "保证金"),
+  PF(100,"批发");
 
   OrderType(int type, String desc) {
     this.type = type;

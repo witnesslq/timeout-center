@@ -14,4 +14,9 @@
     <property name="sqlSessionFactory" ref="defaultSqlSessionFactory"/>
   </bean>
 
+    <bean id="orderSuccessLogDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface"   value="com.youzan.trade.timeout.dal.dao.OrderSuccessLogDAO"/>
+        <property name="sqlSessionFactory" ref="defaultSqlSessionFactory"/>
+    </bean>
+
 </beans>
