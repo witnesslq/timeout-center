@@ -14,6 +14,8 @@ import com.youzan.trade.timeout.source.Processor;
 import com.youzan.trade.util.LogUtils;
 
 
+import com.alibaba.fastjson.JSON;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -52,12 +54,7 @@ public class DispatchingOrderTaskOnSafeProcessorImpl implements Processor {
     }
 
     Safe safe;
-    try {
-      safe = JsonUtil.json2obj(message, Safe.class);
-    } catch (IOException e) {
-      LogUtils.error(log, "Parse message failed.message=" + message, e);
-      return true;
-    }
+    safe = JSON.parseObject(message, Safe.class);
     String orderNo = safe.getOrderNo();
     DelayTask
         orderTask =

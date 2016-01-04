@@ -16,7 +16,6 @@ import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -48,7 +47,6 @@ public class DispatchingOrderTaskOnSafeProcessorImplTest extends TestCase {
 
   @Test
   public void testInferOrderTaskStatusOnSafeOrderUnfree() throws Exception {
-    //TODO
     String orderNo = "E123";
     Integer kdtId= 1;
     Safe safe = new Safe();
@@ -66,7 +64,6 @@ public class DispatchingOrderTaskOnSafeProcessorImplTest extends TestCase {
 
   @Test
   public void testInferOrderTaskStatusOnSafeOrderfree() throws Exception {
-    //TODO
     String orderNo = "E123";
     Integer kdtId= 1;
     Safe safe = new Safe();

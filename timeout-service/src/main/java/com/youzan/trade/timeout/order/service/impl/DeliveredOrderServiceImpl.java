@@ -75,10 +75,22 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     return true;
   }
 
+  /**
+   * 对于已完成或已关闭订单，
+   * @param order
+   * @return
+   */
   private boolean checkDeliveredOrder(Order order) {
     if (null == order) {
       return false;
     }
+
+    //TODO Get order from db.
+
+    if(!Objects.equals(OrderState.SENT.getState(), order.getOrderState())){
+      return false;
+    }
+
     if (order.getExpressTime() == null || order.getExpressTime() <= 0) {
       return false;
     }
@@ -99,27 +111,39 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     Date current = TimeUtils.currentDate();
     task.setCreateTime(current);
     task.setDelayStartTime(TimeUtils.getDateBySeconds(order.getExpressTime()));
+
+    Date msgEndTime = calMsgEndTime(order);
+
+    if (msgEndTime != null) {
+      //默认是要发送通知的
+      task.setMsgEndTime(msgEndTime);
+      task.setMsgStatus(MsgStatus.ACTIVE.code());
+    } else {
+      task.setMsgEndTime(new Date(0));//set default time
+      task.setMsgStatus(MsgStatus.NONE.code());
+    }
+
     task.setDelayEndTime(calDelayEndTime(order));
     task.setDelayTimes(Constants.INITIAL_DELAY_TIMES);
-    task.setMsgStatus(MsgStatus.ACTIVE.code());
-    //默认是要发送通知的
-    task.setMsgEndTime(calMsgEndTime(order));
 
     return task;
   }
 
   protected Date calDelayEndTime(Order order) {
-    int time = order.getExpressTime() + delayTimeStrategy
+    int endTime = order.getExpressTime() + delayTimeStrategy
         .getInitialDelayTimeByOrderType(
             BizType.DELIVERED_ORDER.code(), order.getOrderType());
-    return TimeUtils.getDateBySeconds(time);
+    return TimeUtils.getDateBySeconds(endTime);
   }
 
   protected Date calMsgEndTime(Order order) {
-    int time = order.getExpressTime() + msgDelayTimeStrategy
+    int endTime = order.getExpressTime() + msgDelayTimeStrategy
         .getInitialDelayTimeByOrderType(
             BizType.DELIVERED_ORDER.code(), order.getOrderType());
-    return TimeUtils.getDateBySeconds(time);
+    if (endTime < TimeUtils.currentInSeconds()) {
+      return null;
+    }
+    return TimeUtils.getDateBySeconds(endTime);
   }
 
   protected boolean isSent(Order order) {
