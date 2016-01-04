@@ -17,6 +17,8 @@ public class DelayTaskDO {
 
   private Integer bizState;
 
+  private Integer bizShardKey;
+
   private Integer status;
 
   private Integer closeReason;
