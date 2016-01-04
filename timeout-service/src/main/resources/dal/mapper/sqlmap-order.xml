@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="OrderDAO">
+    <resultMap id="OrderResultMap" type="com.youzan.trade.timeout.dal.dataobject.OrderDO">
+        <result property="id" column="id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="kdtId" column="kdt_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerType" column="customer_type"/>
+        <result property="buyerId" column="buyer_id"/>
+        <result property="buyerPhone" column="buyer_phone"/>
+        <result property="tourist" column="tourist"/>
+        <result property="state" column="state"/>
+        <result property="stockState" column="stock_state"/>
+        <result property="payState" column="pay_state"/>
+        <result property="expressState" column="express_state"/>
+        <result property="feedback" column="feedback"/>
+        <result property="refundState" column="refund_state"/>
+        <result property="closeState" column="close_state"/>
+        <result property="orderType" column="order_type"/>
+        <result property="expressType" column="express_type"/>
+        <result property="buyWay" column="buy_way"/>
+        <result property="normal" column="normal"/>
+        <result property="hasChild" column="has_child"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="bookTime" column="book_time"/>
+        <result property="expireTime" column="expire_time"/>
+        <result property="payTime" column="pay_time"/>
+        <result property="expressTime" column="express_time"/>
+        <result property="feedbackTime" column="feedback_time"/>
+        <result property="refundTime" column="refund_time"/>
+        <result property="successTime" column="success_time"/>
+        <result property="closeTime" column="close_time"/>
+        <result property="currency" column="currency"/>
+
+    </resultMap>
+
+    <sql id="allColumns">
+        id,<include refid="OrderDAO.allColumnsWithoutId"/>
+    </sql>
+
+    <sql id="dynamicConditionParams">
+        <where>
+            <if test="orderNo != null">order_no = #{orderNo}</if>
+            <if test="kdtId != null">and kdt_id = #{kdtId}</if>
+            <if test="customerName != null">and customer_name = #{customerName}</if>
+            <if test="buyerId != null">and buyer_id = #{buyerId}</if>
+            <if test="buyerPhone != null">and buyer_phone = #{buyerPhone}</if>
+            <if test="tourist != null">and tourist = #{tourist}</if>
+            <if test="state != null">and state = #{state}</if>
+            <if test="payState != null">and pay_state = #{payState}</if>
+            <if test="feedback != null">and feedback = #{feedback}</if>
+            <if test="refundState != null">and refund_state = #{refundState}</if>
+            <if test="closeState != null">and close_state = #{closeState}</if>
+            <if test="orderType != null">and order_type = #{orderType}</if>
+            <if test="expressType != null">and express_type = #{expressType}</if>
+            <if test="buyWay != null">and buy_way = #{buyWay}</if>
+            <if test="refundTime != null">and refund_time = #{refundTime}</if>
+            <if test="closeTime != null">and close_time = #{closeTime}</if>
+            <if test="currency != null">and currency = #{currency}</if>
+        </where>
+    </sql>
+
+    <sql id="insertColumns">
+        <if test="orderNo != null">order_no,</if>
+        <if test="kdtId != null">kdt_id,</if>
+        <if test="customerId != null">customer_id,</if>
+        <if test="customerName != null">customer_name,</if>
+        <if test="customerType != null">customer_type,</if>
+        <if test="buyerId != null">buyer_id,</if>
+        <if test="buyerPhone != null">buyer_phone,</if>
+        <if test="tourist != null">tourist,</if>
+        <if test="state != null">state,</if>
+        <if test="stockState != null">stock_state,</if>
+        <if test="payState != null">pay_state,</if>
+        <if test="expressState != null">express_state,</if>
+        <if test="feedback != null">feedback,</if>
+        <if test="refundState != null">refund_state,</if>
+        <if test="closeState != null">close_state,</if>
+        <if test="orderType != null">order_type,</if>
+        <if test="expressType != null">express_type,</if>
+        <if test="buyWay != null">buy_way,</if>
+        <if test="normal != null">normal,</if>
+        <if test="hasChild != null">has_child,</if>
+        <if test="updateTime != null">update_time,</if>
+        <if test="bookTime != null">book_time,</if>
+        <if test="expireTime != null">expire_time,</if>
+        <if test="payTime != null">pay_time,</if>
+        <if test="expressTime != null">express_time,</if>
+        <if test="feedbackTime != null">feedback_time,</if>
+        <if test="refundTime != null">refund_time,</if>
+        <if test="successTime != null">success_time,</if>
+        <if test="closeTime != null">close_time,</if>
+        <if test="currency != null">currency</if>
+    </sql>
+    <sql id="insertColumnValues">
+        <if test="orderNo != null">#{orderNo},</if>
+        <if test="kdtId != null">#{kdtId},</if>
+        <if test="customerId != null">#{customerId},</if>
+        <if test="customerName != null">#{customerName},</if>
+        <if test="customerType != null">#{customerType},</if>
+        <if test="buyerId != null">#{buyerId},</if>
+        <if test="buyerPhone != null">#{buyerPhone},</if>
+        <if test="tourist != null">#{tourist},</if>
+        <if test="state != null">#{state},</if>
+        <if test="stockState != null">#{stockState},</if>
+        <if test="payState != null">#{payState},</if>
+        <if test="expressState != null">#{expressState},</if>
+        <if test="feedback != null">#{feedback},</if>
+        <if test="refundState != null">#{refundState},</if>
+        <if test="closeState != null">#{closeState},</if>
+        <if test="orderType != null">#{orderType},</if>
+        <if test="expressType != null">#{expressType},</if>
+        <if test="buyWay != null">#{buyWay},</if>
+        <if test="normal != null">#{normal},</if>
+        <if test="hasChild != null">#{hasChild},</if>
+        <if test="updateTime != null">#{updateTime},</if>
+        <if test="bookTime != null">#{bookTime},</if>
+        <if test="expireTime != null">#{expireTime},</if>
+        <if test="payTime != null">#{payTime},</if>
+        <if test="expressTime != null">#{expressTime},</if>
+        <if test="feedbackTime != null">#{feedbackTime},</if>
+        <if test="refundTime != null">#{refundTime},</if>
+        <if test="successTime != null">#{successTime},</if>
+        <if test="closeTime != null">#{closeTime},</if>
+        <if test="currency != null">#{currency}</if>
+    </sql>
+
+    <sql id="allColumnsWithoutId">
+        order_no,kdt_id,
+        customer_id,customer_name,customer_type,
+        buyer_id,buyer_phone,tourist,
+        state,stock_state,pay_state,express_state,feedback,refund_state,close_state,
+        order_type,express_type,
+        buy_way,normal,has_child,
+        update_time,book_time,expire_time,pay_time,express_time,feedback_time,refund_time,success_time,close_time,currency
+    </sql>
+
+    <sql id="allFieldsWithoutId">
+        #{orderNo},#{kdtId},
+        #{customerId},#{customerName},#{customerType},
+        #{buyerId},#{buyerPhone},#{tourist},
+        #{state},#{stockState},#{payState},#{expressState},#{feedback},#{refundState},#{closeState},
+        #{orderType},#{expressType},
+        #{buyWay},#{normal},#{hasChild},
+        #{updateTime},#{bookTime},#{expireTime},#{payTime},#{expressTime},#{feedbackTime},#{refundTime},#{successTime},#{closeTime},#{currency}
+    </sql>
+
+    <sql id="updateSet">
+        <set>
+            <if test="customerId != null">customer_id = #{customerId},</if>
+            <if test="customerName != null">customer_name = #{customerName},</if>
+            <if test="customerType != null">customer_type = #{customerType},</if>
+            <if test="buyerPhone != null">buyer_phone = #{buyerPhone},</if>
+            <if test="tourist != null">tourist = #{tourist},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="stockState != null">stock_state = #{stockState},</if>
+            <if test="payState != null">pay_state = #{payState},</if>
+            <if test="expressState != null">express_state = #{expressState},</if>
+            <if test="feedback != null">feedback = #{feedback},</if>
+            <if test="refundState != null">refund_state = #{refundState},</if>
+            <if test="closeState != null">close_state = #{closeState},</if>
+            <if test="orderType != null">order_type = #{orderType},</if>
+            <if test="expressType != null">express_type = #{expressType},</if>
+            <if test="buyWay != null">buy_way = #{buyWay},</if>
+            <if test="normal != null">normal = #{normal},</if>
+            <if test="hasChild != null">has_child = #{hasChild},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="bookTime != null">book_time = #{bookTime},</if>
+            <if test="expireTime != null">expire_time = #{expireTime},</if>
+            <if test="payTime != null">pay_time = #{payTime},</if>
+            <if test="expressTime != null">express_time = #{expressTime},</if>
+            <if test="feedbackTime != null">feedback_time = #{feedbackTime},</if>
+            <if test="refundTime != null">refund_time = #{refundTime},</if>
+            <if test="successTime != null">success_time = #{successTime},</if>
+            <if test="closeTime != null">close_time = #{closeTime},</if>
+            <if test="currency != null">currency = #{currency}</if>
+        </set>
+    </sql>
+
+    <sql id="limitCondition">
+        <choose>
+            <when test="pageNo != null">
+                limit #{offset}, #{pageSize}
+            </when>
+            <otherwise>
+                <if test="limitCount != null">
+                    limit #{limitCount}
+                </if>
+            </otherwise>
+        </choose>
+    </sql>
+</mapper>
