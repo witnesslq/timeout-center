@@ -35,7 +35,7 @@ public class DispatchingOrderTaskOnSafeProcessorImplTest extends TestCase {
 
   @Resource
   @InjectMocks
-  DispatchingOrderTaskOnSafeProcessorImpl dispatchingOrderTaskOnSafeProcessor;
+  DispatchingOrderTaskOnSafeUpdateProcessorImpl dispatchingOrderTaskOnSafeProcessor;
 
   @Mock
   SafeService safeService;
@@ -57,7 +57,7 @@ public class DispatchingOrderTaskOnSafeProcessorImplTest extends TestCase {
     for(Map.Entry<Integer,TaskStatus> entry:datas.entrySet()){
       safe.setState(entry.getKey());
       assertEquals(entry.getValue(),
-                   dispatchingOrderTaskOnSafeProcessor.inferOrderTaskStatusOnSafe(safe));
+                   dispatchingOrderTaskOnSafeProcessor.inferOrderTaskStatusBySafe(safe));
     }
   }
 
@@ -73,7 +73,8 @@ public class DispatchingOrderTaskOnSafeProcessorImplTest extends TestCase {
     Map<Integer,TaskStatus> datas = inferOrderTaskStatusOnSafeTestDataWithOrderSafeFree();
     for(Map.Entry<Integer,TaskStatus> entry:datas.entrySet()){
       safe.setState(entry.getKey());
-      assertEquals(entry.getValue(),dispatchingOrderTaskOnSafeProcessor.inferOrderTaskStatusOnSafe(safe));
+      assertEquals(entry.getValue(),dispatchingOrderTaskOnSafeProcessor.inferOrderTaskStatusBySafe(
+          safe));
     }
   }
 

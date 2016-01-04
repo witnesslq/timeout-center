@@ -22,7 +22,7 @@
         <property name="processor" ref="safeProcessorImpl"/>
     </bean>
 
-    <!--监听维权记录，以便中断/恢复自动完成倒计时-->
+    <!--监听维权记录【创建】，以便中断/恢复自动完成倒计时-->
     <!-- service实际行为是区分维权状态处于哪种状态、再判断是中断还是恢复操作 -->
     <bean name="dispatchingOrderTaskOnSafeCreateSubscriber"
           class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
@@ -30,10 +30,10 @@
         <property name="nsqPort" value="${nsq.port}"/>
         <property name="nsqTopic" value="${nsq.topic.create}"/>
         <property name="nsqChannel" value="${nsq.channel.deliveredorder.safe.create}"/>
-        <property name="processor" ref="dispatchingOrderTaskOnSafeProcessorImpl"/>
+        <property name="processor" ref="dispatchingOrderTaskOnSafeCreateProcessorImpl"/>
     </bean>
 
-    <!--监听维权记录，以便中断/恢复自动完成倒计时-->
+    <!--监听维权记录【更新】，以便中断/恢复自动完成倒计时-->
     <!-- service实际行为是区分维权状态处于哪种状态、再判断是中断还是恢复操作 -->
     <bean name="dispatchingOrderTaskOnSafeUpdateSubscriber"
           class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
@@ -41,7 +41,7 @@
         <property name="nsqPort" value="${nsq.port}"/>
         <property name="nsqTopic" value="${nsq.topic.update}"/>
         <property name="nsqChannel" value="${nsq.channel.deliveredorder.safe.update}"/>
-        <property name="processor" ref="dispatchingOrderTaskOnSafeProcessorImpl"/>
+        <property name="processor" ref="dispatchingOrderTaskOnSafeUpdateProcessorImpl"/>
     </bean>
 
     <!--监听order表。对于已发货订单添加自动完成倒计时任务-->

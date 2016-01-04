@@ -1,6 +1,5 @@
 package com.youzan.trade.timeout.source.impl;
 
-import com.youzan.platform.util.json.JsonUtil;
 import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.SafeState;
 import com.youzan.trade.timeout.constants.TaskStatus;
@@ -17,22 +16,22 @@ import com.youzan.trade.util.LogUtils;
 import com.alibaba.fastjson.JSON;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 
 import javax.annotation.Resource;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 监听维权消息，区分维权出于那种状态，来对deliveredOrderTask进行中断/恢复处理
+ * 监听维权更新，区分维权处于那种状态，来对deliveredOrderTask进行中断/恢复处理
  *
  * @author liwenjia created at: 15/12/31
  */
-@Component(value = "dispatchingOrderTaskOnSafeProcessorImpl")
+@Component(value = "dispatchingOrderTaskOnSafeUpdateProcessorImpl")
 @Slf4j
-public class DispatchingOrderTaskOnSafeProcessorImpl implements Processor {
+public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
 
   @Resource
   DeliveredOrderService deliveredOrderService;
@@ -65,33 +64,24 @@ public class DispatchingOrderTaskOnSafeProcessorImpl implements Processor {
       return true;
     }
 
-    TaskStatus expectedStatus = inferOrderTaskStatusOnSafe(safe);
+    TaskStatus expectedStatus = inferOrderTaskStatusBySafe(safe);
 
     if (expectedStatus == null) {
       return true;
     }
 
-    switch (expectedStatus) {
-      case ACTIVE:
-        //恢复
-        return delayTaskService.resumeTask(orderTask);
-      case SUSPENDED:
-        //中断
-        return delayTaskService.suspendTask(orderTask);
-      case CLOSED:
-        //关闭
-        LogUtils.info(log, "超时任务提前关闭.taskId={}", orderTask.getId());
-        return delayTaskService.closeOnNoRetry(orderTask.getId());
-      default:
-        LogUtils.warn(log, "No need to process orderTask.safeNo={}", safe.getSafeNo());
-        return true;
+    if(TaskStatus.ACTIVE.equals(expectedStatus)){
+      //恢复
+      orderSuccessLogService.updateFinishTime(safe.getOrderNo(),safe.getUpdateTime());
+      delayTaskService.resumeTask(orderTask);
     }
+    return true;
   }
 
   /**
    * 根据维权记录当前状态来判断orderTask可以处于的状态
    */
-  protected TaskStatus inferOrderTaskStatusOnSafe(Safe safe) {
+  protected TaskStatus inferOrderTaskStatusBySafe(Safe safe) {
 
     if (safe.getState() == null || SafeState.getSafeStateByCode(safe.getState()) == null) {
       LogUtils.error(log, "Invalid safe state={},safeNo={}", safe.getState(), safe.getSafeNo());
@@ -118,7 +108,7 @@ public class DispatchingOrderTaskOnSafeProcessorImpl implements Processor {
     SafeState state = SafeState.getSafeStateByCode(safe.getState());
     if(SafeState.CLOSED==state || SafeState.FINISHED==state){
       //判断是否有其他维权处于处理中
-      return safeService.checkOrderFeedbackFinish(safe.getOrderNo(),safe.getKdtId());
+      return safeService.checkOrderFeedbackFinish(safe.getOrderNo(), safe.getKdtId());
     }
     return false;
   }
@@ -135,5 +125,4 @@ public class DispatchingOrderTaskOnSafeProcessorImpl implements Processor {
     }
     return false;
   }
-
 }
