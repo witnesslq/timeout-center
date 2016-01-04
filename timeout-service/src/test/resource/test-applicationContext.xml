@@ -10,7 +10,7 @@
        http://www.springframework.org/schema/task
        http://www.springframework.org/schema/task/spring-task.xsd">
 
-    <context:component-scan base-package="com.youzan.trade"/>
+  <context:component-scan base-package="com.youzan.trade"/>
 
   <context:annotation-config/>
 
@@ -21,19 +21,20 @@
   <!-- 默认的线程池的配置 -->
   <task:executor id="defaultThreadPoolTaskExecutor" pool-size="16-32" queue-capacity="8000"
                  keep-alive="240"
-                 rejection-policy="DISCARD" />
+                 rejection-policy="DISCARD"/>
 
-    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="ignoreResourceNotFound" value="true" />
-        <property name="locations">
-          <list>
-            <value>classpath:test.properties</value>
-          </list>
-        </property>
-    </bean>
+  <bean id="propertyPlaceholderConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="ignoreResourceNotFound" value="true"/>
+    <property name="locations">
+      <list>
+        <value>classpath:test.properties</value>
+      </list>
+    </property>
+  </bean>
 
-    <import resource="classpath:dal/persistence.xml"/>
-    <import resource="classpath:biz/*/beans-*.xml"/>
+  <import resource="classpath:dal/persistence.xml"/>
+  <import resource="classpath:biz/*/beans-*.xml"/>
 
 </beans>
 
