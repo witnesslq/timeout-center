@@ -28,6 +28,7 @@ public class OrderDeliveredExecutorImpl extends AbstractExecutor {
   @Resource
   private DelayTaskService delayTaskService;
 
+  @Resource(name = "orderDeliveredTaskHandlerImpl")
   private TaskHandler taskHandler;
 
   @Scheduled(cron = "${order.delivered.task.cron}")

@@ -13,12 +13,17 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * @author apple created at: 15/12/30 下午3:18
+ * @author apple created at: 16/1/4 上午12:29
  */
-@Component("orderDeliveredTaskHandlerImpl")
-public class OrderDeliveredTaskHandlerImpl extends AbstractTaskHandler {
+@Component("orderDeliveredMsgTaskHandlerImpl")
+public class OrderDeliveredMsgTaskHandlerImpl extends AbstractTaskHandler {
 
-  private String callPath = "trade.order.countDown.completeOrder";
+  private String callPath = "trade.order.countDown.smsAlert";
+
+  @Override
+  protected String getCallPath() {
+    return this.callPath;
+  }
 
   @Async("defaultThreadPoolTaskExecutor")
   @Override
@@ -40,10 +45,5 @@ public class OrderDeliveredTaskHandlerImpl extends AbstractTaskHandler {
   private void generateParamsByDelayTask(DelayTask delayTask, Map<String, Object> params) {
     params.put("order_no", delayTask.getBizId());
     // todo 加入kdt_id
-  }
-
-  @Override
-  protected String getCallPath() {
-    return this.callPath;
   }
 }
