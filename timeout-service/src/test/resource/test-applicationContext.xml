@@ -13,7 +13,18 @@
        http://www.springframework.org/schema/task
        http://www.springframework.org/schema/task/spring-task.xsd">
 
-    <context:component-scan base-package="com.youzan.trade.timeout.service"/>
+    <context:component-scan base-package="com.youzan.trade"/>
+
+  <context:annotation-config/>
+
+  <task:annotation-driven executor="defaultThreadPoolTaskExecutor"
+                          scheduler="threadPoolTaskScheduler"
+                          mode="proxy"/>
+  <task:scheduler id="threadPoolTaskScheduler" pool-size="10"/>
+  <!-- 默认的线程池的配置 -->
+  <task:executor id="defaultThreadPoolTaskExecutor" pool-size="16-32" queue-capacity="8000"
+                 keep-alive="240"
+                 rejection-policy="DISCARD" />
 
     <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true" />
@@ -24,8 +35,8 @@
         </property>
     </bean>
 
-    <!--<import resource="classpath:dal/persistence.xml"/>-->
-    <!--<import resource="classpath:biz/*/beans-*.xml"/>-->
+    <import resource="classpath:dal/persistence.xml"/>
+    <import resource="classpath:biz/*/beans-*.xml"/>
 
 </beans>
 
