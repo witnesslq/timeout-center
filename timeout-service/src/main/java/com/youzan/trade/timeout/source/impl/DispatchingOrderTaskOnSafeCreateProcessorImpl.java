@@ -1,21 +1,24 @@
 package com.youzan.trade.timeout.source.impl;
 
 import com.youzan.trade.timeout.constants.BizType;
-import com.youzan.trade.timeout.constants.TaskStatus;
+import com.youzan.trade.timeout.constants.OrderState;
 import com.youzan.trade.timeout.model.DelayTask;
+import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.order.service.DeliveredOrderService;
 import com.youzan.trade.timeout.service.DelayTaskService;
 import com.youzan.trade.timeout.service.OrderSuccessLogService;
 import com.youzan.trade.timeout.service.SafeService;
+import com.youzan.trade.timeout.service.OrderService;
 import com.youzan.trade.timeout.source.Processor;
 import com.youzan.trade.util.LogUtils;
 
 import com.alibaba.fastjson.JSON;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
@@ -42,6 +45,9 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
   @Resource(name = "safeServiceImpl")
   SafeService safeService;
 
+  @Resource
+  OrderService orderService;
+
   @Override
   public boolean process(String message) {
     if (StringUtils.isBlank(message)) {
@@ -60,9 +66,21 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
       LogUtils.info(log, "[Pass]OrderTask not found.safeNo={}", safe.getSafeNo());
       return true;
     }
+    Order order = orderService.getOrderByOrderNoAndKdtId(safe.getOrderNo(), safe.getKdtId());
+    if (isSentOrder(order)) {
+      orderSuccessLogService.addOrderSuccessLog(order, safe.getAddTime());
+      delayTaskService.suspendTask(orderTask);
+    } else {
+      LogUtils.warn(log, "Order's null or order not in sent state.order={}",
+                    order == null ? null : JSON.toJSON(order));
+    }
+    return true;
+  }
 
-    orderSuccessLogService.addOrderSuccessLog();
-    delayTaskService.suspendTask(orderTask);
+  private boolean isSentOrder(Order order) {
+    if (order == null || Objects.equals(OrderState.SENT.getState(), order.getOrderState())) {
+      return false;
+    }
     return true;
   }
 }
