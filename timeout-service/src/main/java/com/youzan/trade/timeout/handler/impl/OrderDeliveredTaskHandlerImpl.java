@@ -39,7 +39,7 @@ public class OrderDeliveredTaskHandlerImpl extends AbstractTaskHandler {
 
   private void generateParamsByDelayTask(DelayTask delayTask, Map<String, Object> params) {
     params.put("order_no", delayTask.getBizId());
-    // todo 加入kdt_id
+    params.put("kdt_id", delayTask.getBizShardKey());
   }
 
   @Override
