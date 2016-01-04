@@ -32,6 +32,7 @@ public class DelayTaskDataTransfer {
     delayTask.setMsgEndTime(delayTaskDO.getMsgEndTime());
     delayTask.setCreateTime(delayTaskDO.getCreateTime());
     delayTask.setUpdateTime(delayTaskDO.getUpdateTime());
+    delayTask.setSuspendTime(delayTaskDO.getSuspendTime());
     return delayTask;
   }
 
@@ -53,6 +54,7 @@ public class DelayTaskDataTransfer {
     delayTaskDO.setMsgEndTime(delayTask.getMsgEndTime());
     delayTaskDO.setCreateTime(delayTask.getCreateTime());
     delayTaskDO.setUpdateTime(delayTask.getUpdateTime());
+    delayTaskDO.setSuspendTime(delayTask.getSuspendTime());
     return delayTaskDO;
   }
 

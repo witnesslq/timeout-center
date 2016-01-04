@@ -34,4 +34,6 @@ public class DelayTaskDO {
   private Date createTime;
 
   private Date updateTime;
+
+  private Date suspendTime;
 }

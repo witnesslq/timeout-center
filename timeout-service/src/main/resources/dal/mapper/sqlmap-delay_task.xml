@@ -27,7 +27,7 @@
   <sql id="Base_Column_List">
     id, biz_type, biz_id, biz_state, status, close_reason,
     delay_start_time, delay_end_time, delay_times,msg_status,msg_end_time,
-    create_time, update_time
+    create_time, update_time ,suspend_time
   </sql>
 
   <sql id="Insert_Column_List">
