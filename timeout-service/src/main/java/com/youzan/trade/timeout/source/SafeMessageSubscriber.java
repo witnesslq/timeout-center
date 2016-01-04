@@ -29,7 +29,7 @@ public class SafeMessageSubscriber {
   private CustomerConnector updateConnector;
   private CustomerConnector createConnector;
 
-  @Resource
+  @Resource(name = "safeProcessorImpl")
   private Processor safeProcessor;
 
   @PostConstruct

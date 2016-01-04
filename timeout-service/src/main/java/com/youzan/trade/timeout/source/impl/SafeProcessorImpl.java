@@ -28,7 +28,7 @@ import javax.annotation.Resource;
  *
  * @author apple created at: 15/10/28 上午10:02
  */
-@Component
+@Component("safeProcessorImpl")
 public class SafeProcessorImpl implements Processor {
 
   @Resource
