@@ -32,8 +32,8 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author apple created at: 15/10/28 上午10:02
  */
-@Component(value = "safeProcessorImpl")
 @Slf4j
+@Component("safeProcessorImpl")
 public class SafeProcessorImpl implements Processor {
 
   @Resource

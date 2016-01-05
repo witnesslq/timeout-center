@@ -3,11 +3,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.youzan.trade.timeout.dal.dao.DelayTaskDAO">
 
-  <resultMap id="BaseResultMap" type="com.youzan.trade.timeout.dal.dataobject.DelayTaskDO" >
+  <resultMap id="BaseResultMap" type="com.youzan.trade.timeout.dal.dataobject.DelayTaskDO">
     <result column="id" property="id" />
     <result column="biz_type" property="bizType" />
     <result column="biz_id" property="bizId" />
     <result column="biz_state" property="bizState" />
+    <result column="biz_shard_key" property="bizShardKey" />
     <result column="status" property="status" />
     <result column="close_reason" property="closeReason" />
     <result column="delay_start_time" property="delayStartTime" />
@@ -25,13 +26,13 @@
   </sql>
 
   <sql id="Base_Column_List">
-    id, biz_type, biz_id, biz_state, status, close_reason,
+    id, biz_type, biz_id, biz_state, biz_shard_key, status, close_reason,
     delay_start_time, delay_end_time, delay_times,msg_status,msg_end_time,
     create_time, update_time ,suspend_time
   </sql>
 
   <sql id="Insert_Column_List">
-    biz_type, biz_id, biz_state, status, close_reason,
+    biz_type, biz_id, biz_state, biz_shard_key, status, close_reason,
     delay_start_time, delay_end_time, delay_times,msg_status,msg_end_time,
     create_time, update_time
   </sql>
@@ -42,11 +43,10 @@
       <include refid="Insert_Column_List"/>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      #{bizType},#{bizId},#{bizState},#{status},#{closeReason},
+      #{bizType},#{bizId},#{bizState},#{bizShardKey},#{status},#{closeReason},
       #{delayStartTime},#{delayEndTime},#{delayTimes},#{msgStatus},#{msgEndTime},
       #{createTime},#{createTime}
     </trim>
-
   </insert>
 
   <select id="getTaskByBizIdAndBizType" resultMap="BaseResultMap">
