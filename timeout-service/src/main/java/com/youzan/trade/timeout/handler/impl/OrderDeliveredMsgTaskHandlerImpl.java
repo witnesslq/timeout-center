@@ -20,11 +20,6 @@ public class OrderDeliveredMsgTaskHandlerImpl extends AbstractMsgTaskHandler {
 
   private String callPath = "trade.order.countDown.smsAlert";
 
-  @Override
-  protected String getCallPath() {
-    return this.callPath;
-  }
-
   @Async("defaultThreadPoolTaskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
@@ -45,5 +40,10 @@ public class OrderDeliveredMsgTaskHandlerImpl extends AbstractMsgTaskHandler {
   private void generateParamsByDelayTask(DelayTask delayTask, Map<String, Object> params) {
     params.put("order_no", delayTask.getBizId());
     params.put("kdt_id", delayTask.getBizShardKey());
+  }
+
+  @Override
+  protected String getCallPath() {
+    return this.callPath;
   }
 }
