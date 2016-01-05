@@ -22,53 +22,34 @@ import javax.annotation.Resource;
  * @author apple created at: 15/10/30 下午7:40
  */
 @Component("safeMsgTaskHandlerImpl")
-public class SafeMsgTaskHandlerImpl implements TaskHandler {
+public class SafeMsgTaskHandlerImpl extends AbstractMsgTaskHandler {
 
-  @Resource
-  private DelayTaskService delayTaskService;
+  private String callPath = "trade.safe.timeout.sendMsg";
 
   @Async("defaultThreadPoolTaskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
-      Map<String, Object> params = Maps.newHashMap();
-      params.put("safe_no", delayTask.getBizId());
-      params.put("state", delayTask.getBizState());
+    Map<String, Object> params = Maps.newHashMap();
+    generateParamsByDelayTask(delayTask, params);
 
-      BaseResult<TaskResult> result = Client.call("trade.safe.timeout.sendMsg",
-                                                      params,
-                                                      new TaskResult());
+    BaseResult<TaskResult> result = Client.call(getCallPath(),
+                                                params,
+                                                new TaskResult());
 
-      if (ResponseCode.SUCC != result.getCode()) {
-        handleOnRetry(delayTask);
-        return ;
-      }
+    if (handleDelayTaskByResponseCode(delayTask, result.getCode())) {
+      return;
+    }
 
-      switch (result.getData().getResultCode()) {
-        case Constants.SAFE_MSG_TASK_SUCCESS:
-          handleOnSuccess(delayTask);
-          break;
-
-        case Constants.SAFE_MSG_TASK_FAILURE_RETRY:
-          handleOnRetry(delayTask);
-          break;
-
-        case Constants.SAFE_MSG_TASK_FAILURE_NO_RETRY:
-          handleOnNoRetry(delayTask);
-          break;
-
-        default : handleOnNoRetry(delayTask);
-      }
+    handleDelayTaskByResultCode(delayTask, result.getData().getResultCode());
   }
 
-  private void handleOnSuccess(DelayTask delayTask) {
-    delayTaskService.closeMsgOnSuccess(delayTask.getId());
+  private void generateParamsByDelayTask(DelayTask delayTask, Map<String, Object> params) {
+    params.put("safe_no", delayTask.getBizId());
+    params.put("state", delayTask.getBizState());
   }
 
-  private void handleOnNoRetry(DelayTask delayTask) {
-    delayTaskService.closeMsgOnNoRetry(delayTask.getId());
-  }
-
-  private void handleOnRetry(DelayTask delayTask) {
-    delayTaskService.updateMsgOnRetry(delayTask.getId());
+  @Override
+  protected String getCallPath() {
+    return this.callPath;
   }
 }

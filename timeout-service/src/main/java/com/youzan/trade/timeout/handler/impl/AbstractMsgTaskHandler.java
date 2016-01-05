@@ -32,15 +32,15 @@ public abstract class AbstractMsgTaskHandler implements TaskHandler {
 
   protected void handleDelayTaskByResultCode(DelayTask delayTask, Integer resultCode) {
     switch (resultCode) {
-      case Constants.TASK_SUCCESS:
+      case Constants.SAFE_MSG_TASK_SUCCESS:
         handleOnSuccess(delayTask);
         break;
 
-      case Constants.TASK_FAILURE_RETRY:
+      case Constants.SAFE_MSG_TASK_FAILURE_RETRY:
         handleOnRetry(delayTask);
         break;
 
-      case Constants.TASK_FAILURE_NO_RETRY:
+      case Constants.SAFE_MSG_TASK_FAILURE_NO_RETRY:
         handleOnNoRetry(delayTask);
         break;
 
