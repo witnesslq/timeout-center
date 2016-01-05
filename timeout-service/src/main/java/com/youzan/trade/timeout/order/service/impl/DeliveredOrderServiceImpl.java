@@ -126,6 +126,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     task.setDelayEndTime(calDelayEndTime(order));
     task.setDelayTimes(Constants.INITIAL_DELAY_TIMES);
 
+
     return task;
   }
 

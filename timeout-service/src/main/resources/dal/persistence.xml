@@ -46,6 +46,33 @@
         </property>
     </bean>
 
+    <bean id="clusterDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+          init-method="init" destroy-method="close">
+        <property name="url" value="${cluster.jdbc.url}"/>
+        <property name="username" value="${cluster.jdbc.username}"/>
+        <property name="password" value="${cluster.jdbc.password}"/>
+        <property name="initialSize" value="3" />
+        <property name="maxActive" value="20" />
+        <property name="minIdle" value="3" />
+        <property name="maxWait" value="60000" />
+        <property name="removeAbandonedTimeout" value="180"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="validationQuery" value="SELECT 1"/>
+        <property name="validationQueryTimeout" value="1"/>
+        <property name="timeBetweenEvictionRunsMillis" value="30000"/>
+        <property name="minEvictableIdleTimeMillis" value="120000"/>
+        <property name="poolPreparedStatements" value="true"/>
+        <property name="defaultAutoCommit" value="true"/>
+        <property name="logAbandoned" value="true"/>
+        <property name="proxyFilters">
+            <list>
+                <ref bean="log-filter"/>
+            </list>
+        </property>
+    </bean>
+
     <bean id="defaultSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="defaultDataSource" />
         <property name="mapperLocations" value="classpath*:dal/mapper/sqlmap-*.xml" />
@@ -60,14 +87,19 @@
         <property name="transactionManager" ref="defaultTx"/>
     </bean>
 
-    <tx:annotation-driven transaction-manager="defaultTx"/>
+
+    <bean id="clusterSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="clusterDataSource" />
+        <property name="mapperLocations" value="classpath*:dal/mapper/sqlmap-*.xml" />
+        <property name="typeAliasesPackage" value="com.youzan.trade.*.dal.dataobject"/>
+    </bean>
 
 
-    <!--
     <bean id="clusterTx" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="clusterDataSource"/>
     </bean>
 
     <tx:annotation-driven transaction-manager="clusterTx"/>
-    -->
+    <tx:annotation-driven transaction-manager="defaultTx"/>
+
 </beans>

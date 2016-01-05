@@ -28,10 +28,4 @@
         </foreach>
     </select>
 
-    <select id="countAll" resultType="java.lang.Integer">
-        SELECT COUNT(id)
-        FROM   <include refid="tableName"/>
-        <include refid="rangeQueryConditions"/>
-    </select>
-
 </mapper>

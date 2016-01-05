@@ -78,7 +78,7 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
   }
 
   private boolean isSentOrder(Order order) {
-    if (order == null || Objects.equals(OrderState.SENT.getState(), order.getOrderState())) {
+    if (order == null || !Objects.equals(OrderState.SENT.getState(), order.getOrderState())) {
       return false;
     }
     return true;
