@@ -16,7 +16,7 @@ import java.util.Map;
  * @author apple created at: 16/1/4 上午12:29
  */
 @Component("orderDeliveredMsgTaskHandlerImpl")
-public class OrderDeliveredMsgTaskHandlerImpl extends AbstractTaskHandler {
+public class OrderDeliveredMsgTaskHandlerImpl extends AbstractMsgTaskHandler {
 
   private String callPath = "trade.order.countDown.smsAlert";
 
