@@ -108,6 +108,8 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     task.setBizState(order.getOrderState());
     task.setStatus(TaskStatus.ACTIVE.code());
     task.setCloseReason(CloseReason.NOT_CLOSED.code());
+    task.setBizShardKey(order.getKdtId());
+
     Date current = TimeUtils.currentDate();
     task.setCreateTime(current);
     task.setDelayStartTime(TimeUtils.getDateBySeconds(order.getExpressTime()));
