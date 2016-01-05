@@ -19,6 +19,7 @@ public class OrderSuccessLogTransfer {
     orderSuccessLog.setCreateTime(orderSuccessLogDO.getCreateTime());
     orderSuccessLog.setFinishTime(orderSuccessLogDO.getFinishTime());
     orderSuccessLog.setRemainTime(orderSuccessLogDO.getRemainTime());
+    orderSuccessLog.setSuspendedPeriod(orderSuccessLogDO.getSuspendedPeriod());
     return orderSuccessLog;
   }
 
@@ -33,6 +34,7 @@ public class OrderSuccessLogTransfer {
     orderSuccessLogDO.setCreateTime(orderSuccessLog.getCreateTime());
     orderSuccessLogDO.setFinishTime(orderSuccessLog.getFinishTime());
     orderSuccessLogDO.setRemainTime(orderSuccessLog.getRemainTime());
+    orderSuccessLogDO.setSuspendedPeriod(orderSuccessLog.getSuspendedPeriod());
     return orderSuccessLogDO;
   }
 }

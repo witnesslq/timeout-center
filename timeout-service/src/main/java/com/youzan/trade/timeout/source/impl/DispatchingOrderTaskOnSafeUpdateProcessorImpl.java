@@ -4,7 +4,6 @@ import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.SafeState;
 import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.model.DelayTask;
-import com.youzan.trade.timeout.model.OrderSuccessLog;
 import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.order.service.DeliveredOrderService;
 import com.youzan.trade.timeout.service.DelayTaskService;
@@ -12,13 +11,11 @@ import com.youzan.trade.timeout.service.OrderSuccessLogService;
 import com.youzan.trade.timeout.service.SafeService;
 import com.youzan.trade.timeout.source.Processor;
 import com.youzan.trade.util.LogUtils;
-import com.youzan.trade.util.TimeUtils;
 
 
 import com.alibaba.fastjson.JSON;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 
@@ -62,7 +59,7 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
         delayTaskService.getTaskByBizIdAndBizType(orderNo, BizType.DELIVERED_ORDER.code());
 
     if (orderTask == null) {
-      LogUtils.info(log, "[Pass]OrderTask not found.safeNo={}", safe.getSafeNo());
+      LogUtils.error(log, "[Pass]OrderTask not found.safeNo={}", safe.getSafeNo());
       return true;
     }
 
@@ -75,8 +72,10 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
     if(TaskStatus.ACTIVE.equals(expectedStatus)){
       //恢复
       if(orderSuccessLogService.updateFinishTime(safe.getOrderNo(),safe.getUpdateTime())){
-        long suspendTime = orderSuccessLogService.getSuspendedTime(safe.getOrderNo(), orderTask.getDelayEndTime().getTime());
-        delayTaskService.resumeTask(orderTask, suspendTime);
+        long suspendPeriod = orderSuccessLogService.getSuspendedPeriod(safe.getOrderNo(),
+                                                                     orderTask.getDelayEndTime()
+                                                                         .getTime());
+        delayTaskService.resumeTask(orderTask, suspendPeriod);
       }
     }
     return true;
@@ -110,9 +109,16 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
    */
   private boolean isFinished(Safe safe) {
     SafeState state = SafeState.getSafeStateByCode(safe.getState());
-    if(SafeState.CLOSED==state || SafeState.FINISHED==state){
+    if (SafeState.CLOSED == state || SafeState.FINISHED == state) {
       //判断是否有其他维权处于处理中
-      return safeService.checkOrderFeedbackFinish(safe.getOrderNo(), safe.getKdtId());
+      boolean
+          hasSafeOnTheGo =
+          safeService.checkOrderFeedbackFinish(safe.getOrderNo(), safe.getKdtId());
+      if (hasSafeOnTheGo) {
+        LogUtils.info(log, "Still has safe on the go.orderNo={},safeNo={}", safe.getOrderNo(),
+                      safe.getSafeNo());
+      }
+      return hasSafeOnTheGo;
     }
     return false;
   }

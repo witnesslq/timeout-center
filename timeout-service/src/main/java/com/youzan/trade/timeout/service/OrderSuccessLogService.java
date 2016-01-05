@@ -13,7 +13,9 @@ public interface OrderSuccessLogService {
 
   boolean updateFinishTime(String OrderNo, int finishTime);
 
+  boolean updateFinishAndRemainTime(OrderSuccessLog orderSuccessLog);
+
   boolean addOrderSuccessLog(Order order, int safeTime);
 
-  long getSuspendedTime(String orderNo,long originTaskEndTime);
+  long getSuspendedPeriod(String orderNo, long originTaskEndTime);
 }

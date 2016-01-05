@@ -200,11 +200,11 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
-  public boolean resumeTask(DelayTask task, long suspendTime) {
+  public boolean resumeTask(DelayTask task, long suspendPeriod) {
     LogUtils.info(log, "[Resume Task]taskId={},fromStatus={},fromEndTime={},fromMsgEndTime={}",
                   task.getId(), task.getStatus(), task.getDelayEndTime(), task.getMsgEndTime());
     if (isResumable(task)) {
-      if (refreshEndTime(task, suspendTime)) {
+      if (refreshEndTime(task, suspendPeriod)) {
         LogUtils.info(log, "[Resume Task]taskId={},toStatus={},toEndTime={},toMsgEndTime={}",
                       task.getId(), TaskStatus.ACTIVE.code(), task.getDelayEndTime(),
                       task.getMsgEndTime());

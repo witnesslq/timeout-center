@@ -10,6 +10,7 @@
         <result column="create_time" property="createTime"/>
         <result column="finish_time" property="finishTime"/>
         <result column="remain_time" property="remainTime"/>
+        <result column="suspended_period" property="suspendedPeriod"/>
     </resultMap>
 
     <sql id="tableName">
@@ -17,7 +18,7 @@
   </sql>
 
     <sql id="Base_Column_List">
-    id, order_no, kdt_id, create_time, finish_time, remain_time
+    id, order_no, kdt_id, create_time, finish_time, remain_time ,suspended_period
   </sql>
 
     <sql id="Insert_Column_List">
@@ -49,7 +50,7 @@
         UPDATE
         <include refid="tableName"/>
         <set>
-            finish_time = #{finishTime}
+            finish_time = #{finishTime},suspended_period=#{suspendedPeriod}
         </set>
         WHERE order_no = #{orderNo}
     </update>

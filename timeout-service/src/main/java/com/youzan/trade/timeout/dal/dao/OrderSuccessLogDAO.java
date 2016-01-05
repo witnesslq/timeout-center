@@ -20,9 +20,15 @@ public interface OrderSuccessLogDAO {
   OrderSuccessLogDO getLastOrderSuccessLogByOrderNo(@Param("orderNo") String orderNo);
 
   /**
-   * 更新完成时间
+   *
+   * @param orderNo
+   * @param finishTime
+   * @param suspendedPeriod
+   * @return
    */
-  boolean updateFinishTimeByOrderNo(@Param("orderNo") String orderNo, @Param("finishTime") int finishTime);
+  boolean updateFinishTimeByOrderNo(@Param("orderNo") String orderNo,
+                                    @Param("finishTime") int finishTime,
+                                    @Param("suspendedPeriod") int suspendedPeriod);
 
 
 }

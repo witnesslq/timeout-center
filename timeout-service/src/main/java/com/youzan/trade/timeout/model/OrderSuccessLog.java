@@ -39,4 +39,9 @@ public class OrderSuccessLog {
    * 剩余时间
    */
   Integer remainTime;
+
+  /**
+   * 中断持续时间
+   */
+  Integer suspendedPeriod;
 }

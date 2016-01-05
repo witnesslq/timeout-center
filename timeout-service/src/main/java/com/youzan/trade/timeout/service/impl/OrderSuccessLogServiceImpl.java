@@ -5,19 +5,22 @@ import com.youzan.trade.timeout.dal.dao.OrderSuccessLogDAO;
 import com.youzan.trade.timeout.dal.dataobject.OrderSuccessLogDO;
 import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.model.OrderSuccessLog;
-import com.youzan.trade.timeout.service.OrderService;
 import com.youzan.trade.timeout.service.OrderSuccessLogService;
 import com.youzan.trade.timeout.transfer.OrderSuccessLogTransfer;
+import com.youzan.trade.util.LogUtils;
 import com.youzan.trade.util.TimeUtils;
 
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Created by hupp on 15/12/29.
  */
 @Component
+@Slf4j
 public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
 
   @Resource
@@ -33,11 +36,28 @@ public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
   }
 
   @Override
-  public boolean updateFinishTime(String OrderNo, int finishTime) {
-    if (finishTime == 0) {
+  public boolean updateFinishTime(String orderNo, int finishTime) {
+    OrderSuccessLog orderSuccessLog = getLatestOrderSuccessLogByOrderNo(orderNo);
+    if (orderSuccessLog == null) {
+      LogUtils
+          .error(log, "OrderSuccessLog not found.orderNo={},finishTime={}", orderNo, finishTime);
       return false;
     }
-    return orderSuccessLogDAO.updateFinishTimeByOrderNo(OrderNo, finishTime) == true;
+    if (finishTime <= 0) {
+      LogUtils.error(log, "finish time should be positive.orderNo={},finishTime={}", orderNo,
+                     finishTime);
+      return false;
+    }
+    orderSuccessLog.setFinishTime(finishTime);
+    return updateFinishAndRemainTime(orderSuccessLog);
+  }
+
+  @Override
+  public boolean updateFinishAndRemainTime(OrderSuccessLog orderSuccessLog) {
+    int suspendedPeriod = orderSuccessLog.getFinishTime() - orderSuccessLog.getCreateTime();
+    return orderSuccessLogDAO.updateFinishTimeByOrderNo(orderSuccessLog.getOrderNo(),
+                                                        orderSuccessLog.getFinishTime(),
+                                                        suspendedPeriod);
   }
 
   @Override
@@ -52,16 +72,15 @@ public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
       int remainTime = order.getExpressTime() + delayTime - safeTime;
       OrderSuccessLog buildOrderSuccessLog = buildOrderSuccessLog(order, remainTime);
       return orderSuccessLogDAO.insert(
-          OrderSuccessLogTransfer.transfer2DO(buildOrderSuccessLog)) == true;
+          OrderSuccessLogTransfer.transfer2DO(buildOrderSuccessLog));
     }
     return true;
   }
 
   @Override
-  public long getSuspendedTime(String orderNo,long originTaskEndTime) {
+  public long getSuspendedPeriod(String orderNo, long originTaskEndTime) {
     OrderSuccessLog orderSuccessLog = this.getLatestOrderSuccessLogByOrderNo(orderNo);
-    long suspendTime = orderSuccessLog.getRemainTime()+ System.currentTimeMillis() - originTaskEndTime;
-    return suspendTime;
+    return orderSuccessLog.getRemainTime()+ System.currentTimeMillis() - originTaskEndTime;
   }
 
   private OrderSuccessLog buildOrderSuccessLog(Order order, int remainTime) {
@@ -71,6 +90,7 @@ public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
     orderSuccessLog.setKdtId(order.getKdtId());
     orderSuccessLog.setCreateTime(currentTime);
     orderSuccessLog.setRemainTime(remainTime);
+    orderSuccessLog.setSuspendedPeriod(0);
     return orderSuccessLog;
   }
 
