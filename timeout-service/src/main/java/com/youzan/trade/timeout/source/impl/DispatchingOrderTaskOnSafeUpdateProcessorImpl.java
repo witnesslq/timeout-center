@@ -4,6 +4,7 @@ import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.SafeState;
 import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.model.DelayTask;
+import com.youzan.trade.timeout.model.OrderSuccessLog;
 import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.order.service.DeliveredOrderService;
 import com.youzan.trade.timeout.service.DelayTaskService;
@@ -11,6 +12,7 @@ import com.youzan.trade.timeout.service.OrderSuccessLogService;
 import com.youzan.trade.timeout.service.SafeService;
 import com.youzan.trade.timeout.source.Processor;
 import com.youzan.trade.util.LogUtils;
+import com.youzan.trade.util.TimeUtils;
 
 
 import com.alibaba.fastjson.JSON;
@@ -72,8 +74,10 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
 
     if(TaskStatus.ACTIVE.equals(expectedStatus)){
       //恢复
-      orderSuccessLogService.updateFinishTime(safe.getOrderNo(),safe.getUpdateTime());
-      delayTaskService.resumeTask(orderTask);
+      if(orderSuccessLogService.updateFinishTime(safe.getOrderNo(),safe.getUpdateTime())){
+        long suspendTime = orderSuccessLogService.getSuspendedTime(safe.getOrderNo(), orderTask.getDelayEndTime().getTime());
+        delayTaskService.resumeTask(orderTask, suspendTime);
+      }
     }
     return true;
   }

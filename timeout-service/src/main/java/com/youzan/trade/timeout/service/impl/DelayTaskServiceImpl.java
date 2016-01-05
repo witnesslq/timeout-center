@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
@@ -199,11 +200,11 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
-  public boolean resumeTask(DelayTask task) {
+  public boolean resumeTask(DelayTask task, long suspendTime) {
     LogUtils.info(log, "[Resume Task]taskId={},fromStatus={},fromEndTime={},fromMsgEndTime={}",
                   task.getId(), task.getStatus(), task.getDelayEndTime(), task.getMsgEndTime());
     if (isResumable(task)) {
-      if (refreshEndTime(task)) {
+      if (refreshEndTime(task, suspendTime)) {
         LogUtils.info(log, "[Resume Task]taskId={},toStatus={},toEndTime={},toMsgEndTime={}",
                       task.getId(), TaskStatus.ACTIVE.code(), task.getDelayEndTime(),
                       task.getMsgEndTime());
@@ -216,23 +217,21 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     return false;
   }
 
-  private boolean refreshEndTime(DelayTask task) {
-    long current = System.currentTimeMillis();
+  private boolean refreshEndTime(DelayTask task, long suspendedTime) {
     Date startTime = task.getDelayStartTime();
-    Date suspendTime = task.getSuspendTime();
+    Date suspendingTime = task.getSuspendTime();
     Date endTime = task.getDelayEndTime();
     Date msgEndTime = task.getMsgEndTime();
-    if (suspendTime == null || startTime == null || endTime == null) {
+    if (suspendingTime == null || startTime == null || endTime == null) {
       LogUtils.error(log,
                      "Invalid suspended task.suspend/startTime/endTime shouldn't be blank.taskId={},start={},end={},suspend={}",
-                     task.getId(), startTime, endTime, suspendTime);
+                     task.getId(), startTime, endTime, suspendingTime);
       return false;
     }
-    Date refreshedEndTime = TimeUtils.plusMilliSecond(endTime, current - suspendTime.getTime());
+    Date refreshedEndTime = TimeUtils.plusMilliSecond(endTime, suspendedTime);
     task.setDelayEndTime(refreshedEndTime);
-    if (msgEndTime != null) {
-      Date refreshMsgEndTime = TimeUtils.plusMilliSecond(msgEndTime,
-                                                         current - suspendTime.getTime());
+    if (msgEndTime != null && Objects.equals(MsgStatus.ACTIVE.code(), task.getMsgStatus())) {
+      Date refreshMsgEndTime = TimeUtils.plusMilliSecond(msgEndTime, suspendedTime);
       task.setMsgEndTime(refreshMsgEndTime);
     }
     return true;

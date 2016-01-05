@@ -167,8 +167,8 @@ public interface DelayTaskService {
   /***
    * 恢复任务
    * @param task 具体任务
-   * */
-  boolean resumeTask(DelayTask task);
+   * @param suspendTime*/
+  boolean resumeTask(DelayTask task, long suspendTime);
 
   /**
    * 延长任务时间

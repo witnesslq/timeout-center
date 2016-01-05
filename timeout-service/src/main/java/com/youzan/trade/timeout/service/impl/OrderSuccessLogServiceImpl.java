@@ -5,6 +5,7 @@ import com.youzan.trade.timeout.dal.dao.OrderSuccessLogDAO;
 import com.youzan.trade.timeout.dal.dataobject.OrderSuccessLogDO;
 import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.model.OrderSuccessLog;
+import com.youzan.trade.timeout.service.OrderService;
 import com.youzan.trade.timeout.service.OrderSuccessLogService;
 import com.youzan.trade.timeout.transfer.OrderSuccessLogTransfer;
 import com.youzan.trade.util.TimeUtils;
@@ -54,6 +55,13 @@ public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
           OrderSuccessLogTransfer.transfer2DO(buildOrderSuccessLog)) == true;
     }
     return true;
+  }
+
+  @Override
+  public long getSuspendedTime(String orderNo,long originTaskEndTime) {
+    OrderSuccessLog orderSuccessLog = this.getLatestOrderSuccessLogByOrderNo(orderNo);
+    long suspendTime = orderSuccessLog.getRemainTime()+ System.currentTimeMillis() - originTaskEndTime;
+    return suspendTime;
   }
 
   private OrderSuccessLog buildOrderSuccessLog(Order order, int remainTime) {
