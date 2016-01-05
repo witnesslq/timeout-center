@@ -60,8 +60,7 @@ public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
   @Override
   public long getSuspendedTime(String orderNo,long originTaskEndTime) {
     OrderSuccessLog orderSuccessLog = this.getLatestOrderSuccessLogByOrderNo(orderNo);
-    long suspendTime = orderSuccessLog.getRemainTime()+ System.currentTimeMillis() - originTaskEndTime;
-    return suspendTime;
+    return orderSuccessLog.getRemainTime()+ System.currentTimeMillis() - originTaskEndTime;
   }
 
   private OrderSuccessLog buildOrderSuccessLog(Order order, int remainTime) {
