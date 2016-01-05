@@ -30,7 +30,7 @@
       <include refid="Insert_Column_List"/>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      #{orderNo},#{kdtId},#{createTime},#{finishTime},#{remainTime}
+      #{orderNo},#{kdtId},#{createTime},#{remainTime}
     </trim>
 
   </insert>
