@@ -23,12 +23,6 @@ import javax.annotation.Resource;
 @Component
 public class SafeMsgExecutorImpl extends AbstractExecutor {
 
-  @Value("${safe.msg.scan.once.max.size}")
-  private int maxSize;
-
-  @Resource
-  private DelayTaskService delayTaskService;
-
   @Resource(name = "safeMsgTaskHandlerImpl")
   private TaskHandler taskHandler;
 

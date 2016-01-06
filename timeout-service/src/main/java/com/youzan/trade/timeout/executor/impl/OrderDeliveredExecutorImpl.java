@@ -23,12 +23,6 @@ import javax.annotation.Resource;
 @Component
 public class OrderDeliveredExecutorImpl extends AbstractExecutor {
 
-  @Value("${order.delivered.scan.once.max.size}")
-  private int maxSize;
-
-  @Resource
-  private DelayTaskService delayTaskService;
-
   @Resource(name = "orderDeliveredTaskHandlerImpl")
   private TaskHandler taskHandler;
 

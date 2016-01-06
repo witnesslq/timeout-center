@@ -23,12 +23,6 @@ import javax.annotation.Resource;
 @Component
 public class SafeExecutorImpl extends AbstractExecutor {
 
-  @Value("${safe.scan.once.max.size}")
-  private int maxSize;
-
-  @Resource
-  private DelayTaskService delayTaskService;
-
   @Resource(name = "safeTaskHandlerImpl")
   private TaskHandler taskHandler;
 
