@@ -52,7 +52,7 @@
         <set>
             finish_time = #{finishTime},suspended_period=#{suspendedPeriod}
         </set>
-        WHERE order_no = #{orderNo}
+        WHERE id = #{id} and order_no = #{orderNo}
     </update>
 
     <select id="getTotalSuspendedPeriodByOrderNo" resultType="java.lang.Integer">
