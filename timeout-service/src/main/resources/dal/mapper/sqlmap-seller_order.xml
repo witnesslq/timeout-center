@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.youzan.trade.timeout.dal.dao.SellerOrderDAO">
+
+    <sql id="tableName">
+        seller_order
+    </sql>
+
+    <select id="queryByOrderNo" resultMap="OrderDAO.OrderResultMap">
+        select <include refid="OrderDAO.allColumns"/>
+        from   <include refid="tableName"/>
+        where order_no = #{orderNo} and kdt_id = #{kdtId}
+    </select>
+
+
+    <select id="getOrderState" resultType="java.lang.Integer">
+        select state from <include refid="tableName"/>
+        where order_no = #{orderNo} and kdt_id = #{kdtId}
+    </select>
+
+    <select id="queryByOrderNoListAndKdtId" resultMap="OrderDAO.OrderResultMap">
+        SELECT <include refid="OrderDAO.allColumns"/>
+        FROM   <include refid="tableName"/>
+        WHERE order_no IN
+        <foreach item="item" index="index" collection="orderNoList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

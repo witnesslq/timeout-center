@@ -1,6 +1,5 @@
 package com.youzan.trade.timeout.service.impl;
 
-import com.youzan.trade.timeout.constants.TimeConstants;
 import com.youzan.trade.timeout.service.DelayTimeStrategy;
 
 import org.springframework.beans.factory.annotation.Value;

@@ -24,6 +24,14 @@ public class Safe {
   @JSONField(name = "safe_no")
   private String safeNo;
 
+  /** 订单号 */
+  @JSONField(name = "order_no")
+  private String orderNo;
+
+  /**店铺Id**/
+  @JSONField(name = "kdt_id")
+  private Integer kdtId;
+
   /** 添加时间 */
   @JSONField(name = "add_time")
   private Integer addTime;

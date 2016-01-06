@@ -15,11 +15,15 @@ public interface DelayTaskDAO {
 
   /**
    * 保存一条记录
-   *
-   * @param delayTaskDO
-   * @return
    */
   int insert(DelayTaskDO delayTaskDO);
+
+  /**
+   * 根据业务id及业务类型获取唯一任务记录
+   */
+  List<DelayTaskDO> getTaskByBizIdAndBizType(@Param("bizId") String bizId,
+                                             @Param("bizType") int bizType);
+
 
   /**
    * 查询在某个时间点后已经超时的任务列表
@@ -30,12 +34,11 @@ public interface DelayTaskDAO {
   List<DelayTaskDO> selectListWithTimeout(Date timePoint);
 
   /**
-   * 查询某个业务在某个时间点后已经超时的任务列表
-   * 按业务域区分
+   * 查询某个业务在某个时间点后已经超时的任务列表 按业务域区分
    *
-   * @param bizType 业务类型
+   * @param bizType   业务类型
    * @param timePoint 某个时间点
-   * @param maxSize 返回记录数的最大值
+   * @param maxSize   返回记录数的最大值
    * @return 任务列表
    */
   List<DelayTaskDO> selectListWithBizTypeAndTimeout(@Param("bizType") int bizType,
@@ -53,28 +56,22 @@ public interface DelayTaskDAO {
   /**
    * 查询某个业务在某个时间点后消息任务已经超时且没有完成的任务列表
    *
-   * @param bizType 业务类型
+   * @param bizType   业务类型
    * @param timePoint 某个时间点
-   * @param maxSize 返回记录数的最大值
+   * @param maxSize   返回记录数的最大值
    * @return 任务列表
    */
   List<DelayTaskDO> selectListWithBizTypeAndMsgTimeout(@Param("bizType") int bizType,
-                                                    @Param("timePoint") Date timePoint,
-                                                    @Param("maxSize") int maxSize);
+                                                       @Param("timePoint") Date timePoint,
+                                                       @Param("maxSize") int maxSize);
 
   /**
    * 根据taskId查询任务已经超时的次数
-   *
-   * @param taskId
-   * @return
    */
   int selectDelayTimesById(int taskId);
 
   /**
    * 当
-   *
-   * @param delayTaskDO
-   * @return
    */
   int close(DelayTaskDO delayTaskDO);
 
@@ -89,6 +86,20 @@ public interface DelayTaskDAO {
   int updateMsgOnRetry(@Param("taskId") int taskId,
                        @Param("delayTimeIncrement") int delayTimeIncrement,
                        @Param("updateTime") Date updateTime);
+
+  int updateSuspendTime(@Param("taskId") int taskId,
+                        @Param("status") int status,
+                        @Param("suspendTime") Date suspendTime,
+                        @Param("updateTime") Date updateTime);
+
+  /**
+   * @param delayMsgEndTime 如果没有消息任务，该字段可能为空
+   */
+  int updateStatusAndEndTime(@Param("taskId") int taskId,
+                             @Param("status") int status,
+                             @Param("delayEndTime") Date delayTaskEndTime,
+                             @Param("msgEndTime") Date delayMsgEndTime,
+                             @Param("updateTime") Date updateTime);
 
   int closeTaskAhead(DelayTaskDO delayTaskDO);
 }

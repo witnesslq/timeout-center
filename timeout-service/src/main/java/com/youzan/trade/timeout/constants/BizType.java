@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 public enum BizType {
 
   SAFE(10, "维权"),
-  OrderDelivered(26, "订单已发货");
+  DELIVERED_ORDER(26,"订单已发货");
 
   private int code;
   private String description;

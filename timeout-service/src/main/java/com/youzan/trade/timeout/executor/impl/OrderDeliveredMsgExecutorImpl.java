@@ -38,6 +38,6 @@ public class OrderDeliveredMsgExecutorImpl extends AbstractExecutor {
 
   @Override
   protected List<DelayTask> getTaskList() {
-    return delayTaskService.getListWithBizTypeAndMsgTimeoutCurrently(BizType.OrderDelivered.code(), maxSize);
+    return delayTaskService.getListWithBizTypeAndMsgTimeoutCurrently(BizType.DELIVERED_ORDER.code(), maxSize);
   }
 }

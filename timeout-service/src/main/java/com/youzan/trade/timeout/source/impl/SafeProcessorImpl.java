@@ -8,12 +8,12 @@ import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.SafeState;
 import com.youzan.trade.timeout.constants.SafeType;
 import com.youzan.trade.timeout.constants.TaskStatus;
-import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.service.DelayTaskService;
 import com.youzan.trade.timeout.service.DelayTimeStrategy;
 import com.youzan.trade.timeout.source.Processor;
+import com.youzan.trade.util.LogUtils;
 import com.youzan.trade.util.TimeUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -21,13 +21,18 @@ import com.alibaba.fastjson.JSON;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 维权消息处理器
  *
  * @author apple created at: 15/10/28 上午10:02
  */
+@Slf4j
 @Component("safeProcessorImpl")
 public class SafeProcessorImpl implements Processor {
 
@@ -52,6 +57,7 @@ public class SafeProcessorImpl implements Processor {
     Safe safe = JSON.parseObject(message, Safe.class);
 
     if (safe == null) {
+      LogUtils.error(log, "Invalid safe message={}", message);
       return true;
     }
 
@@ -97,14 +103,12 @@ public class SafeProcessorImpl implements Processor {
     delayTask.setStatus(TaskStatus.ACTIVE.code());
     delayTask.setCloseReason(CloseReason.NOT_CLOSED.code());
     delayTask.setDelayStartTime(TimeUtils.getDateBySeconds(safe.getRecordTime()));
-    delayTask.setDelayEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + delayTimeStrategy
-        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
+    delayTask.setDelayEndTime(calDelayEndTime(safe));
     delayTask.setDelayTimes(Constants.INITIAL_DELAY_TIMES);
 
     if (safe.isNeedMsg()) {
       delayTask.setMsgStatus(MsgStatus.ACTIVE.code());
-      delayTask.setMsgEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + msgDelayTimeStrategy
-          .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
+      delayTask.setMsgEndTime(calMsgEndTime(safe));
     } else {
       delayTask.setMsgStatus(MsgStatus.NONE.code());
       delayTask.setMsgEndTime(TimeUtils.getDateBySeconds(Constants.INITIAL_MSG_END_TIME));
@@ -113,6 +117,16 @@ public class SafeProcessorImpl implements Processor {
     delayTask.setCreateTime(TimeUtils.getDateBySeconds(TimeUtils.currentInSeconds()));
 
     return delayTaskService.save(delayTask);
+  }
+
+  private Date calDelayEndTime(Safe safe) {
+    return TimeUtils.getDateBySeconds(safe.getRecordTime() + delayTimeStrategy
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
+  }
+
+  private Date calMsgEndTime(Safe safe) {
+    return TimeUtils.getDateBySeconds(safe.getRecordTime() + msgDelayTimeStrategy
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
   }
 
   private boolean processOnClose(Safe safe) {

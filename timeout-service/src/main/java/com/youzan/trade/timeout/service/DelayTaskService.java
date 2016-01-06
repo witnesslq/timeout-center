@@ -152,5 +152,29 @@ public interface DelayTaskService {
    */
   boolean closeTaskByBizTypeAndBizId(int bizType, String bizId);
 
+  /**
+   * 根据bizId及bizType获取唯一任务
+   * **/
+  DelayTask getTaskByBizIdAndBizType(String bizId,int bizType);
+
+  /**
+   * 中断任务
+   * @param task 具体任务信息
+   * **/
+  boolean suspendTask(DelayTask task);
+
+
+  /***
+   * 恢复任务
+   * @param task 具体任务
+   * @param suspendTime*/
+  boolean resumeTask(DelayTask task, long suspendTime);
+
+  /**
+   * 延长任务时间
+   * @param task 具体任务
+   * @param expendTime 延长时间
+   * **/
+  boolean enlargeTask(DelayTask task,int expendTime);
 
 }

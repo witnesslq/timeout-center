@@ -13,6 +13,7 @@
     <result column="close_reason" property="closeReason" />
     <result column="delay_start_time" property="delayStartTime" />
     <result column="delay_end_time" property="delayEndTime" />
+    <result column="suspend_time" property="suspendTime" />
     <result column="delay_times" property="delayTimes" />
     <result column="msg_status" property="msgStatus" />
     <result column="msg_end_time" property="msgEndTime" />
@@ -27,7 +28,7 @@
   <sql id="Base_Column_List">
     id, biz_type, biz_id, biz_state, biz_shard_key, status, close_reason,
     delay_start_time, delay_end_time, delay_times,msg_status,msg_end_time,
-    create_time, update_time
+    create_time, update_time ,suspend_time
   </sql>
 
   <sql id="Insert_Column_List">
@@ -47,6 +48,12 @@
       #{createTime},#{createTime}
     </trim>
   </insert>
+
+  <select id="getTaskByBizIdAndBizType" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM <include refid="tableName" />
+    WHERE biz_type=#{bizType} and biz_id=#{bizId}
+  </select>
 
   <select id="selectListWithTimeout" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
@@ -119,6 +126,29 @@
       update_time = #{updateTime}
     </set>
     WHERE id = #{taskId} AND status = 10 AND msg_status = 10
+  </update>
+
+  <update id="updateSuspendTime">
+    UPDATE
+    <include refid="tableName"/>
+    <set>
+      status = #{status},
+      suspend_time = #{suspendTime},
+      update_time = #{updateTime}
+    </set>
+    WHERE id = #{taskId} AND status = 10
+  </update>
+
+  <update id="updateStatusAndEndTime">
+    UPDATE
+    <include refid="tableName"/>
+    <set>
+      status = #{status},
+      delay_end_time = #{delayEndTime},
+      <if test="msgEndTime != null">msg_end_time = #{msgEndTime},</if>
+      update_time = #{updateTime}
+    </set>
+    WHERE id = #{taskId}
   </update>
 
   <update id="closeTaskAhead">

@@ -21,4 +21,9 @@ public class TimeUtils {
   public static Date currentDate() {
     return Calendar.getInstance().getTime();
   }
+
+  public static Date plusMilliSecond(Date date, long milliSecondsToPlus) {
+    long milliseconds = date.getTime() + milliSecondsToPlus ;
+    return new Date(milliseconds);
+  }
 }

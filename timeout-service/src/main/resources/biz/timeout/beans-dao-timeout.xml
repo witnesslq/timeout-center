@@ -3,15 +3,27 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <!-- DAO 配置 -->
-  <bean id="delayTaskDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
-      <property name="mapperInterface"   value="com.youzan.trade.timeout.dal.dao.DelayTaskDAO"/>
-      <property name="sqlSessionFactory" ref="defaultSqlSessionFactory"/>
-  </bean>
+    <!-- DAO 配置 -->
+    <bean id="delayTaskDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.youzan.trade.timeout.dal.dao.DelayTaskDAO"/>
+        <property name="sqlSessionFactory" ref="defaultSqlSessionFactory"/>
+    </bean>
 
-  <bean id="delayTaskLockDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
-    <property name="mapperInterface"   value="com.youzan.trade.timeout.dal.dao.DelayTaskLockDAO"/>
-    <property name="sqlSessionFactory" ref="defaultSqlSessionFactory"/>
-  </bean>
+    <bean id="delayTaskLockDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.youzan.trade.timeout.dal.dao.DelayTaskLockDAO"/>
+        <property name="sqlSessionFactory" ref="defaultSqlSessionFactory"/>
+    </bean>
+
+    <bean id="orderSuccessLogDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface"
+                  value="com.youzan.trade.timeout.dal.dao.OrderSuccessLogDAO"/>
+        <property name="sqlSessionFactory" ref="defaultSqlSessionFactory"/>
+    </bean>
+
+    <bean id="sellerOrderDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface"
+                  value="com.youzan.trade.timeout.dal.dao.SellerOrderDAO"/>
+        <property name="sqlSessionFactory" ref="clusterSqlSessionFactory"/>
+    </bean>
 
 </beans>
