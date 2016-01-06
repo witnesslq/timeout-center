@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Component(value = "dispatchingOrderTaskOnSafeUpdateProcessorImpl")
 @Slf4j
-public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
+public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor {
 
   @Resource
   DeliveredOrderService deliveredOrderService;
@@ -68,22 +68,20 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
       return true;
     }
 
-    TaskStatus expectedStatus = inferOrderTaskStatusBySafe(safe);
-
-    if (expectedStatus == null) {
-      return true;
-    }
-
-    if(TaskStatus.ACTIVE.equals(expectedStatus)){
+    if (isFinished(safe)) {
       //恢复
-      if(orderSuccessLogService.updateFinishTime(safe.getOrderNo(),safe.getUpdateTime())){
+      if (orderSuccessLogService.updateFinishTime(safe.getOrderNo(), safe.getUpdateTime())) {
         long suspendPeriod = orderSuccessLogService.getSuspendedPeriod(safe.getOrderNo(),
-                                                                     orderTask.getDelayEndTime()
-                                                                         .getTime());
+                                                                       orderTask.getDelayEndTime()
+                                                                           .getTime());
+        if (suspendPeriod <= 0) {
+          LogUtils
+              .error(log, "Invalid suspendPeriod={},safeNo={}", suspendPeriod, safe.getSafeNo());
+        }
         delayTaskService.resumeTask(orderTask, suspendPeriod);
       }
     } else {
-      if (isSuspendable(orderTask,safe)) {
+      if (isSuspendable(orderTask, safe)) {
         Order order = orderService.getOrderByOrderNoAndKdtId(orderNo, safe.getKdtId());
         if (order == null) {
           LogUtils.error(log, "[SuspendTaskFail]Order not found.orderNo={},taskId={}", orderNo,
@@ -111,7 +109,8 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
           return true;
         }
       } else {
-        LogUtils.error(log, "[Check suspendable]Invalid safeState={},safeNo={},taskId={}", orderTask.getId());
+        LogUtils.error(log, "[Check suspendable]Invalid safeState={},safeNo={},taskId={}",
+                       orderTask.getId());
       }
       return true;
     }
@@ -124,15 +123,16 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
   protected TaskStatus inferOrderTaskStatusBySafe(Safe safe) {
 
     if (safe.getState() == null || SafeState.getSafeStateByCode(safe.getState()) == null) {
-      LogUtils.error(log, "[Infer]Invalid safeState={},safeNo={}", safe.getState(), safe.getSafeNo());
+      LogUtils
+          .error(log, "[Infer]Invalid safeState={},safeNo={}", safe.getState(), safe.getSafeNo());
       return null;
     }
     //是否为新增，并且倒计时任务不为空：获取最新order_success_log记录。如果为空/finistime存在不为空，则调用沛大爷接口
-    if(isNewlyAdded(safe)){
+    if (isNewlyAdded(safe)) {
       return TaskStatus.SUSPENDED;
     }
     //如果为结束，
-    if(isFinished(safe)){
+    if (isFinished(safe)) {
       return TaskStatus.ACTIVE;
     }
 
@@ -140,9 +140,7 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
   }
 
   /**
-   * 是否为维权结束.同个订单在同一时刻可能存在多比维权。需要判断此刻是否还有其他维权处于处理中。
-   * @param safe
-   * @return
+   * 是否为维权结束.同个订单在同一时刻可能存在多笔维权。需要判断此刻是否还有其他维权处于处理中。
    */
   private boolean isFinished(Safe safe) {
     SafeState state = SafeState.getSafeStateByCode(safe.getState());
@@ -162,12 +160,12 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
 
   /**
    * 判断是否为新增维权操作
-   * @param safe
+   *
    * @return 若为新增返回true
    */
   private boolean isNewlyAdded(Safe safe) {
     SafeState state = SafeState.getSafeStateByCode(safe.getState());
-    if(SafeState.BUYER_START == state){
+    if (SafeState.BUYER_START == state) {
       return true;
     }
     return false;

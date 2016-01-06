@@ -80,7 +80,7 @@ public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
   @Override
   public long getSuspendedPeriod(String orderNo, long originTaskEndTime) {
     OrderSuccessLog orderSuccessLog = this.getLatestOrderSuccessLogByOrderNo(orderNo);
-    return orderSuccessLog.getRemainTime()+ System.currentTimeMillis() - originTaskEndTime;
+    return orderSuccessLog.getSuspendedPeriod();
   }
 
   private OrderSuccessLog buildOrderSuccessLog(Order order, int remainTime) {

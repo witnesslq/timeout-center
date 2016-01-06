@@ -2,12 +2,8 @@ package com.youzan.trade.timeout.handler.impl;
 
 import com.youzan.trade.common.httpclient.BaseResult;
 import com.youzan.trade.common.httpclient.Client;
-import com.youzan.trade.common.httpclient.constant.ResponseCode;
-import com.youzan.trade.timeout.constants.Constants;
-import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.TaskResult;
-import com.youzan.trade.timeout.service.DelayTaskService;
 
 import com.google.common.collect.Maps;
 
@@ -16,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
 
 /**
  * @author apple created at: 15/10/30 下午7:40

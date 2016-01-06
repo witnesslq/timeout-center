@@ -218,14 +218,11 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   private boolean refreshEndTime(DelayTask task, long suspendedTime) {
-    Date startTime = task.getDelayStartTime();
-    Date suspendingTime = task.getSuspendTime();
     Date endTime = task.getDelayEndTime();
     Date msgEndTime = task.getMsgEndTime();
-    if (suspendingTime == null || startTime == null || endTime == null) {
+    if (endTime == null) {
       LogUtils.error(log,
-                     "Invalid suspended task.suspend/startTime/endTime shouldn't be blank.taskId={},start={},end={},suspend={}",
-                     task.getId(), startTime, endTime, suspendingTime);
+                     "Invalid suspended task.endTime shouldn't be blank.taskId={},end={}",endTime);
       return false;
     }
     Date refreshedEndTime = TimeUtils.plusMilliSecond(endTime, suspendedTime);

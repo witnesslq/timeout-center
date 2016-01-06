@@ -1,7 +1,6 @@
 package com.youzan.trade.timeout.source.impl;
 
 import com.youzan.trade.timeout.constants.BizType;
-import com.youzan.trade.timeout.constants.OrderState;
 import com.youzan.trade.timeout.constants.SafeState;
 import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.model.DelayTask;
@@ -19,8 +18,6 @@ import com.alibaba.fastjson.JSON;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 import javax.annotation.Resource;
 
