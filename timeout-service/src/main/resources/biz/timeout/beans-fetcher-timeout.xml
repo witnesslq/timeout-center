@@ -18,7 +18,7 @@
 
   <!-- 订单已发货的延时任务获取者-->
   <bean id="orderDeliveredTaskFetcher" class="com.youzan.trade.timeout.fetcher.impl.SimpleTaskFetcher">
-    <property name="bizType" value="OrderDelivered" />
+    <property name="bizType" value="DELIVERED_ORDER" />
     <property name="maxSize" value="${order.delivered.scan.once.max.size}" />
   </bean>
 
