@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author apple created at: 15/10/28 下午6:06
  */
 @Slf4j
+@Deprecated
 public class SafeMessageSubscriber {
 
   private String NSQ_HOST;
@@ -32,7 +33,7 @@ public class SafeMessageSubscriber {
   @Resource(name = "safeProcessorImpl")
   private Processor safeProcessor;
 
-  @PostConstruct
+//  @PostConstruct
   public void init() {
     initCreateConnector();
     initUpdateConnector();

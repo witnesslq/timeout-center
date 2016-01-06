@@ -28,11 +28,14 @@ public class NSQSubConnectorBuilder {
 
   public void buildAndRun() {
     try {
+
       ConnectorListener subListener = createConnectorListener();
 
       connector = new CustomerConnector(nsqHost, nsqPort, nsqTopic, nsqChannel);
       connector.setSubListener(subListener);
       connector.connect();
+      LogUtils.debug(log, "NSQ={}:{},topic={},channel={} started.", nsqHost, nsqPort, nsqTopic,
+                     nsqChannel);
     } catch (Exception e) {
       LogUtils.error(log,
                      "Start connector failed.host=" + nsqHost + " port=" + nsqPort + " topic="
