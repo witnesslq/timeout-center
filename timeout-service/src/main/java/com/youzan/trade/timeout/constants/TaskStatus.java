@@ -17,4 +17,16 @@ public enum TaskStatus {
   public int code() {
     return this.code;
   }
+
+  public static TaskStatus getTaskStatusByCode(Integer code) {
+    if (code == null) {
+      return null;
+    }
+    for (TaskStatus status : values()) {
+      if (status.code() == code) {
+        return status;
+      }
+    }
+    return null;
+  }
 }

@@ -2,6 +2,8 @@ package com.youzan.trade.timeout.source.impl;
 
 import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.OrderState;
+import com.youzan.trade.timeout.constants.SafeState;
+import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.model.Safe;
@@ -67,7 +69,7 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
       return true;
     }
     Order order = orderService.getOrderByOrderNoAndKdtId(safe.getOrderNo(), safe.getKdtId());
-    if (isSentOrder(order)) {
+    if (isSuspendableOrder(orderTask,safe)) {
       orderSuccessLogService.addOrderSuccessLog(order, safe.getAddTime());
       delayTaskService.suspendTask(orderTask);
     } else {
@@ -77,10 +79,24 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
     return true;
   }
 
-  private boolean isSentOrder(Order order) {
-    if (order == null || !Objects.equals(OrderState.SENT.getState(), order.getOrderState())) {
+  private boolean isSuspendableOrder(DelayTask orderTask, Safe safe) {
+    TaskStatus status = TaskStatus.getTaskStatusByCode(orderTask.getStatus());
+    if (status == null) {
+      LogUtils
+          .error(log, "Invalid taskStatus={},taskId={}", orderTask.getStatus(), orderTask.getId());
       return false;
     }
-    return true;
+    if (TaskStatus.ACTIVE == status) {
+      SafeState safeState = SafeState.getSafeStateByCode(safe.getState());
+      if (safeState != null) {
+        if (safeState != SafeState.CLOSED && safeState != SafeState.FINISHED) {
+          return true;
+        }
+      } else {
+        LogUtils.error(log, "Invalid safeState={},safeNo={},taskId={}", orderTask.getId());
+      }
+      return true;
+    }
+    return false;
   }
 }

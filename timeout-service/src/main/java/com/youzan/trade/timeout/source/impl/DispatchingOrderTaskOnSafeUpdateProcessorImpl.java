@@ -4,9 +4,11 @@ import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.SafeState;
 import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.model.DelayTask;
+import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.order.service.DeliveredOrderService;
 import com.youzan.trade.timeout.service.DelayTaskService;
+import com.youzan.trade.timeout.service.OrderService;
 import com.youzan.trade.timeout.service.OrderSuccessLogService;
 import com.youzan.trade.timeout.service.SafeService;
 import com.youzan.trade.timeout.source.Processor;
@@ -44,10 +46,13 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
   @Resource(name = "safeServiceImpl")
   SafeService safeService;
 
+  @Resource
+  OrderService orderService;
+
   @Override
   public boolean process(String message) {
     if (StringUtils.isBlank(message)) {
-      LogUtils.warn(log, "Message's blank");
+      LogUtils.error(log, "Message's blank");
       return true;
     }
 
@@ -59,7 +64,7 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
         delayTaskService.getTaskByBizIdAndBizType(orderNo, BizType.DELIVERED_ORDER.code());
 
     if (orderTask == null) {
-      LogUtils.error(log, "[Pass]OrderTask not found.safeNo={}", safe.getSafeNo());
+      LogUtils.error(log, "OrderTask not found.safeNo={}", safe.getSafeNo());
       return true;
     }
 
@@ -77,8 +82,40 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
                                                                          .getTime());
         delayTaskService.resumeTask(orderTask, suspendPeriod);
       }
+    } else {
+      if (isSuspendable(orderTask,safe)) {
+        Order order = orderService.getOrderByOrderNoAndKdtId(orderNo, safe.getKdtId());
+        if (order == null) {
+          LogUtils.error(log, "[SuspendTaskFail]Order not found.orderNo={},taskId={}", orderNo,
+                         orderTask.getId());
+        } else {
+          orderSuccessLogService.addOrderSuccessLog(order, safe.getAddTime());
+          delayTaskService.suspendTask(orderTask);
+        }
+      }
     }
     return true;
+  }
+
+  private boolean isSuspendable(DelayTask orderTask, Safe safe) {
+    TaskStatus status = TaskStatus.getTaskStatusByCode(orderTask.getStatus());
+    if (status == null) {
+      LogUtils
+          .error(log, "Invalid taskStatus={},taskId={}", orderTask.getStatus(), orderTask.getId());
+      return false;
+    }
+    if (TaskStatus.ACTIVE == status) {
+      SafeState safeState = SafeState.getSafeStateByCode(safe.getState());
+      if (safeState != null) {
+        if (safeState != SafeState.CLOSED && safeState != SafeState.FINISHED) {
+          return true;
+        }
+      } else {
+        LogUtils.error(log, "[Check suspendable]Invalid safeState={},safeNo={},taskId={}", orderTask.getId());
+      }
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -87,11 +124,11 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
   protected TaskStatus inferOrderTaskStatusBySafe(Safe safe) {
 
     if (safe.getState() == null || SafeState.getSafeStateByCode(safe.getState()) == null) {
-      LogUtils.error(log, "Invalid safe state={},safeNo={}", safe.getState(), safe.getSafeNo());
+      LogUtils.error(log, "[Infer]Invalid safeState={},safeNo={}", safe.getState(), safe.getSafeNo());
       return null;
     }
     //是否为新增，并且倒计时任务不为空：获取最新order_success_log记录。如果为空/finistime存在不为空，则调用沛大爷接口
-    if(isAdded(safe)){
+    if(isNewlyAdded(safe)){
       return TaskStatus.SUSPENDED;
     }
     //如果为结束，
@@ -128,7 +165,7 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor{
    * @param safe
    * @return 若为新增返回true
    */
-  private boolean isAdded(Safe safe) {
+  private boolean isNewlyAdded(Safe safe) {
     SafeState state = SafeState.getSafeStateByCode(safe.getState());
     if(SafeState.BUYER_START == state){
       return true;
