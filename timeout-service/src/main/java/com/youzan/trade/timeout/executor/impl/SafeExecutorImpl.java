@@ -2,6 +2,7 @@ package com.youzan.trade.timeout.executor.impl;
 
 import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.LockIdConstants;
+import com.youzan.trade.timeout.fetcher.TaskFetcher;
 import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.service.DelayTaskService;
@@ -31,6 +32,9 @@ public class SafeExecutorImpl extends AbstractExecutor {
   @Resource(name = "safeTaskHandlerImpl")
   private TaskHandler taskHandler;
 
+  @Resource(name = "safeTaskFetcher")
+  private TaskFetcher taskFetcher;
+
   @Scheduled(cron = "${safe.task.cron}")
   public void start() {
     execute(LockIdConstants.SAFE_EXECUTOR_LOCK_ID, taskHandler);
@@ -38,6 +42,6 @@ public class SafeExecutorImpl extends AbstractExecutor {
 
   @Override
   protected List<DelayTask> getTaskList() {
-    return delayTaskService.getListWithBizTypeAndTimeoutCurrently(BizType.SAFE.code(), maxSize);
+    return taskFetcher.fetch();
   }
 }
