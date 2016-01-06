@@ -1,13 +1,10 @@
 package com.youzan.trade.timeout.executor.impl;
 
-import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.LockIdConstants;
 import com.youzan.trade.timeout.fetcher.TaskFetcher;
 import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
-import com.youzan.trade.timeout.service.DelayTaskService;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
