@@ -49,15 +49,16 @@ public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
       return false;
     }
     orderSuccessLog.setFinishTime(finishTime);
-    return updateFinishAndRemainTime(orderSuccessLog);
+    return updateFinishTimeAndSuspendedPeriod(orderSuccessLog);
   }
 
   @Override
-  public boolean updateFinishAndRemainTime(OrderSuccessLog orderSuccessLog) {
+  public boolean updateFinishTimeAndSuspendedPeriod(OrderSuccessLog orderSuccessLog) {
     int suspendedPeriod = orderSuccessLog.getFinishTime() - orderSuccessLog.getCreateTime();
-    return orderSuccessLogDAO.updateFinishTimeByOrderNo(orderSuccessLog.getOrderNo(),
-                                                        orderSuccessLog.getFinishTime(),
-                                                        suspendedPeriod);
+    return orderSuccessLogDAO
+        .updateFinishTimeByOrderNo(orderSuccessLog.getId(), orderSuccessLog.getOrderNo(),
+                                   orderSuccessLog.getFinishTime(),
+                                   suspendedPeriod);
   }
 
   @Override
@@ -80,7 +81,7 @@ public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
   @Override
   public long getSuspendedPeriod(String orderNo, long originTaskEndTime) {
     OrderSuccessLog orderSuccessLog = this.getLatestOrderSuccessLogByOrderNo(orderNo);
-    return orderSuccessLog.getSuspendedPeriod();
+    return orderSuccessLog.getSuspendedPeriod()*1000L; //second to millisecond
   }
 
   private OrderSuccessLog buildOrderSuccessLog(Order order, int remainTime) {

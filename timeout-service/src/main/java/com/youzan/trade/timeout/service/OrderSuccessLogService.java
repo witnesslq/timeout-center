@@ -13,7 +13,7 @@ public interface OrderSuccessLogService {
 
   boolean updateFinishTime(String OrderNo, int finishTime);
 
-  boolean updateFinishAndRemainTime(OrderSuccessLog orderSuccessLog);
+  boolean updateFinishTimeAndSuspendedPeriod(OrderSuccessLog orderSuccessLog);
 
   boolean addOrderSuccessLog(Order order, int safeTime);
 

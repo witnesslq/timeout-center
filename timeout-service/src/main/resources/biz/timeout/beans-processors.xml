@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean name="createSafeMessageSubscriber"
+    <!--<bean name="createSafeMessageSubscriber"
           class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
         <property name="nsqHost" value="${nsq.host}"/>
         <property name="nsqPort" value="${nsq.port}"/>
@@ -20,7 +20,7 @@
         <property name="nsqTopic" value="${nsq.topic.update}"/>
         <property name="nsqChannel" value="${nsq.channel.update}"/>
         <property name="processor" ref="safeProcessorImpl"/>
-    </bean>
+    </bean>-->
 
     <!--监听维权记录【创建】，以便中断/恢复自动完成倒计时-->
     <!-- service实际行为是区分维权状态处于哪种状态、再判断是中断还是恢复操作 -->

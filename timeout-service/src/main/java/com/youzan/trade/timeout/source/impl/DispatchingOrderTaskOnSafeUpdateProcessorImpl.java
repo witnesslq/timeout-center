@@ -147,13 +147,13 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor 
     if (SafeState.CLOSED == state || SafeState.FINISHED == state) {
       //判断是否有其他维权处于处理中
       boolean
-          hasSafeOnTheGo =
+          hasNoSafeOnTheGo =
           safeService.checkOrderFeedbackFinish(safe.getOrderNo(), safe.getKdtId());
-      if (hasSafeOnTheGo) {
+      if (!hasNoSafeOnTheGo) {
         LogUtils.info(log, "Still has safe on the go.orderNo={},safeNo={}", safe.getOrderNo(),
                       safe.getSafeNo());
       }
-      return hasSafeOnTheGo;
+      return hasNoSafeOnTheGo;
     }
     return false;
   }
