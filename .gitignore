@@ -6,7 +6,7 @@ timeout-deploy/target
 .idea/*
 .DS_Store
 *.iml
-./**/*.iml
+**/*.iml
 .settings
 .classpath
 .project
