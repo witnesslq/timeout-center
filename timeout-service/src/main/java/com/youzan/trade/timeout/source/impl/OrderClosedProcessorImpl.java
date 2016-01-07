@@ -17,10 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author Created by hupp on 2016/01/07 .
  */
-@Component(value = "orderClosedProcessorImpl")
 @Slf4j
+@Component(value = "orderClosedProcessorImpl")
 public class OrderClosedProcessorImpl implements Processor {
-
 
   @Resource(name = "deliveredOrderServiceImpl")
   DeliveredOrderService deliveredOrderService;
