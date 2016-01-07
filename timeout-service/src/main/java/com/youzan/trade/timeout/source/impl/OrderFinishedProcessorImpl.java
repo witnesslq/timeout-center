@@ -26,7 +26,6 @@ public class OrderFinishedProcessorImpl implements Processor {
 
   @Override
   public boolean process(String message) {
-
     if (StringUtils.isBlank(message)) {
       LogUtils.warn(log, "Order Finished Message's blank");
       return true;

@@ -26,7 +26,6 @@ public class OrderClosedProcessorImpl implements Processor {
 
   @Override
   public boolean process(String message) {
-
     if (StringUtils.isBlank(message)) {
       LogUtils.warn(log, "Order Closed Message's blank");
       return true;

@@ -50,7 +50,7 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
   @Override
   public boolean process(String message) {
     if (StringUtils.isBlank(message)) {
-      LogUtils.warn(log, "Message's blank");
+      LogUtils.warn(log, "Message is blank");
       return true;
     }
 
@@ -70,7 +70,7 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
       orderSuccessLogService.addOrderSuccessLog(order, safe.getAddTime());
       delayTaskService.suspendTask(orderTask);
     } else {
-      LogUtils.warn(log, "Order's null or order not in sent state.order={}",
+      LogUtils.warn(log, "Order is null or not in sent state.order={}",
                     order == null ? null : JSON.toJSON(order));
     }
     return true;
