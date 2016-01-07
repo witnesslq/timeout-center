@@ -54,6 +54,26 @@
         <property name="processor" ref="deliveredOrderOnOrderProcessorImpl"/>
     </bean>
 
+    <!--监听order表。对于订单关闭，直接中断任务-->
+    <bean name="orderClosedSubscriber"
+          class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
+        <property name="nsqHost" value="${nsq.host}"/>
+        <property name="nsqPort" value="${nsq.port}"/>
+        <property name="nsqTopic" value="${nsq.topic.orderclosed}"/>
+        <property name="nsqChannel" value="${nsq.channel.orderclosed}"/>
+        <property name="processor" ref="orderClosedProcessorImpl"/>
+    </bean>
+
+    <!--监听order表。对于订单完成，直接中断任务-->
+    <bean name="orderFinishedSubscriber"
+          class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
+        <property name="nsqHost" value="${nsq.host}"/>
+        <property name="nsqPort" value="${nsq.port}"/>
+        <property name="nsqTopic" value="${nsq.topic.orderfinished}"/>
+        <property name="nsqChannel" value="${nsq.channel.orderfinished}"/>
+        <property name="processor" ref="orderFinishedProcessorImpl"/>
+    </bean>
+
 
 
 </beans>

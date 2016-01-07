@@ -11,4 +11,9 @@ public interface DeliveredOrderService {
    *
    * */
   boolean addToDelayTask(Order order);
+
+  /***
+   *
+   * */
+  boolean closeDelayTask(Order order);
 }

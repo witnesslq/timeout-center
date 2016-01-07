@@ -75,6 +75,18 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     return true;
   }
 
+  @Override
+  public boolean closeDelayTask(Order order) {
+    if (!order.getOrderState().equals(OrderState.CLOSE.getState()) &&
+        !order.getOrderState().equals(OrderState.SUCCESS.getState())) {
+        return false;
+    }
+    DelayTask task = delayTaskService.getTaskByBizIdAndBizType(order.getOrderNo(),
+                                                               BizType.DELIVERED_ORDER.code());
+
+    return delayTaskService.closeTaskByBizTypeAndBizId(task.getBizType(), task.getBizId());
+  }
+
   /**
    * 对于已完成或已关闭订单，
    * @param order
