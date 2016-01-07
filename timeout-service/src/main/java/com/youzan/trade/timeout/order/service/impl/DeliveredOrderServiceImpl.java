@@ -54,8 +54,9 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     }
 
     if (isSent(order)) {
-      DelayTask task = delayTaskService.getTaskByBizIdAndBizType(order.getOrderNo(),
-                                                                 BizType.DELIVERED_ORDER.code());
+      DelayTask task = delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(),
+                                                                 order.getOrderNo()
+      );
       if (task != null) {
         LogUtils.warn(log, "[DeliveredOrderTask]Already added.order={},type={}", order.getOrderNo(),
                       BizType.DELIVERED_ORDER.code());
@@ -81,8 +82,9 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
         !order.getOrderState().equals(OrderState.SUCCESS.getState())) {
         return false;
     }
-    DelayTask task = delayTaskService.getTaskByBizIdAndBizType(order.getOrderNo(),
-                                                               BizType.DELIVERED_ORDER.code());
+    DelayTask task = delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(),
+                                                               order.getOrderNo()
+    );
 
     return delayTaskService.closeTaskByBizTypeAndBizId(task.getBizType(), task.getBizId());
   }

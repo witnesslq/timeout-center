@@ -59,7 +59,7 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
     String orderNo = safe.getOrderNo();
     DelayTask
         orderTask =
-        delayTaskService.getTaskByBizIdAndBizType(orderNo, BizType.DELIVERED_ORDER.code());
+        delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(), orderNo);
 
     if (orderTask == null) {
       LogUtils.info(log, "[Pass]OrderTask not found.safeNo={}", safe.getSafeNo());
