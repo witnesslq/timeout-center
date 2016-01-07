@@ -163,22 +163,28 @@ public interface DelayTaskService {
 
   /**
    * 中断任务
-   * @param task 具体任务信息
-   * **/
+   *
+   * @param task 具体任务
+   * @return
+   */
   boolean suspendTask(DelayTask task);
 
-
-  /***
+  /**
    * 恢复任务
+   *
    * @param task 具体任务
-   * @param suspendTime*/
+   * @param suspendTime
+   * @return
+   */
   boolean resumeTask(DelayTask task, long suspendTime);
 
   /**
    * 延长任务时间
+   *
    * @param task 具体任务
    * @param expendTime 延长时间
-   * **/
-  boolean enlargeTask(DelayTask task,int expendTime);
+   * @return
+   */
+  boolean enlargeTask(DelayTask task, int expendTime);
 
 }
