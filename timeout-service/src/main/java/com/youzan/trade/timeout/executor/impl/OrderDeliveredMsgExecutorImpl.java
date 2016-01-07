@@ -2,6 +2,7 @@ package com.youzan.trade.timeout.executor.impl;
 
 import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.LockIdConstants;
+import com.youzan.trade.timeout.fetcher.TaskFetcher;
 import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.service.DelayTaskService;
@@ -22,11 +23,8 @@ import javax.annotation.Resource;
 @Component
 public class OrderDeliveredMsgExecutorImpl extends AbstractExecutor {
 
-  @Value("${order.delivered.msg.scan.once.max.size}")
-  private int maxSize;
-
-  @Resource
-  private DelayTaskService delayTaskService;
+  @Resource(name = "orderDeliveredMsgTaskFetcher")
+  private TaskFetcher taskFetcher;
 
   @Resource(name = "orderDeliveredMsgTaskHandlerImpl")
   private TaskHandler taskHandler;
@@ -38,6 +36,6 @@ public class OrderDeliveredMsgExecutorImpl extends AbstractExecutor {
 
   @Override
   protected List<DelayTask> getTaskList() {
-    return delayTaskService.getListWithBizTypeAndMsgTimeoutCurrently(BizType.DELIVERED_ORDER.code(), maxSize);
+    return taskFetcher.fetch();
   }
 }

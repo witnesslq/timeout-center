@@ -22,4 +22,10 @@
     <property name="maxSize" value="${order.delivered.scan.once.max.size}" />
   </bean>
 
+  <!-- 订单已发货的延时消息任务获取者-->
+  <bean id="orderDeliveredMsgTaskFetcher" class="com.youzan.trade.timeout.fetcher.impl.TimeRelatedTaskFetched">
+    <property name="bizType" value="DELIVERED_ORDER" />
+    <property name="maxSize" value="${order.delivered.msg.scan.once.max.size}" />
+  </bean>
+
 </beans>

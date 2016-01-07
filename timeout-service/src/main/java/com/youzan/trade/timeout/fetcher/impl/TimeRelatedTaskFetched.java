@@ -9,69 +9,50 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 /**
  * @author apple created at: 16/1/5 下午7:44
  */
-@Component
 public class TimeRelatedTaskFetched extends AbstractTaskFetcher {
+
+  /**
+   * 起始时间,从9点到21点
+   */
+  private LocalTime startTime = LocalTime.of(9, 0);
+  private LocalTime endTime = LocalTime.of(21, 0);
+
+  private int incrementTimes = 2;
 
   @Override
   public List<DelayTask> fetch() {
+    if (!validateTime(LocalDateTime.now())) {
+      return Collections.emptyList();
+    }
+
     return delayTaskService.getListWithBizTypeAndMsgTimeout(bizType.code(), mapDate(LocalDateTime.now()), maxSize);
   }
 
-  private Date mapDate(LocalDateTime someLocalDateTime) {
-    LocalTime resultLocalTime = mapLocalTime(someLocalDateTime.toLocalTime());
+  private boolean validateTime(LocalDateTime someDateTime) {
+    return !(someDateTime.toLocalTime().isBefore(startTime) || someDateTime.toLocalTime()
+        .isAfter(endTime));
+  }
 
-    LocalDateTime resultDateTime = LocalDateTime.of(someLocalDateTime.toLocalDate(), resultLocalTime);
+  /**
+   * 根据某个合法时间获取扫描时间点
+   *
+   * @param someDateTime 某个合法时间 时间部分在startTime和endTime之间
+   * @return 扫描时间点
+   */
+  private Date mapDate(LocalDateTime someDateTime) {
+    int incrementInSeconds = someDateTime.toLocalTime().toSecondOfDay() - startTime.toSecondOfDay();
+
+    LocalDateTime startDateTime = LocalDateTime.of(someDateTime.toLocalDate(), startTime);
+    LocalDateTime resultDateTime = startDateTime.plusSeconds(incrementInSeconds * incrementTimes);
 
     return Date.from(resultDateTime.toInstant(ZoneOffset.ofHours(8)));
   }
 
-  private LocalTime mapLocalTime(LocalTime someLocalTime) {
-    /**
-     * 起始时间,从9点到21点
-     */
-    LocalTime startLocalTime = LocalTime.of(9, 0);
-    LocalTime endLocalTime = LocalTime.of(21, 0);
-    int incrementTimes = 2;
-
-    if (someLocalTime.isBefore(startLocalTime)) {
-      return LocalTime.MIN;
-    } else if (someLocalTime.isAfter(endLocalTime)) {
-      return LocalTime.MAX;
-    } else {
-      int incrementInSeconds = someLocalTime.toSecondOfDay() - startLocalTime.toSecondOfDay();
-      return LocalTime.MIN.plusSeconds(incrementInSeconds * incrementTimes);
-    }
-  }
-
-  public static void main(String[] args) {
-    Date date1 = new TimeRelatedTaskFetched().mapDate(LocalDateTime.now());
-
-    LocalTime startTime = LocalTime.of(9, 0);
-    startTime.toSecondOfDay();
-
-
-    LocalTime now = LocalTime.now();
-    System.out.println("now: " + now);
-    System.out.println("startTime: " + startTime);
-    int i = now.compareTo(startTime);
-    System.out.println(now.isAfter(startTime));
-
-    //
-    LocalTime min = LocalTime.MIN;
-    min.plusSeconds(1000);
-
-    //
-    LocalDateTime localDateTime = LocalDateTime.now();
-
-    new Date();
-    Date date = Date.from(localDateTime.toInstant(ZoneOffset.ofHours(8)));
-    System.out.println("当前时间: " + date);
-
-  }
 }
