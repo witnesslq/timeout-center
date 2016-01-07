@@ -174,10 +174,10 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public boolean suspendTask(DelayTask task) {
-    LogUtils.info(log, "[Suspend Task]，taskId={},fromStatus={}", task.getId(), task.getStatus());
+    LogUtils.info(log, "[Suspend Task], taskId={}, fromStatus={}", task.getId(), task.getStatus());
 
     if (isSuspendable(task)) {
-      LogUtils.info(log, "[Suspend Task]，taskId={},toStatus={}", task.getId(),
+      LogUtils.info(log, "[Suspend Task], taskId={}, toStatus={}", task.getId(),
                     TaskStatus.SUSPENDED.code());
 
       Date currentTime = TimeUtils.currentDate();
