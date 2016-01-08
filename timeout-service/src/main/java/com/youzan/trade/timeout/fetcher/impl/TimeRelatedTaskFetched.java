@@ -36,8 +36,8 @@ public class TimeRelatedTaskFetched extends AbstractTaskFetcher {
   }
 
   private boolean validateTime(LocalDateTime someDateTime) {
-    return !(someDateTime.toLocalTime().isBefore(startTime) || someDateTime.toLocalTime()
-        .isAfter(endTime));
+    return someDateTime.toLocalTime().isAfter(startTime) && someDateTime.toLocalTime()
+        .isBefore(endTime);
   }
 
   /**

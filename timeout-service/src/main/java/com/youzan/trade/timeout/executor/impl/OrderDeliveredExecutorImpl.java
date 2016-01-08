@@ -1,6 +1,7 @@
 package com.youzan.trade.timeout.executor.impl;
 
 import com.youzan.trade.timeout.constants.LockIdConstants;
+import com.youzan.trade.timeout.executor.AbstractExecutor;
 import com.youzan.trade.timeout.fetcher.TaskFetcher;
 import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
