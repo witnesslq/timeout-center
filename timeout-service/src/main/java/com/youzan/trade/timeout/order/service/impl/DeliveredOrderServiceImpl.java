@@ -78,6 +78,10 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
 
   @Override
   public boolean closeDelayTask(Order order) {
+    if (order == null) {
+      LogUtils.error(log, "Order should not be null!");
+      return true;
+    }
     if (!order.getOrderState().equals(OrderState.CLOSE.getState()) &&
         !order.getOrderState().equals(OrderState.SUCCESS.getState())) {
         return false;
@@ -85,6 +89,10 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     DelayTask task = delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(),
                                                                order.getOrderNo()
     );
+    if (task == null) {
+      LogUtils.warn(log, "Task not exist.bizType={},bizId={}", order.getOrderNo());
+      return true;
+    }
 
     return delayTaskService.closeTaskByBizTypeAndBizId(task.getBizType(), task.getBizId());
   }

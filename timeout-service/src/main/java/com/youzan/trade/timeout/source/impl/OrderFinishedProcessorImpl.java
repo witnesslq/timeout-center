@@ -32,6 +32,6 @@ public class OrderFinishedProcessorImpl implements Processor {
     }
     Order order = JSON.parseObject(message, Order.class);
 
-    return deliveredOrderService.addToDelayTask(order);
+    return deliveredOrderService.closeDelayTask(order);
   }
 }
