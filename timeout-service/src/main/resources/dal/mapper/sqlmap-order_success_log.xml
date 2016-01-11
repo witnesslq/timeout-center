@@ -44,19 +44,12 @@
     WHERE order_no = #{orderNo} ORDER BY id DESC limit 1;
   </select>
 
-  <select id="getTotalSuspendedPeriodByOrderNo" resultType="java.lang.Integer">
-    SELECT
-    COUNT(suspended_period)
-    FROM
-    <include refid="tableName"/>
-    WHERE order_no = #{orderNo}
-  </select>
-
   <update id="updateFinishTimeByOrderNo">
     UPDATE
     <include refid="tableName"/>
     <set>
-      finish_time = #{finishTime},suspended_period=#{suspendedPeriod}
+      finish_time = #{finishTime},
+      suspended_period = #{suspendedPeriod}
     </set>
     WHERE id = #{id} AND order_no = #{orderNo}
   </update>
