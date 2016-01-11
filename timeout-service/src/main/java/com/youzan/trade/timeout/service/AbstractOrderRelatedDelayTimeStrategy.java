@@ -1,4 +1,4 @@
-package com.youzan.trade.timeout.service.impl;
+package com.youzan.trade.timeout.service;
 
 import com.youzan.trade.timeout.service.DelayTimeStrategy;
 
