@@ -50,8 +50,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
 
     if (isSent(order)) {
       DelayTask task = delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(),
-                                                                 order.getOrderNo()
-      );
+                                                                 order.getOrderNo());
       if (task != null) {
         LogUtils.warn(log, "[DeliveredOrderTask]Already added.order={},type={}", order.getOrderNo(),
                       BizType.DELIVERED_ORDER.code());
@@ -61,8 +60,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
       try {
         delayTaskService.save(buildDeliveredOrderTask(order));
       } catch (Exception e) {
-        LogUtils
-            .error(log, "[DeliveredOrderTask]Save task failed.orderNo={}", order.getOrderNo(), e);
+        LogUtils.error(log, "[DeliveredOrderTask]Save task failed.orderNo={}", order.getOrderNo(), e);
       }
     } else {
       LogUtils.warn(log, "[DeliveredOrderTask]Abnormal order state={}.orderNo={}",
