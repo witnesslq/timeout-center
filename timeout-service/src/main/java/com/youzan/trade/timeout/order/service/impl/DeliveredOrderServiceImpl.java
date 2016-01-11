@@ -44,12 +44,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
   @Override
   public boolean addToDelayTask(Order order) {
     if (!checkDeliveredOrder(order)) {
-      try {
-        LogUtils.error(log, "Invalid delivered order.order={}", JsonUtil.obj2json(order));
-      } catch (IOException e) {
-        LogUtils.error(log, "Invalid delivered order.order={}",
-                       order == null ? null : order.getOrderNo(), e);
-      }
+      LogUtils.error(log, "Invalid delivered order.order={}", order);
       return true;
     }
 

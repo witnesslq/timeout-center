@@ -168,10 +168,9 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     LogUtils.info(log, "根据业务类型和业务ID获取任务, bizType: {}, bizId: {}", bizType, bizId);
 
     List<DelayTaskDO> delayTaskDOs = delayTaskDAO.selectListByBizTypeAndBizId(bizType, bizId);
-    if (CollectionUtils.isNotEmpty(delayTaskDOs)) {
-      return DelayTaskDataTransfer.transfer2TO(delayTaskDOs.get(0));
-    }
-    return null;
+
+    return CollectionUtils.isNotEmpty(delayTaskDOs)
+           ? DelayTaskDataTransfer.transfer2TO(delayTaskDOs.get(0)) : null;
   }
 
   @Override
