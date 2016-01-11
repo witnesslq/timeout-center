@@ -64,7 +64,7 @@ public class NSQSubConnectorBuilder {
       try {
         connector.close();
       } catch (Exception e) {
-        LogUtils.error(log, "Destroy connector failed.");
+        LogUtils.error(log, "Destroy connector failed.", e);
       }
     }
   }

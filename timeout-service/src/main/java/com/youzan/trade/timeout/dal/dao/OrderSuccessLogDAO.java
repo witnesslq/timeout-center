@@ -26,9 +26,8 @@ public interface OrderSuccessLogDAO {
    * @param suspendedPeriod
    * @return
    */
-  boolean updateFinishTimeByOrderNo(@Param("orderNo") String orderNo,
+  boolean updateFinishTimeByOrderNo(@Param("id")Integer id,
+                                    @Param("orderNo") String orderNo,
                                     @Param("finishTime") int finishTime,
                                     @Param("suspendedPeriod") int suspendedPeriod);
-
-
 }

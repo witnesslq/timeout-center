@@ -42,7 +42,7 @@
         <include refid="Base_Column_List"/>
         FROM
         <include refid="tableName"/>
-        WHERE order_no=#{orderNo}
+        WHERE order_no=#{orderNo} order by id desc limit 1;
     </select>
 
 
@@ -52,8 +52,15 @@
         <set>
             finish_time = #{finishTime},suspended_period=#{suspendedPeriod}
         </set>
-        WHERE order_no = #{orderNo}
+        WHERE id = #{id} and order_no = #{orderNo}
     </update>
 
+    <select id="getTotalSuspendedPeriodByOrderNo" resultType="java.lang.Integer">
+        SELECT
+        count(suspended_period)
+        FROM
+        <include refid="tableName"/>
+        WHERE order_no=#{orderNo}
+    </select>
 
 </mapper>

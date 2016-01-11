@@ -1,7 +1,8 @@
 package com.youzan.trade.timeout.source.impl;
 
 import com.youzan.trade.timeout.constants.BizType;
-import com.youzan.trade.timeout.constants.OrderState;
+import com.youzan.trade.timeout.constants.SafeState;
+import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.model.Safe;
@@ -17,8 +18,6 @@ import com.alibaba.fastjson.JSON;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 import javax.annotation.Resource;
 
@@ -51,7 +50,7 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
   @Override
   public boolean process(String message) {
     if (StringUtils.isBlank(message)) {
-      LogUtils.warn(log, "Message's blank");
+      LogUtils.warn(log, "Message is blank");
       return true;
     }
 
@@ -60,27 +59,41 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
     String orderNo = safe.getOrderNo();
     DelayTask
         orderTask =
-        delayTaskService.getTaskByBizIdAndBizType(orderNo, BizType.DELIVERED_ORDER.code());
+        delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(), orderNo);
 
     if (orderTask == null) {
       LogUtils.info(log, "[Pass]OrderTask not found.safeNo={}", safe.getSafeNo());
       return true;
     }
     Order order = orderService.getOrderByOrderNoAndKdtId(safe.getOrderNo(), safe.getKdtId());
-    if (isSentOrder(order)) {
+    if (isSuspendableOrder(orderTask,safe)) {
       orderSuccessLogService.addOrderSuccessLog(order, safe.getAddTime());
       delayTaskService.suspendTask(orderTask);
     } else {
-      LogUtils.warn(log, "Order's null or order not in sent state.order={}",
+      LogUtils.warn(log, "Order is null or not in sent state.order={}",
                     order == null ? null : JSON.toJSON(order));
     }
     return true;
   }
 
-  private boolean isSentOrder(Order order) {
-    if (order == null || !Objects.equals(OrderState.SENT.getState(), order.getOrderState())) {
+  private boolean isSuspendableOrder(DelayTask orderTask, Safe safe) {
+    TaskStatus status = TaskStatus.getTaskStatusByCode(orderTask.getStatus());
+    if (status == null) {
+      LogUtils
+          .error(log, "Invalid taskStatus={},taskId={}", orderTask.getStatus(), orderTask.getId());
       return false;
     }
-    return true;
+    if (TaskStatus.ACTIVE == status) {
+      SafeState safeState = SafeState.getSafeStateByCode(safe.getState());
+      if (safeState != null) {
+        if (safeState != SafeState.CLOSED && safeState != SafeState.FINISHED) {
+          return true;
+        }
+      } else {
+        LogUtils.error(log, "Invalid safeState={},safeNo={},taskId={}", orderTask.getId());
+      }
+      return true;
+    }
+    return false;
   }
 }

@@ -1,6 +1,5 @@
 package com.youzan.trade.timeout.fetcher.impl;
 
-import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.fetcher.AbstractTaskFetcher;
 import com.youzan.trade.timeout.model.DelayTask;
 

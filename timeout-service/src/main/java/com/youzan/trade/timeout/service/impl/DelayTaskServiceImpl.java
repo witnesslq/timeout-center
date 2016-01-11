@@ -163,8 +163,8 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
-  public DelayTask getTaskByBizIdAndBizType(String bizId, int bizType) {
-    LogUtils.info(log, "根据业务类型和业务ID获取任务，bizType: {},bizId: {}", bizType, bizId);
+  public DelayTask getTaskByBizTypeAndBizId(int bizType, String bizId) {
+    LogUtils.info(log, "根据业务类型和业务ID获取任务, bizType: {}, bizId: {}", bizType, bizId);
     List<DelayTaskDO> delayTaskDOs = delayTaskDAO.getTaskByBizIdAndBizType(bizId, bizType);
     if (delayTaskDOs != null && delayTaskDOs.size() > 0) {
       return DelayTaskDataTransfer.transfer2TO(delayTaskDOs.get(0));
@@ -174,16 +174,19 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public boolean suspendTask(DelayTask task) {
-    LogUtils.info(log, "[Suspend Task]，taskId={},fromStatus={}", task.getId(), task.getStatus());
+    LogUtils.info(log, "[Suspend Task], taskId={}, fromStatus={}", task.getId(), task.getStatus());
 
     if (isSuspendable(task)) {
-      LogUtils.info(log, "[Suspend Task]，taskId={},toStatus={}", task.getId(),
+      LogUtils.info(log, "[Suspend Task], taskId={}, toStatus={}", task.getId(),
                     TaskStatus.SUSPENDED.code());
+
+      Date currentTime = TimeUtils.currentDate();
+
       return 0 < delayTaskDAO
           .updateSuspendTime(task.getId(),
                              TaskStatus.SUSPENDED.code(),
-                             TimeUtils.currentDate(),
-                             TimeUtils.currentDate()
+                             currentTime,
+                             currentTime
           );
     }
     return false;
@@ -218,14 +221,11 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   private boolean refreshEndTime(DelayTask task, long suspendedTime) {
-    Date startTime = task.getDelayStartTime();
-    Date suspendingTime = task.getSuspendTime();
     Date endTime = task.getDelayEndTime();
     Date msgEndTime = task.getMsgEndTime();
-    if (suspendingTime == null || startTime == null || endTime == null) {
+    if (endTime == null) {
       LogUtils.error(log,
-                     "Invalid suspended task.suspend/startTime/endTime shouldn't be blank.taskId={},start={},end={},suspend={}",
-                     task.getId(), startTime, endTime, suspendingTime);
+                     "Invalid suspended task.endTime shouldn't be blank.taskId={},end={}",endTime);
       return false;
     }
     Date refreshedEndTime = TimeUtils.plusMilliSecond(endTime, suspendedTime);

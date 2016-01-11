@@ -1,4 +1,4 @@
-package com.youzan.trade.timeout.executor.impl;
+package com.youzan.trade.timeout.executor;
 
 import com.youzan.trade.timeout.executor.Executor;
 import com.youzan.trade.timeout.handler.TaskHandler;

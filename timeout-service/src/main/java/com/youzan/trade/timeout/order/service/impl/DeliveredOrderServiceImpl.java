@@ -54,8 +54,9 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     }
 
     if (isSent(order)) {
-      DelayTask task = delayTaskService.getTaskByBizIdAndBizType(order.getOrderNo(),
-                                                                 BizType.DELIVERED_ORDER.code());
+      DelayTask task = delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(),
+                                                                 order.getOrderNo()
+      );
       if (task != null) {
         LogUtils.warn(log, "[DeliveredOrderTask]Already added.order={},type={}", order.getOrderNo(),
                       BizType.DELIVERED_ORDER.code());
@@ -73,6 +74,27 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
                     order.getOrderState(), order.getOrderNo());
     }
     return true;
+  }
+
+  @Override
+  public boolean closeDelayTask(Order order) {
+    if (order == null) {
+      LogUtils.error(log, "Order should not be null!");
+      return true;
+    }
+    if (!order.getOrderState().equals(OrderState.CLOSE.getState()) &&
+        !order.getOrderState().equals(OrderState.SUCCESS.getState())) {
+        return true;
+    }
+    DelayTask task = delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(),
+                                                               order.getOrderNo()
+    );
+    if (task == null) {
+      LogUtils.warn(log, "Task not exist.bizType={},bizId={}", order.getOrderNo());
+      return true;
+    }
+
+    return delayTaskService.closeTaskByBizTypeAndBizId(task.getBizType(), task.getBizId());
   }
 
   /**

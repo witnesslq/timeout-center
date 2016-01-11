@@ -1,4 +1,4 @@
-package com.youzan.trade.timeout.handler.impl;
+package com.youzan.trade.timeout.handler;
 
 import com.youzan.trade.common.httpclient.constant.ResponseCode;
 import com.youzan.trade.timeout.constants.Constants;
