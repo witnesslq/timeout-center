@@ -225,7 +225,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     Date msgEndTime = task.getMsgEndTime();
     if (endTime == null) {
       LogUtils.error(log,
-                     "Invalid suspended task.endTime shouldn't be blank.taskId={},end={}",endTime);
+                     "Invalid suspended task.endTime shouldn't be blank.taskId={}", task.getId());
       return false;
     }
     Date refreshedEndTime = TimeUtils.plusMilliSecond(endTime, suspendedTime);
