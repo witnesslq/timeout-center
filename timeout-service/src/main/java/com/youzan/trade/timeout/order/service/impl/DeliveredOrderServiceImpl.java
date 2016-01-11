@@ -84,7 +84,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     }
     if (!order.getOrderState().equals(OrderState.CLOSE.getState()) &&
         !order.getOrderState().equals(OrderState.SUCCESS.getState())) {
-        return false;
+        return true;
     }
     DelayTask task = delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(),
                                                                order.getOrderNo()
