@@ -90,7 +90,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
                                                                order.getOrderNo()
     );
     if (task == null) {
-      LogUtils.warn(log, "Task not exist.bizType={},bizId={}", order.getOrderNo());
+      LogUtils.warn(log, "Task not exist, bizType={}, bizId={}", BizType.DELIVERED_ORDER.code(), order.getOrderNo());
       return true;
     }
 
