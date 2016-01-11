@@ -18,7 +18,7 @@
   </sql>
 
     <sql id="Base_Column_List">
-    id, order_no, kdt_id, create_time, finish_time, remain_time ,suspended_period
+    id, order_no, kdt_id, create_time, finish_time, remain_time, suspended_period
   </sql>
 
     <sql id="Insert_Column_List">
@@ -34,7 +34,6 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             #{orderNo},#{kdtId},#{createTime},#{remainTime}
         </trim>
-
     </insert>
 
     <select id="getLastOrderSuccessLogByOrderNo" resultMap="BaseResultMap">
@@ -45,6 +44,13 @@
         WHERE order_no=#{orderNo} order by id desc limit 1;
     </select>
 
+    <select id="getTotalSuspendedPeriodByOrderNo" resultType="java.lang.Integer">
+      SELECT
+      count(suspended_period)
+      FROM
+      <include refid="tableName"/>
+      WHERE order_no=#{orderNo}
+    </select>
 
     <update id="updateFinishTimeByOrderNo">
         UPDATE
@@ -54,13 +60,5 @@
         </set>
         WHERE id = #{id} and order_no = #{orderNo}
     </update>
-
-    <select id="getTotalSuspendedPeriodByOrderNo" resultType="java.lang.Integer">
-        SELECT
-        count(suspended_period)
-        FROM
-        <include refid="tableName"/>
-        WHERE order_no=#{orderNo}
-    </select>
 
 </mapper>
