@@ -19,10 +19,14 @@ public interface DelayTaskDAO {
   int insert(DelayTaskDO delayTaskDO);
 
   /**
-   * 根据业务id及业务类型获取唯一任务记录
+   * 根据业务id及业务类型获取任务记录列表
+   *
+   * @param bizType 业务类型
+   * @param bizId 业务id
+   * @return
    */
-  List<DelayTaskDO> getTaskByBizIdAndBizType(@Param("bizId") String bizId,
-                                             @Param("bizType") int bizType);
+  List<DelayTaskDO> selectListByBizTypeAndBizId(@Param("bizType") int bizType,
+                                                @Param("bizId") String bizId);
 
 
   /**

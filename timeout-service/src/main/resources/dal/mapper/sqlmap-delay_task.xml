@@ -49,10 +49,10 @@
     </trim>
   </insert>
 
-  <select id="getTaskByBizIdAndBizType" resultMap="BaseResultMap">
+  <select id="selectListByBizTypeAndBizId" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
     FROM <include refid="tableName" />
-    WHERE biz_type=#{bizType} and biz_id=#{bizId}
+    WHERE biz_type = #{bizType} AND biz_id = #{bizId}
   </select>
 
   <select id="selectListWithTimeout" resultMap="BaseResultMap">

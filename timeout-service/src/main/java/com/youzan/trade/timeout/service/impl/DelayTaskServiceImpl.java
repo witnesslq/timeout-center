@@ -12,6 +12,7 @@ import com.youzan.trade.timeout.transfer.DelayTaskDataTransfer;
 import com.youzan.trade.util.LogUtils;
 import com.youzan.trade.util.TimeUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -165,8 +166,9 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   @Override
   public DelayTask getTaskByBizTypeAndBizId(int bizType, String bizId) {
     LogUtils.info(log, "根据业务类型和业务ID获取任务, bizType: {}, bizId: {}", bizType, bizId);
-    List<DelayTaskDO> delayTaskDOs = delayTaskDAO.getTaskByBizIdAndBizType(bizId, bizType);
-    if (delayTaskDOs != null && delayTaskDOs.size() > 0) {
+
+    List<DelayTaskDO> delayTaskDOs = delayTaskDAO.selectListByBizTypeAndBizId(bizType, bizId);
+    if (CollectionUtils.isNotEmpty(delayTaskDOs)) {
       return DelayTaskDataTransfer.transfer2TO(delayTaskDOs.get(0));
     }
     return null;
