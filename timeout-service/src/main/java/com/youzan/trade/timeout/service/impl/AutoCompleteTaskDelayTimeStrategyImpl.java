@@ -31,9 +31,9 @@ public class AutoCompleteTaskDelayTimeStrategyImpl extends AbstractOrderRelatedD
 
   @Override
   public int getInitialDelayTimeByOrderType(int bizType, int orderType) {
-    if(orderType== OrderType.PF.type()){
+    if (orderType == OrderType.PF.type()) {
       return pfOrderInitDelayTime;
-    }else {
+    } else {
       return normalOrderInitDelayTime;
     }
   }

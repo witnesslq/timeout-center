@@ -87,8 +87,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
         return true;
     }
     DelayTask task = delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(),
-                                                               order.getOrderNo()
-    );
+                                                               order.getOrderNo());
     if (task == null) {
       LogUtils.warn(log, "Task not exist, bizType={}, bizId={}", BizType.DELIVERED_ORDER.code(), order.getOrderNo());
       return true;
