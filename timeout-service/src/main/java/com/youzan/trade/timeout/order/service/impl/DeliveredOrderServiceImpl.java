@@ -60,6 +60,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
       } catch (Exception e) {
         LogUtils.error(log, "[DeliveredOrderTask]Save task failed.orderNo={}", order.getOrderNo(),
                        e);
+        return false;
       }
     } else {
       LogUtils.warn(log, "[DeliveredOrderTask]Abnormal order state={}.orderNo={}",
@@ -97,8 +98,6 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     if (null == order) {
       return false;
     }
-
-    //TODO Get order from db.
 
     if(!Objects.equals(OrderState.SENT.getState(), order.getOrderState())){
       return false;
