@@ -25,33 +25,42 @@
     order_no, kdt_id, create_time, remain_time
   </sql>
 
-  <insert id="insert">
-    INSERT INTO
-    <include refid="tableName"/>
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <include refid="Insert_Column_List"/>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      #{orderNo},#{kdtId},#{createTime},#{remainTime}
-    </trim>
-  </insert>
+    <insert id="insert">
+        INSERT INTO
+        <include refid="tableName"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="Insert_Column_List"/>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{orderNo},#{kdtId},#{createTime},#{remainTime}
+        </trim>
 
-  <select id="getLastOrderSuccessLogByOrderNo" resultMap="BaseResultMap">
-    SELECT
-    <include refid="Base_Column_List"/>
-    FROM
-    <include refid="tableName"/>
-    WHERE order_no = #{orderNo} ORDER BY id DESC limit 1;
-  </select>
+    </insert>
 
-  <update id="updateFinishTimeByOrderNo">
-    UPDATE
-    <include refid="tableName"/>
-    <set>
-      finish_time = #{finishTime},
-      suspended_period = #{suspendedPeriod}
-    </set>
-    WHERE id = #{id} AND order_no = #{orderNo}
-  </update>
+    <select id="getLastOrderSuccessLogByOrderNo" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tableName"/>
+        WHERE order_no=#{orderNo} order by create_time desc limit 1;
+    </select>
+
+
+    <update id="updateFinishTimeByOrderNo">
+        UPDATE
+        <include refid="tableName"/>
+        <set>
+            finish_time = #{finishTime},suspended_period=#{suspendedPeriod}
+        </set>
+        WHERE id = #{id} and order_no = #{orderNo}
+    </update>
+
+    <select id="getTotalSuspendedPeriodByOrderNo" resultType="java.lang.Integer">
+        SELECT
+        count(suspended_period)
+        FROM
+        <include refid="tableName"/>
+        WHERE order_no=#{orderNo}
+    </select>
 
 </mapper>
