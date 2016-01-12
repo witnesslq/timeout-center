@@ -99,8 +99,6 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
       return false;
     }
 
-    //TODO Get order from db.
-
     if(!Objects.equals(OrderState.SENT.getState(), order.getOrderState())){
       return false;
     }
