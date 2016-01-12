@@ -6,6 +6,7 @@ import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.util.TimeUtils;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -50,9 +51,30 @@ public class DelayTaskDAOTest extends BaseTest {
   }
 
   @Test
+  public void testSelectListWithBizTypeAndTimeout() throws Exception {
+    int bizType = 10;
+    Date timePoint = new Date(115, 7, 1);
+    int maxSize = 2;
+    List<DelayTaskDO> delayTaskDOs =
+        delayTaskDAO.selectListWithBizTypeAndTimeout(bizType, timePoint, maxSize);
+    Assert.assertEquals(2, delayTaskDOs.size());
+  }
+
+  @Test
   public void testSelectListWithMsgTimeout() {
     Date timePoint = new Date();
     List<DelayTaskDO> delayTaskDOList = delayTaskDAO.selectListWithMsgTimeout(timePoint);
+  }
+
+  @Test
+  public void testSelectListWithBizTypeAndMsgTimeout() throws Exception {
+    int bizType = 10;
+    Date timePoint = new Date(115, 7, 1);
+    int maxSize = 2;
+
+    List<DelayTaskDO> delayTaskDOs =
+        delayTaskDAO.selectListWithBizTypeAndMsgTimeout(bizType, timePoint, maxSize);
+    Assert.assertEquals(2, delayTaskDOs.size());
   }
 
   @Test
@@ -110,4 +132,6 @@ public class DelayTaskDAOTest extends BaseTest {
 
     int effectNum = delayTaskDAO.close(delayTaskDO);
   }
+
+
 }

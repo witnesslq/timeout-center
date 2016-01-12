@@ -30,9 +30,30 @@ public interface DelayTaskService {
   /**
    * 获取当前已经超时的任务
    *
-   * @return
+   * @return 任务列表
    */
   List<DelayTask> getListWithTimeoutCurrently();
+
+  /**
+   * 获取某个业务在某个时间点后已经超时的任务列表
+   * 按业务域区分
+   *
+   * @param bizType 业务类型
+   * @param timePoint 某个时间点
+   * @param maxSize 返回任务数的最大值
+   * @return 任务列表
+   */
+  List<DelayTask> getListWithBizTypeAndTimeout(int bizType, Date timePoint, int maxSize);
+
+  /**
+   * 获取某个业务当前已经超时的任务列表
+   * 按业务域区分
+   *
+   * @param bizType 业务类型
+   * @param maxSize 返回任务数的最大值
+   * @return 任务列表
+   */
+  List<DelayTask> getListWithBizTypeAndTimeoutCurrently(int bizType, int maxSize);
 
   /**
    * 获取某个时间点消息任务已经超时且没有完成的任务
@@ -48,6 +69,27 @@ public interface DelayTaskService {
    * @return 任务列表
    */
   List<DelayTask> getListWithMsgTimeoutCurrently();
+
+  /**
+   * 获取某个业务在某个时间点后消息任务已经超时且没有完成的任务列表
+   * 按业务域区分
+   *
+   * @param bizType 业务类型
+   * @param timePoint 某个时间点
+   * @param maxSize 返回任务数的最大值
+   * @return 任务列表
+   */
+  List<DelayTask> getListWithBizTypeAndMsgTimeout(int bizType, Date timePoint, int maxSize);
+
+  /**
+   * 获取某个业务当前消息任务已经超时且没有完成的任务列表
+   * 按业务域区分
+   *
+   * @param bizType 业务类型
+   * @param maxSize 返回任务数的最大值
+   * @return 任务列表
+   */
+  List<DelayTask> getListWithBizTypeAndMsgTimeoutCurrently(int bizType, int maxSize);
 
   /**
    * 执行成功, 关闭超时任务
@@ -110,5 +152,39 @@ public interface DelayTaskService {
    */
   boolean closeTaskByBizTypeAndBizId(int bizType, String bizId);
 
+  /**
+   * 根据业务类型和业务id获取唯一任务
+   *
+   * @param bizType 业务类型
+   * @param bizId 业务id
+   * @return 延时任务
+   */
+  DelayTask getTaskByBizTypeAndBizId(int bizType, String bizId);
+
+  /**
+   * 中断任务
+   *
+   * @param task 具体任务
+   * @return
+   */
+  boolean suspendTask(DelayTask task);
+
+  /**
+   * 恢复任务
+   *
+   * @param task 具体任务
+   * @param suspendTime
+   * @return
+   */
+  boolean resumeTask(DelayTask task, long suspendTime);
+
+  /**
+   * 延长任务时间
+   *
+   * @param task 具体任务
+   * @param expendTime 延长时间
+   * @return
+   */
+  boolean enlargeTask(DelayTask task, int expendTime);
 
 }

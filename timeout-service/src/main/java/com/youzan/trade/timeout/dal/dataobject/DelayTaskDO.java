@@ -17,6 +17,8 @@ public class DelayTaskDO {
 
   private Integer bizState;
 
+  private Integer bizShardKey;
+
   private Integer status;
 
   private Integer closeReason;
@@ -34,4 +36,6 @@ public class DelayTaskDO {
   private Date createTime;
 
   private Date updateTime;
+
+  private Date suspendTime;
 }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean name="createSafeMessageSubscriber"
+          class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
+        <property name="nsqHost" value="${nsq.host}"/>
+        <property name="nsqPort" value="${nsq.port}"/>
+        <property name="nsqTopic" value="${nsq.topic.create}"/>
+        <property name="nsqChannel" value="${nsq.channel.create}"/>
+        <property name="processor" ref="safeProcessorImpl"/>
+    </bean>
+
+
+    <bean name="updateSafeMessageSubscriber"
+          class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
+        <property name="nsqHost" value="${nsq.host}"/>
+        <property name="nsqPort" value="${nsq.port}"/>
+        <property name="nsqTopic" value="${nsq.topic.update}"/>
+        <property name="nsqChannel" value="${nsq.channel.update}"/>
+        <property name="processor" ref="safeProcessorImpl"/>
+    </bean>
+
+    <!--监听维权记录【创建】，以便中断/恢复自动完成倒计时-->
+    <!-- service实际行为是区分维权状态处于哪种状态、再判断是中断还是恢复操作 -->
+    <bean name="dispatchingOrderTaskOnSafeCreateSubscriber"
+          class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
+        <property name="nsqHost" value="${nsq.host}"/>
+        <property name="nsqPort" value="${nsq.port}"/>
+        <property name="nsqTopic" value="${nsq.topic.create}"/>
+        <property name="nsqChannel" value="${nsq.channel.deliveredorder.safe.create}"/>
+        <property name="processor" ref="dispatchingOrderTaskOnSafeCreateProcessorImpl"/>
+    </bean>
+
+    <!--监听维权记录【更新】，以便中断/恢复自动完成倒计时-->
+    <!-- service实际行为是区分维权状态处于哪种状态、再判断是中断还是恢复操作 -->
+    <bean name="dispatchingOrderTaskOnSafeUpdateSubscriber"
+          class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
+        <property name="nsqHost" value="${nsq.host}"/>
+        <property name="nsqPort" value="${nsq.port}"/>
+        <property name="nsqTopic" value="${nsq.topic.update}"/>
+        <property name="nsqChannel" value="${nsq.channel.deliveredorder.safe.update}"/>
+        <property name="processor" ref="dispatchingOrderTaskOnSafeUpdateProcessorImpl"/>
+    </bean>
+
+    <!--监听order表。对于已发货订单添加自动完成倒计时任务-->
+    <bean name="deliveredOrderOnOrderSubscriber"
+          class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
+        <property name="nsqHost" value="${nsq.host}"/>
+        <property name="nsqPort" value="${nsq.port}"/>
+        <property name="nsqTopic" value="${nsq.topic.deliveredorder}"/>
+        <property name="nsqChannel" value="${nsq.channel.deliveredorder}"/>
+        <property name="processor" ref="deliveredOrderOnOrderProcessorImpl"/>
+    </bean>
+
+    <!--监听order表。对于订单关闭，直接中断任务-->
+    <bean name="orderClosedSubscriber"
+          class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
+        <property name="nsqHost" value="${nsq.host}"/>
+        <property name="nsqPort" value="${nsq.port}"/>
+        <property name="nsqTopic" value="${nsq.topic.orderclosed}"/>
+        <property name="nsqChannel" value="${nsq.channel.orderclosed}"/>
+        <property name="processor" ref="orderClosedProcessorImpl"/>
+    </bean>
+
+    <!--监听order表。对于订单完成，直接中断任务-->
+    <bean name="orderFinishedSubscriber"
+          class="com.youzan.trade.common.nsq.NSQSubConnectorBuilder" init-method="buildAndRun">
+        <property name="nsqHost" value="${nsq.host}"/>
+        <property name="nsqPort" value="${nsq.port}"/>
+        <property name="nsqTopic" value="${nsq.topic.orderfinished}"/>
+        <property name="nsqChannel" value="${nsq.channel.orderfinished}"/>
+        <property name="processor" ref="orderFinishedProcessorImpl"/>
+    </bean>
+
+
+
+</beans>

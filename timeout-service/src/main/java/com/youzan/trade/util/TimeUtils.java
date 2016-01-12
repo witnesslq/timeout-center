@@ -8,7 +8,6 @@ import java.util.Date;
  */
 public class TimeUtils {
 
-
   public static int currentInSeconds() {
     long current = System.currentTimeMillis();
     return (int)(current/1000);
@@ -20,5 +19,10 @@ public class TimeUtils {
 
   public static Date currentDate() {
     return Calendar.getInstance().getTime();
+  }
+
+  public static Date plusMilliSecond(Date date, long milliSecondsToPlus) {
+    long milliseconds = date.getTime() + milliSecondsToPlus;
+    return new Date(milliseconds);
   }
 }

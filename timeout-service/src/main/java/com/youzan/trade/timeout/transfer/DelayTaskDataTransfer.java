@@ -23,6 +23,7 @@ public class DelayTaskDataTransfer {
     delayTask.setBizType(delayTaskDO.getBizType());
     delayTask.setBizId(delayTaskDO.getBizId());
     delayTask.setBizState(delayTaskDO.getBizState());
+    delayTask.setBizShardKey(delayTaskDO.getBizShardKey());
     delayTask.setStatus(delayTaskDO.getStatus());
     delayTask.setCloseReason(delayTaskDO.getCloseReason());
     delayTask.setDelayStartTime(delayTaskDO.getDelayStartTime());
@@ -32,6 +33,7 @@ public class DelayTaskDataTransfer {
     delayTask.setMsgEndTime(delayTaskDO.getMsgEndTime());
     delayTask.setCreateTime(delayTaskDO.getCreateTime());
     delayTask.setUpdateTime(delayTaskDO.getUpdateTime());
+    delayTask.setSuspendTime(delayTaskDO.getSuspendTime());
     return delayTask;
   }
 
@@ -44,6 +46,7 @@ public class DelayTaskDataTransfer {
     delayTaskDO.setBizType(delayTask.getBizType());
     delayTaskDO.setBizId(delayTask.getBizId());
     delayTaskDO.setBizState(delayTask.getBizState());
+    delayTaskDO.setBizShardKey(delayTask.getBizShardKey());
     delayTaskDO.setStatus(delayTask.getStatus());
     delayTaskDO.setCloseReason(delayTask.getCloseReason());
     delayTaskDO.setDelayStartTime(delayTask.getDelayStartTime());
@@ -53,6 +56,7 @@ public class DelayTaskDataTransfer {
     delayTaskDO.setMsgEndTime(delayTask.getMsgEndTime());
     delayTaskDO.setCreateTime(delayTask.getCreateTime());
     delayTaskDO.setUpdateTime(delayTask.getUpdateTime());
+    delayTaskDO.setSuspendTime(delayTask.getSuspendTime());
     return delayTaskDO;
   }
 

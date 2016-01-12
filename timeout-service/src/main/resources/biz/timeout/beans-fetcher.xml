@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- 维权的延时任务获取者-->
+  <bean id="safeTaskFetcher" class="com.youzan.trade.timeout.fetcher.impl.SimpleTaskFetcher">
+    <!-- Spring automatically attempt to match the string property value to a constant on the enum class-->
+    <property name="bizType" value="SAFE" />
+    <property name="maxSize" value="${safe.scan.once.max.size}" />
+  </bean>
+
+  <!-- 维权的延时消息任务获取者-->
+  <bean id="safeMsgTaskFetcher" class="com.youzan.trade.timeout.fetcher.impl.SimpleMsgTaskFetcher">
+    <property name="bizType" value="SAFE" />
+    <property name="maxSize" value="${safe.msg.scan.once.max.size}" />
+  </bean>
+
+  <!-- 订单已发货的延时任务获取者-->
+  <bean id="orderDeliveredTaskFetcher" class="com.youzan.trade.timeout.fetcher.impl.SimpleTaskFetcher">
+    <property name="bizType" value="DELIVERED_ORDER" />
+    <property name="maxSize" value="${order.delivered.scan.once.max.size}" />
+  </bean>
+
+  <!-- 订单已发货的延时消息任务获取者-->
+  <bean id="orderDeliveredMsgTaskFetcher" class="com.youzan.trade.timeout.fetcher.impl.TimeRelatedTaskFetcher">
+    <property name="bizType" value="DELIVERED_ORDER" />
+    <property name="maxSize" value="${order.delivered.msg.scan.once.max.size}" />
+  </bean>
+
+</beans>

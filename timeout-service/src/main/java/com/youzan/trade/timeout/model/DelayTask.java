@@ -21,6 +21,8 @@ public class DelayTask {
 
   private Integer bizState;
 
+  private Integer bizShardKey;
+
   private Integer status;
 
   private Integer closeReason;
@@ -28,6 +30,8 @@ public class DelayTask {
   private Date delayStartTime;
 
   private Date delayEndTime;
+
+  private Date suspendTime;
 
   private Integer delayTimes;
 

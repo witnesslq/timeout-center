@@ -8,12 +8,12 @@ import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.SafeState;
 import com.youzan.trade.timeout.constants.SafeType;
 import com.youzan.trade.timeout.constants.TaskStatus;
-import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.service.DelayTaskService;
 import com.youzan.trade.timeout.service.DelayTimeStrategy;
 import com.youzan.trade.timeout.source.Processor;
+import com.youzan.trade.util.LogUtils;
 import com.youzan.trade.util.TimeUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -21,14 +21,19 @@ import com.alibaba.fastjson.JSON;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 维权消息处理器
  *
  * @author apple created at: 15/10/28 上午10:02
  */
-@Component
+@Slf4j
+@Component("safeProcessorImpl")
 public class SafeProcessorImpl implements Processor {
 
   @Resource
@@ -52,58 +57,38 @@ public class SafeProcessorImpl implements Processor {
     Safe safe = JSON.parseObject(message, Safe.class);
 
     if (safe == null) {
+      LogUtils.error(log, "Invalid safe message={}", message);
       return true;
     }
 
+    // 过滤不需要的维权任务
     if (safe.getDelayState() == null ||
         safe.getDelayState() == DelayState.NOTNEEDED.code()) {
       return true;
     }
 
-    // 我要退款，但不退货
     if (SafeType.REFUND_ONLY.code() == safe.getSafeType()) {
+      switch (SafeState.getSafeStateByCode(safe.getState())) {
+        case BUYER_START          : return processOnStart(safe);          // 201
+        case BUYER_RESTART        : return processOnRestart(safe);        // 202
+        case SELLER_REJECTED      : return processOnRestart(safe);        // 203
+        case INVOLVED             : return processOnClose(safe);          // 204
+        case SELLER_ACCEPTED      : return processOnClose(safe);          // 205
+        case CLOSED               : return processOnClose(safe);          // 249
+        case FINISHED             : return processOnClose(safe);          // 250
 
-      // 201
-      if (SafeState.BUYER_START.code() == safe.getState()) {
-        return processOnStart(safe);
       }
-
-      // 203 + 202
-      if (SafeState.SELLER_REJECTED.code() == safe.getState()
-          || SafeState.BUYER_RESTART.code() == safe.getState()) {
-        return processOnRestart(safe);
-      }
-
-      // 205 + 204 + 249 + 250
-      if (SafeState.SELLER_ACCEPTED.code() == safe.getState()
-          || SafeState.INVOLVED.code() == safe.getState()
-          || SafeState.CLOSED.code()   == safe.getState()
-          || SafeState.FINISHED.code() == safe.getState()) {
-        return processOnClose(safe);
-      }
-    }
-
-    if (SafeType.REFUND_RETURN.code() == safe.getSafeType()) {
-
-      // 201
-      if (SafeState.BUYER_START.code() == safe.getState()) {
-        return processOnStart(safe);
-      }
-
-      // 205 + 203 + 202 + 206 + 207
-      if (SafeState.SELLER_ACCEPTED.code() == safe.getState()
-          || SafeState.SELLER_REJECTED.code() == safe.getState()
-          || SafeState.BUYER_RESTART.code() == safe.getState()
-          || SafeState.BUYER_SENT.code() == safe.getState()
-          || SafeState.SELLER_NOT_RECEIVED.code() == safe.getState()) {
-        return processOnRestart(safe);
-      }
-
-      // 204 + 249 + 250
-      if (SafeState.INVOLVED.code() == safe.getState()
-          || SafeState.CLOSED.code() == safe.getState()
-          || SafeState.FINISHED.code() == safe.getState()) {
-        return processOnClose(safe);
+    } else if (SafeType.REFUND_RETURN.code() == safe.getSafeType()) {
+      switch (SafeState.getSafeStateByCode(safe.getState())) {
+        case BUYER_START          : return processOnStart(safe);          // 201
+        case BUYER_RESTART        : return processOnRestart(safe);        // 202
+        case SELLER_REJECTED      : return processOnRestart(safe);        // 203
+        case INVOLVED             : return processOnClose(safe);          // 204
+        case SELLER_ACCEPTED      : return processOnRestart(safe);        // 205
+        case BUYER_SENT           : return processOnRestart(safe);        // 206
+        case SELLER_NOT_RECEIVED  : return processOnRestart(safe);        // 207
+        case CLOSED               : return processOnClose(safe);          // 249
+        case FINISHED             : return processOnClose(safe);          // 250
       }
     }
 
@@ -118,14 +103,12 @@ public class SafeProcessorImpl implements Processor {
     delayTask.setStatus(TaskStatus.ACTIVE.code());
     delayTask.setCloseReason(CloseReason.NOT_CLOSED.code());
     delayTask.setDelayStartTime(TimeUtils.getDateBySeconds(safe.getRecordTime()));
-    delayTask.setDelayEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + delayTimeStrategy
-        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
+    delayTask.setDelayEndTime(calDelayEndTime(safe));
     delayTask.setDelayTimes(Constants.INITIAL_DELAY_TIMES);
 
     if (safe.isNeedMsg()) {
       delayTask.setMsgStatus(MsgStatus.ACTIVE.code());
-      delayTask.setMsgEndTime(TimeUtils.getDateBySeconds(safe.getRecordTime() + msgDelayTimeStrategy
-          .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState())));
+      delayTask.setMsgEndTime(calMsgEndTime(safe));
     } else {
       delayTask.setMsgStatus(MsgStatus.NONE.code());
       delayTask.setMsgEndTime(TimeUtils.getDateBySeconds(Constants.INITIAL_MSG_END_TIME));
@@ -134,6 +117,16 @@ public class SafeProcessorImpl implements Processor {
     delayTask.setCreateTime(TimeUtils.getDateBySeconds(TimeUtils.currentInSeconds()));
 
     return delayTaskService.save(delayTask);
+  }
+
+  private Date calDelayEndTime(Safe safe) {
+    return TimeUtils.getDateBySeconds(safe.getRecordTime() + delayTimeStrategy
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
+  }
+
+  private Date calMsgEndTime(Safe safe) {
+    return TimeUtils.getDateBySeconds(safe.getRecordTime() + msgDelayTimeStrategy
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
   }
 
   private boolean processOnClose(Safe safe) {
