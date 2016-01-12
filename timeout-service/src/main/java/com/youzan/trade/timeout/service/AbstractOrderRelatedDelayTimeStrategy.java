@@ -1,7 +1,5 @@
 package com.youzan.trade.timeout.service;
 
-import com.youzan.trade.timeout.service.DelayTimeStrategy;
-
 /**
  * @author Created by liwenjia@youzan.com on 2016/01/03 .
  */

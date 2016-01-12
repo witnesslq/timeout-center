@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author apple created at: 16/1/5 下午7:44
  */
-public class TimeRelatedTaskFetched extends AbstractTaskFetcher {
+public class TimeRelatedTaskFetcher extends AbstractTaskFetcher {
 
   /**
    * 起始时间,从9点到21点
