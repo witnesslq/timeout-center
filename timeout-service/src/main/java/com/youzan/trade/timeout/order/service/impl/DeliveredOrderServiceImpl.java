@@ -60,6 +60,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
       } catch (Exception e) {
         LogUtils.error(log, "[DeliveredOrderTask]Save task failed.orderNo={}", order.getOrderNo(),
                        e);
+        return false;
       }
     } else {
       LogUtils.warn(log, "[DeliveredOrderTask]Abnormal order state={}.orderNo={}",
