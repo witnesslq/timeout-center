@@ -55,12 +55,4 @@
         WHERE id = #{id} and order_no = #{orderNo}
     </update>
 
-    <select id="getTotalSuspendedPeriodByOrderNo" resultType="java.lang.Integer">
-        SELECT
-        count(suspended_period)
-        FROM
-        <include refid="tableName"/>
-        WHERE order_no=#{orderNo}
-    </select>
-
 </mapper>
