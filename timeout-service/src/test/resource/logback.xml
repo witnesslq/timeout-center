@@ -1,33 +1,128 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<configuration debug="false">
+<configuration scan="true" scanPeriod=" 5 seconds" debug="false">
+    <jmxConfigurator/>
 
-    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>%d{yyyy-MM-dd  HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</Pattern>
+    <property name="LOG_PATH" value="${trade.log.home}"/>
+    <property name="APP_NAME" value="timeout-center" />
+
+    <!--业务日志输出格式-->
+    <property name="BUSINESS_OUTPUT_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{15} - %msg%n" />
+
+    <!--框架日志输出格式-->
+    <property name="FW_OUTPUT_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{56} - %msg%n" />
+
+    <!--TRACK日志输出格式-->
+    <property name="TRACK_OUTPUT_PATTERN"
+              value="%X{TRACE_ID} %X{ORDER_NO} %logger{15} - %msg%n" />
+
+    <!--日志文件保留最大天数-->
+    <property name="MAXDAY" value="10"/>
+
+    <!--日志文件滚动阈值-->
+    <property name="MAXSIZE" value="100MB"/>
+
+    <!-- ************* appender配置 ****************** -->
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${OUTPUT_PATTERN}</pattern>
         </encoder>
     </appender>
 
     <appender name="BUSINESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>trade.log</File>
+        <File>${LOG_PATH}/timeout-center.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>trade-%d{yyyy-MM-dd}-%i.log.gz
+            <fileNamePattern>${LOG_PATH}/timeout-center-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>${MAXSIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAXDAY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${BUSINESS_OUTPUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/sql.log</File>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_PATH}/sql-%d{yyyy-MM-dd}-%i.log.gz
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- or whenever the file size reaches 100MB -->
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
-            <maxHistory>30</maxHistory>
+            <maxHistory>${MAXDAY}</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level %logger{15} - %msg%n</pattern>
+            <pattern>${FW_OUTPUT_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <logger name="com.youzan.trade.timeout.dal" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="BUSINESS"/>
+
+    <appender name="ROOT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/root.log</File>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_PATH}/root-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAXDAY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FW_OUTPUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+
+
+    <!--上传日志到日志平台-->
+    <appender name="ERROR_ALARM" class="com.youzan.track.appender.TrackAppender">
+        <app>${application.name}</app> <!--timeout_center-->
+        <type>trade-soa</type>
+        <pattern>${TRACK_OUTPUT_PATTERN}</pattern>
+        <host>${track.log.addr}</host>
+    </appender>
+
+    <!--For test-->
+    <appender name="BUSINESS_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/timeout-center-err.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_PATH}/timeout-center-err-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>${MAXSIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAXDAY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${BUSINESS_OUTPUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    <!--For test-->
+
+    <!-- ************* logger配置 ****************** -->
+
+    <logger name="com.youzan.trade">
+        <level value="ERROR"/>
+        <appender-ref ref="BUSINESS_ERROR"/>
+        <!--<appender-ref ref="ERROR_ALARM"/>-->
     </logger>
 
     <logger name="com.youzan.trade" additivity="false">
@@ -35,13 +130,26 @@
         <appender-ref ref="BUSINESS"/>
     </logger>
 
-    <logger name="com.youzan.nsq.client" additivity="false">
-        <level value="DEBUG"/>
+    <logger name="druid.sql.Statement" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="SQL"/>
+    </logger>
+
+    <!--<logger name="com.youzan.platform.bootstrap.rest.extension.RestExceptionHandler"-->
+    <logger name="com.youzan.platform.bootstrap.rest.extension.ResponseHandler"
+            additivity="false">
+        <level value="ERROR"/>
+        <appender-ref ref="ERROR_ALARM"/>
         <appender-ref ref="BUSINESS"/>
     </logger>
-    <root>
-        <level value="INFO"/>
-        <appender-ref ref="consoleAppender"/>
+
+    <root level="${trade.log.level}">
+        <appender-ref ref="ROOT"/>
     </root>
 
+    <appender name="trackError" class="com.youzan.track.appender.TrackAppender">
+       <app>${application.name}</app>
+       <type>normal logs</type>
+       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{56} - %msg%n</pattern>
+    </appender>
 </configuration>

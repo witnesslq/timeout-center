@@ -66,6 +66,12 @@
             </dependency>
 
 
+            <!-- Monitor Dependency -->
+            <dependency>
+                <groupId>com.youzan.platform</groupId>
+                <artifactId>track-appender</artifactId>
+                <version>0.0.9-SNAPSHOT</version>
+            </dependency>
             <!-- apache commons -->
             <dependency>
                 <groupId>commons-lang</groupId>
