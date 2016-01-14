@@ -27,6 +27,16 @@
       <groupId>com.youzan.platform</groupId>
       <artifactId>bootstrap</artifactId>
     </dependency>
+    <!-- internal dependency -->
+    <dependency>
+      <groupId>com.youzan.trade</groupId>
+      <artifactId>timeout-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.youzan</groupId>
+      <artifactId>common-model</artifactId>
+    </dependency>
+
     <!-- apache commons -->
     <dependency>
       <groupId>commons-lang</groupId>
