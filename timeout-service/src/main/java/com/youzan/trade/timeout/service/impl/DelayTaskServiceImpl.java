@@ -225,7 +225,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
   @Override
   public Integer increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId,
-                                                       int incrementInDays) {
+                                                       int toDelaySeconds) {
     LogUtils.info(log, "根据业务类型和业务id延长任务到期时间, bizType: {}, bizId: {}", bizType, bizId);
 
     DelayTask delayTask = getTaskByBizTypeAndBizId(bizType, bizId);
@@ -233,10 +233,9 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
       return null;
     }
-    Integer increasedDelayEndTime = calIncreasedDelayEndTime(incrementInDays, delayTask);
+    Integer increasedDelayEndTime = calIncreasedDelayEndTime(toDelaySeconds, delayTask);
     // 因为bizType + bizId不构成唯一索引
-    if (delayTaskDAO.updateDelayEndTime(bizType, bizId,
-                                        TimeConstants.ONE_DAY_IN_SECONDS * incrementInDays,
+    if (delayTaskDAO.updateDelayEndTime(bizType, bizId, toDelaySeconds,
                                         TimeUtils.currentDate()) > 0) {
       return increasedDelayEndTime;
     } else {
@@ -265,8 +264,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   private int calIncreasedDelayEndTime(int incrementInDays, DelayTask delayTask) {
-    return (int) delayTask.getDelayEndTime().getTime() / 1000
-     + TimeConstants.ONE_DAY_IN_SECONDS * incrementInDays;
+    return (int) delayTask.getDelayEndTime().getTime() / 1000 + incrementInDays;
   }
 
   private boolean refreshEndTime(DelayTask task, long suspendedTime) {

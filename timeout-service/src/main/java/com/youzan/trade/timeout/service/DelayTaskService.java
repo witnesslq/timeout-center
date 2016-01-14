@@ -183,8 +183,8 @@ public interface DelayTaskService {
    * 根据业务类型和业务id增加任务到期时间
    *  @param bizType 业务类型
    * @param bizId 业务id
-   * @param incrementInDays 延长的天数
+   * @param toDelaySeconds 延长的秒数
    */
-  Integer increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId, int incrementInDays);
+  Integer increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId, int toDelaySeconds);
 
 }

@@ -25,4 +25,8 @@ public class TimeUtils {
     long milliseconds = date.getTime() + milliSecondsToPlus;
     return new Date(milliseconds);
   }
+
+  public static int getSecondFromDate(Date date){
+    return (int)date.getTime()/1000;
+  }
 }

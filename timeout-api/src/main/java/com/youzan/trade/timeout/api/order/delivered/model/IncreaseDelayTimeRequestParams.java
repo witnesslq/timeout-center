@@ -1,7 +1,5 @@
 package com.youzan.trade.timeout.api.order.delivered.model;
 
-import java.io.Serializable;
-
 import lombok.Data;
 
 /**
@@ -12,12 +10,9 @@ import lombok.Data;
  * @author apple created at: 16/1/14 下午12:15
  */
 @Data
-public class DelayParams implements Serializable {
+public class IncreaseDelayTimeRequestParams extends DelayParams {
 
-  private static final long serialVersionUID = 7552235130865273546L;
-
-  private String bizId;
-
-  private Integer bizShardKey;
+  /***/
+  private Integer delayPeriod;
 
 }

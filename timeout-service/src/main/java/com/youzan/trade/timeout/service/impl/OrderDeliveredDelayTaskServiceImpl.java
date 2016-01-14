@@ -4,11 +4,17 @@ import com.youzan.api.common.response.CommonResultCode;
 import com.youzan.api.common.response.PlainResult;
 import com.youzan.trade.timeout.api.order.delivered.OrderDeliveredDelayTaskService;
 import com.youzan.trade.timeout.api.order.delivered.model.DelayParams;
+import com.youzan.trade.timeout.api.order.delivered.model.IncreaseDelayTimeRequestParams;
 import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.CloseReason;
+import com.youzan.trade.timeout.dal.dao.SellerOrderDAO;
 import com.youzan.trade.timeout.model.DelayTask;
+import com.youzan.trade.timeout.model.Order;
+import com.youzan.trade.timeout.service.AbstractOrderRelatedDelayTimeStrategy;
 import com.youzan.trade.timeout.service.DelayTaskService;
+import com.youzan.trade.timeout.service.OrderService;
 import com.youzan.trade.util.LogUtils;
+import com.youzan.trade.util.TimeUtils;
 
 import com.alibaba.dubbo.config.annotation.Service;
 
@@ -34,14 +40,18 @@ public class OrderDeliveredDelayTaskServiceImpl implements OrderDeliveredDelayTa
   @Resource
   private DelayTaskService delayTaskService;
 
-  private int defaultIncrementInDays = 2;
+  @Resource(name = "autoCompleteTaskDelayTimeStrategyImpl")
+  private AbstractOrderRelatedDelayTimeStrategy autoCompleteTaskDelayTimeStrategy;
+
+  @Resource
+  private OrderService orderService;
 
   private int bizType = BizType.DELIVERED_ORDER.code();
 
   @POST
   @Path("delay/increase")
   @Override
-  public PlainResult<Integer> increaseDelayEndTime(DelayParams delayParams) {
+  public PlainResult<Integer> increaseDelayEndTime(IncreaseDelayTimeRequestParams delayParams) {
     LogUtils.info(log, "订单已发货的延时任务, 延长任务到期时间, 参数: {}", delayParams);
 
     PlainResult<Integer> baseResult = new PlainResult<>();
@@ -51,7 +61,7 @@ public class OrderDeliveredDelayTaskServiceImpl implements OrderDeliveredDelayTa
     try {
       Integer result =
           delayTaskService
-              .increaseDelayEndTimeByBizTypeAndBizId(bizType, orderNo, defaultIncrementInDays);
+              .increaseDelayEndTimeByBizTypeAndBizId(bizType, orderNo, delayParams.getDelayPeriod());
       if (result != null && result > 0) {
         // 更新数据库不成功,且不抛异常,暂时按异常处理
         LogUtils.info(log, "[SUCC]订单已发货的延时任务, 延长任务到期时间, 执行成功");
@@ -98,6 +108,44 @@ public class OrderDeliveredDelayTaskServiceImpl implements OrderDeliveredDelayTa
       plainResult.setData(result);
     } catch (Exception e) {
       LogUtils.error(log, "[FAIL]订单已发货的延时任务, 延长任务到期时间, 发生异常", e);
+      plainResult.setError(CommonResultCode.EXCEPTION, e.getMessage());
+    }
+
+    return plainResult;
+  }
+
+  @POST
+  @Path("delay/getEndTime")
+  @Override
+  public PlainResult<Integer> getEndTime(DelayParams delayParams) {
+    LogUtils.info(log, "订单已发货的延时任务, 获取自动完成时间, 参数: {}", delayParams);
+
+    PlainResult<Integer> plainResult = new PlainResult<>();
+    plainResult.setCode("0");//reset
+    String orderNo = delayParams.getBizId();
+    Integer kdtId = delayParams.getBizShardKey();
+
+    if(StringUtils.isBlank(orderNo) || kdtId==null || kdtId<=0){
+      LogUtils.error(log, "[GetEndTime]BizId/KdtId should not be null.");
+      plainResult.setError(CommonResultCode.ILLEGAL_PARAM);
+      return plainResult;
+    }
+
+    try {
+      DelayTask delayTask = delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(),orderNo);
+      if(delayTask!=null && delayTask.getDelayEndTime()!=null){
+        plainResult.setData(TimeUtils.getSecondFromDate(delayTask.getDelayEndTime()));
+      }else{
+        //获取默认时间配置
+        Order order = orderService.getOrderByOrderNoAndKdtId(orderNo,kdtId);
+        if(order==null){
+          LogUtils.error(log,"[GetEndTime]Order not found.orderNo={}",orderNo);
+        }
+        Integer defaultDelayPeriod = autoCompleteTaskDelayTimeStrategy.getInitialDelayTimeByOrderType(BizType.DELIVERED_ORDER.code(),order.getOrderType());
+        plainResult.setData(defaultDelayPeriod);
+      }
+    } catch (Exception e) {
+      LogUtils.error(log, "[FAIL]订单已发货的延时任务, 获取自动完成时间, 发生异常", e);
       plainResult.setError(CommonResultCode.EXCEPTION, e.getMessage());
     }
 
