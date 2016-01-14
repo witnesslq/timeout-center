@@ -133,9 +133,9 @@
         <appender-ref ref="ROOT"/>
     </root>
 
-    <appender name="trackError" class="com.youzan.track.appender.TrackAppender">
-       <app>${application.name}</app>
-       <type>normal logs</type>
-       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{56} - %msg%n</pattern>
-    </appender>
+    <!--<appender name="trackError" class="com.youzan.track.appender.TrackAppender">-->
+    <!--   <app>${application.name}</app>-->
+    <!--   <type>normal logs</type>-->
+    <!--   <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{56} - %msg%n</pattern>-->
+    <!--</appender>-->
 </configuration>

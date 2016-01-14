@@ -67,7 +67,7 @@ SERVICE_OPTS="-Dprops.path=${conf_path} -Dservice.configurationFile=$service_con
 if [ -e $service_configurationFile ]
 then
 
-	MAIN_CLASS="com.youzan.trade.timeout.executor.Main"
+	MAIN_CLASS="com.youzan.trade.timeout.Main"
 
 	for i in $base/lib/*;
 		do CLASSPATH=$i:"$CLASSPATH";

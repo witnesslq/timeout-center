@@ -48,8 +48,6 @@ public class NSQSubConnectorBuilder {
       if (NSQEvent.READ.equals(event.getType())) {
         String message = event.getMessage();
 
-        LogUtils.info(log, "[{}-{}]receive create message: {}", nsqTopic, nsqChannel, message);
-
         if (!processor.process(message)) {
           //处理失败抛出异常，NSQClient捕获后会将消息重新添加到NSQ中便于下次重新消费处理
           throw new Exception("consuming message failed.");
