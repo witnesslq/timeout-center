@@ -179,12 +179,11 @@ public interface DelayTaskService {
   boolean resumeTask(DelayTask task, long suspendTime);
 
   /**
-   * 延长任务时间
-   *
-   * @param task 具体任务
-   * @param expendTime 延长时间
-   * @return
+   * 根据业务类型和业务id增加任务到期时间
+   *  @param bizType 业务类型
+   * @param bizId 业务id
+   * @param incrementInDays 延长的天数
    */
-  boolean enlargeTask(DelayTask task, int expendTime);
+  boolean increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId, int incrementInDays);
 
 }

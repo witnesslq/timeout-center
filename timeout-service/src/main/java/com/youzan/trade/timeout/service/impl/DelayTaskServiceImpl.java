@@ -3,6 +3,7 @@ package com.youzan.trade.timeout.service.impl;
 import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.TaskStatus;
+import com.youzan.trade.timeout.constants.TimeConstants;
 import com.youzan.trade.timeout.dal.dao.DelayTaskDAO;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.timeout.model.DelayTask;
@@ -221,6 +222,16 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     return false;
   }
 
+  @Override
+  public boolean increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId,
+                                                       int incrementInDays) {
+
+    // 因为bizType + bizId不构成唯一索引
+    return delayTaskDAO.updateDelayEndTime(bizType, bizId,
+                                    TimeConstants.ONE_DAY_IN_SECONDS * incrementInDays,
+                                    TimeUtils.currentDate()) > 0;
+  }
+
   private boolean refreshEndTime(DelayTask task, long suspendedTime) {
     Date endTime = task.getDelayEndTime();
     Date msgEndTime = task.getMsgEndTime();
@@ -243,11 +254,6 @@ public class DelayTaskServiceImpl implements DelayTaskService {
    */
   private boolean isResumable(DelayTask task) {
     return task.getStatus() == TaskStatus.SUSPENDED.code();
-  }
-
-  @Override
-  public boolean enlargeTask(DelayTask task, int expendTime) {
-    return false;
   }
 
 

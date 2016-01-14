@@ -106,4 +106,18 @@ public interface DelayTaskDAO {
                              @Param("updateTime") Date updateTime);
 
   int closeTaskAhead(DelayTaskDO delayTaskDO);
+
+  /**
+   * 增加delay_end_time
+   *
+   * @param bizType 业务类型
+   * @param bizId 业务ID
+   * @param delayTimeIncrement delay_end_time的增加量,以秒为单位
+   * @param updateTime 更新时间
+   * @return 受影响的行数
+   */
+  int updateDelayEndTime(@Param("bizType") int bizType,
+                    @Param("bizId") String bizId,
+                    @Param("delayTimeIncrement") int delayTimeIncrement,
+                    @Param("updateTime") Date updateTime);
 }

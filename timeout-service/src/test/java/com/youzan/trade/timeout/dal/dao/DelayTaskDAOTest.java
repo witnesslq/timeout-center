@@ -133,5 +133,14 @@ public class DelayTaskDAOTest extends BaseTest {
     int effectNum = delayTaskDAO.close(delayTaskDO);
   }
 
+  @Test
+  public void testUpdateDelayEndTime() throws Exception {
+    int bizType = 26;
+    String bizId = "E20160111191049094573401";
+    int delayTimeIncrement = 5 * 60;
+    Date updateTime = new Date();
 
+    int effectNum = delayTaskDAO.updateDelayEndTime(bizType, bizId, delayTimeIncrement, updateTime);
+    Assert.assertEquals(1, effectNum);
+  }
 }
