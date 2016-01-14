@@ -4,7 +4,6 @@ import com.youzan.trade.timeout.dal.dao.DelayTaskLockDAO;
 import com.youzan.trade.timeout.service.DelayTaskLockService;
 import com.youzan.trade.util.TimeUtils;
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -13,7 +12,7 @@ import javax.annotation.Resource;
  * @author apple created at: 15/11/5 下午5:38
  */
 @Service
-public class DelayTaskLockServiceImpl implements DelayTaskLockService {
+public class DelayTaskLockServiceImpl implements DelayTaskLockService{
 
   private static final int LOCK_MAX_INTERNAL_IN_MINUTES = 30;
 

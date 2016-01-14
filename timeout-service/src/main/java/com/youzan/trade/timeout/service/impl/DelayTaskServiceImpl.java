@@ -91,13 +91,13 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
-  public boolean closeOnSuccess(int taskId) {
+  public boolean closeOnSuccess(int taskId,CloseReason closeReason) {
     LogUtils.info(log, "超时任务执行成功, 关闭超时任务, taskId: {}", taskId);
 
     DelayTaskDO delayTaskDO = new DelayTaskDO();
     delayTaskDO.setId(taskId);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
-    delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
+    delayTaskDO.setCloseReason(closeReason.code());
     delayTaskDO.setUpdateTime(TimeUtils.currentDate());
 
     return delayTaskDAO.close(delayTaskDO) == 1;
@@ -222,15 +222,51 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     return false;
   }
 
+
   @Override
-  public boolean increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId,
+  public Integer increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId,
                                                        int incrementInDays) {
     LogUtils.info(log, "根据业务类型和业务id延长任务到期时间, bizType: {}, bizId: {}", bizType, bizId);
 
+    DelayTask delayTask = getTaskByBizTypeAndBizId(bizType, bizId);
+    if (!canDelayTaskToBeIncreased(delayTask, bizId, bizType)) {
+
+      return null;
+    }
+    Integer increasedDelayEndTime = calIncreasedDelayEndTime(incrementInDays, delayTask);
     // 因为bizType + bizId不构成唯一索引
-    return delayTaskDAO.updateDelayEndTime(bizType, bizId,
-                                    TimeConstants.ONE_DAY_IN_SECONDS * incrementInDays,
-                                    TimeUtils.currentDate()) > 0;
+    if (delayTaskDAO.updateDelayEndTime(bizType, bizId,
+                                        TimeConstants.ONE_DAY_IN_SECONDS * incrementInDays,
+                                        TimeUtils.currentDate()) > 0) {
+      return increasedDelayEndTime;
+    } else {
+      LogUtils.error(log, "[FAIL]Increase delaytask end time failed.bizId={},bizType={}", bizId,
+                     bizType);
+      return null;
+    }
+  }
+
+  private boolean canDelayTaskToBeIncreased(DelayTask delayTask,String bizId,Integer bizType) {
+    if (delayTask == null) {
+      LogUtils.warn(log, "DelayTask not found.bizId={},bizType={}",bizId,bizType);
+      return false;
+    }
+    if (delayTask.getDelayEndTime() == null) {
+      LogUtils.warn(log, "[IncreaseEndTime]Invalid delayEndTime.bizId={},bizType={}",
+                    delayTask.getBizId(), delayTask.getBizType());
+      return false;
+    }
+    if (delayTask.getStatus() == null || TaskStatus.ACTIVE.code() != delayTask.getStatus()) {
+      LogUtils.warn(log, "[IncreaseEndTime]Invalid task status={},bizId={},bizType={}",
+                    delayTask.getStatus(), delayTask.getBizId(), delayTask.getBizType());
+      return false;
+    }
+    return true;
+  }
+
+  private int calIncreasedDelayEndTime(int incrementInDays, DelayTask delayTask) {
+    return (int) delayTask.getDelayEndTime().getTime() / 1000
+     + TimeConstants.ONE_DAY_IN_SECONDS * incrementInDays;
   }
 
   private boolean refreshEndTime(DelayTask task, long suspendedTime) {

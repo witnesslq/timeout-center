@@ -1,6 +1,7 @@
 package com.youzan.trade.timeout.handler;
 
 import com.youzan.trade.common.httpclient.constant.ResponseCode;
+import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.constants.Constants;
 import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
@@ -17,7 +18,7 @@ public abstract class AbstractTaskHandler implements TaskHandler {
   protected DelayTaskService delayTaskService;
 
   private void handleOnSuccess(DelayTask delayTask) {
-    delayTaskService.closeOnSuccess(delayTask.getId());
+    delayTaskService.closeOnSuccess(delayTask.getId(), CloseReason.SUCCESS);
   }
 
   private void handleOnNoRetry(DelayTask delayTask) {

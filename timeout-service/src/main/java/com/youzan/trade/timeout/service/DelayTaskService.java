@@ -1,5 +1,6 @@
 package com.youzan.trade.timeout.service;
 
+import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Safe;
 
@@ -97,7 +98,7 @@ public interface DelayTaskService {
    * @param taskId 超时任务唯一标识
    * @return
    */
-  boolean closeOnSuccess(int taskId);
+  boolean closeOnSuccess(int taskId,CloseReason closeReason);
 
   /**
    * 执行失败, 关闭超时任务, 不再重试
@@ -184,6 +185,6 @@ public interface DelayTaskService {
    * @param bizId 业务id
    * @param incrementInDays 延长的天数
    */
-  boolean increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId, int incrementInDays);
+  Integer increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId, int incrementInDays);
 
 }

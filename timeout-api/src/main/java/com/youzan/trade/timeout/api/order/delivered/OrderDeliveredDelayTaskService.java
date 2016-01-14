@@ -1,6 +1,6 @@
 package com.youzan.trade.timeout.api.order.delivered;
 
-import com.youzan.api.common.response.BaseResult;
+import com.youzan.api.common.response.PlainResult;
 import com.youzan.trade.timeout.api.order.delivered.model.DelayParams;
 
 /**
@@ -16,5 +16,10 @@ public interface OrderDeliveredDelayTaskService {
    * @param delayParams 延时任务调用参数
    * @return 操作执行结果
    */
-  BaseResult increaseDelayEndTime(DelayParams delayParams);
+  PlainResult<Integer> increaseDelayEndTime(DelayParams delayParams);
+
+  /**
+   * 确认收货，将相关任务关闭
+   */
+  PlainResult<Boolean> finishDelayTask(DelayParams delayParams);
 }
