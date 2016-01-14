@@ -17,6 +17,7 @@
     <modules>
         <module>timeout-service</module>
         <module>timeout-deploy</module>
+        <module>timeout-api</module>
     </modules>
 
     <properties>
