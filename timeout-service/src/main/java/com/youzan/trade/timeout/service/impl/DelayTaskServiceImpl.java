@@ -225,6 +225,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   @Override
   public boolean increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId,
                                                        int incrementInDays) {
+    LogUtils.info(log, "根据业务类型和业务id延长任务到期时间, bizType: {}, bizId: {}", bizType, bizId);
 
     // 因为bizType + bizId不构成唯一索引
     return delayTaskDAO.updateDelayEndTime(bizType, bizId,
