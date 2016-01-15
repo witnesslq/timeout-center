@@ -3,6 +3,7 @@ package com.youzan.trade.timeout.handler.impl;
 import com.youzan.trade.common.httpclient.BaseResult;
 import com.youzan.trade.common.httpclient.Client;
 import com.youzan.trade.common.httpclient.constant.ResponseCode;
+import com.youzan.trade.timeout.constants.Constants;
 import com.youzan.trade.timeout.handler.AbstractMsgTaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.TaskResult;
@@ -35,6 +36,9 @@ public class OrderDeliveredMsgTaskHandlerImpl extends AbstractMsgTaskHandler {
     //start
     BaseResult<TaskResult> result = new BaseResult<>();
     result.setCode(ResponseCode.SUCC);
+    TaskResult data = new TaskResult();
+    data.setResultCode(Constants.SAFE_MSG_TASK_SUCCESS);
+    result.setData(data);
     //end
 
     if (handleDelayTaskByResponseCode(delayTask, result.getCode())) {
