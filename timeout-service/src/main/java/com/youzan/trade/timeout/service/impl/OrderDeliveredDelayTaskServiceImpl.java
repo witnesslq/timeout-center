@@ -7,7 +7,8 @@ import com.youzan.trade.timeout.api.order.delivered.model.DelayParams;
 import com.youzan.trade.timeout.api.order.delivered.model.IncreaseDelayTimeRequestParams;
 import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.CloseReason;
-import com.youzan.trade.timeout.dal.dao.SellerOrderDAO;
+import com.youzan.trade.timeout.constants.ErrorCode;
+import com.youzan.trade.timeout.constants.OrderState;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.service.AbstractOrderRelatedDelayTimeStrategy;
@@ -125,24 +126,44 @@ public class OrderDeliveredDelayTaskServiceImpl implements OrderDeliveredDelayTa
     String orderNo = delayParams.getBizId();
     Integer kdtId = delayParams.getBizShardKey();
 
-    if(StringUtils.isBlank(orderNo) || kdtId==null || kdtId<=0){
+    if (StringUtils.isBlank(orderNo) || kdtId == null || kdtId <= 0) {
       LogUtils.error(log, "[GetEndTime]BizId/KdtId should not be null.");
       plainResult.setError(CommonResultCode.ILLEGAL_PARAM);
       return plainResult;
     }
 
     try {
-      DelayTask delayTask = delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(),orderNo);
-      if(delayTask!=null && delayTask.getDelayEndTime()!=null){
+      DelayTask
+          delayTask =
+          delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(), orderNo);
+      if (delayTask != null && delayTask.getDelayEndTime() != null) {
         plainResult.setData(TimeUtils.getSecondFromDate(delayTask.getDelayEndTime()));
-      }else{
+      } else {
         //获取默认时间配置
-        Order order = orderService.getOrderByOrderNoAndKdtId(orderNo,kdtId);
-        if(order==null){
-          LogUtils.error(log,"[GetEndTime]Order not found.orderNo={}",orderNo);
+        Order order = orderService.getOrderByOrderNoAndKdtId(orderNo, kdtId);
+        if (order == null) {
+          LogUtils.error(log, "[GetEndTime]Order not found.orderNo={}", orderNo);
+          plainResult.setCode(ErrorCode.ORDER_NOT_FOUND);
+          plainResult.setMessage("Order not found.");
+          return plainResult;
         }
-        Integer defaultDelayPeriod = autoCompleteTaskDelayTimeStrategy.getInitialDelayTimeByOrderType(BizType.DELIVERED_ORDER.code(),order.getOrderType());
-        plainResult.setData(defaultDelayPeriod);
+        Integer
+            defaultDelayPeriod =
+            autoCompleteTaskDelayTimeStrategy
+                .getInitialDelayTimeByOrderType(BizType.DELIVERED_ORDER.code(),
+                                                order.getOrderType());
+        Integer expressTime = order.getExpressTime();
+        if (expressTime != null && expressTime > 0) {
+          plainResult.setData(defaultDelayPeriod + expressTime);
+        } else {
+          LogUtils
+              .error(log, "[GetEndTime]Fetch order express time failed.state={},orderNo={}",
+                     order.getOrderState(),
+                     orderNo);
+          plainResult.setCode(ErrorCode.ORDER_IN_ABNORMAL_STATE);
+          plainResult.setMessage("Order is in wrong state.");
+          return plainResult;
+        }
       }
     } catch (Exception e) {
       LogUtils.error(log, "[FAIL]订单已发货的延时任务, 获取自动完成时间, 发生异常", e);
