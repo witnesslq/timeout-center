@@ -117,7 +117,7 @@ public interface DelayTaskDAO {
    * @return 受影响的行数
    */
   int updateDelayEndTime(@Param("bizType") int bizType,
-                    @Param("bizId") String bizId,
-                    @Param("delayTimeIncrement") int delayTimeIncrement,
-                    @Param("updateTime") Date updateTime);
+                         @Param("bizId") String bizId,
+                         @Param("delayTimeIncrement") int delayTimeIncrement,
+                         @Param("updateTime") Date updateTime);
 }
