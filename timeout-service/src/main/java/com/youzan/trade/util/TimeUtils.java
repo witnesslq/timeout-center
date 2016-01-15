@@ -27,6 +27,6 @@ public class TimeUtils {
   }
 
   public static int getSecondFromDate(Date date){
-    return (int)date.getTime()/1000;
+    return (int)(date.getTime()/1000);
   }
 }

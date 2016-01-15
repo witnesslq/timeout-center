@@ -147,19 +147,21 @@ public class OrderDeliveredDelayTaskServiceImpl implements OrderDeliveredDelayTa
           plainResult.setMessage("Order not found.");
           return plainResult;
         }
-        Integer
-            defaultDelayPeriod =
-            autoCompleteTaskDelayTimeStrategy
-                .getInitialDelayTimeByOrderType(BizType.DELIVERED_ORDER.code(),
-                                                order.getOrderType());
         Integer expressTime = order.getExpressTime();
         if (expressTime != null && expressTime > 0) {
+          Integer
+              defaultDelayPeriod =
+              autoCompleteTaskDelayTimeStrategy
+                  .getInitialDelayTimeByOrderType(BizType.DELIVERED_ORDER.code(),
+                                                  order.getOrderType());
           plainResult.setData(defaultDelayPeriod + expressTime);
         } else {
           LogUtils
-              .error(log, "[GetEndTime]Fetch order express time failed.state={},orderNo={}",
+              .error(log,
+                     "[GetEndTime]Fetch order express time failed.state={},orderNo={},expressTime={}",
                      order.getOrderState(),
-                     orderNo);
+                     orderNo,
+                     order.getExpressTime());
           plainResult.setCode(ErrorCode.ORDER_IN_ABNORMAL_STATE);
           plainResult.setMessage("Order is in wrong state.");
           return plainResult;
