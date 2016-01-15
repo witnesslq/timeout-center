@@ -233,11 +233,10 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
       return null;
     }
-    Integer increasedDelayEndTime = calIncreasedDelayEndTime(toDelaySeconds, delayTask);
     // 因为bizType + bizId不构成唯一索引
     if (delayTaskDAO.updateDelayEndTime(bizType, bizId, toDelaySeconds,
                                         TimeUtils.currentDate()) > 0) {
-      return increasedDelayEndTime;
+      return calIncreasedDelayEndTime(toDelaySeconds, delayTask);
     } else {
       LogUtils.error(log, "[FAIL]Increase delaytask end time failed.bizId={},bizType={}", bizId,
                      bizType);
