@@ -3,7 +3,6 @@ package com.youzan.trade.timeout.service.impl;
 import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.TaskStatus;
-import com.youzan.trade.timeout.constants.TimeConstants;
 import com.youzan.trade.timeout.dal.dao.DelayTaskDAO;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.timeout.model.DelayTask;
@@ -236,7 +235,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     // 因为bizType + bizId不构成唯一索引
     if (delayTaskDAO.updateDelayEndTime(bizType, bizId, toDelaySeconds,
                                         TimeUtils.currentDate()) > 0) {
-      return calIncreasedDelayEndTime(toDelaySeconds, delayTask);
+      return calDelayEndTimeAfterIncreasing(toDelaySeconds, delayTask);
     } else {
       LogUtils.error(log, "[FAIL]Increase delaytask end time failed.bizId={},bizType={}", bizId,
                      bizType);
@@ -262,8 +261,14 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     return true;
   }
 
-  private int calIncreasedDelayEndTime(int incrementInDays, DelayTask delayTask) {
-    return (int) delayTask.getDelayEndTime().getTime() / 1000 + incrementInDays;
+  /**
+   * 计算延期之后的任务到期时间
+   * @param incrementInDays
+   * @param delayTask
+   * @return
+   */
+  private int calDelayEndTimeAfterIncreasing(int incrementInDays, DelayTask delayTask) {
+    return (int) ((delayTask.getDelayEndTime().getTime() / 1000) + incrementInDays);
   }
 
   private boolean refreshEndTime(DelayTask task, long suspendedTime) {
