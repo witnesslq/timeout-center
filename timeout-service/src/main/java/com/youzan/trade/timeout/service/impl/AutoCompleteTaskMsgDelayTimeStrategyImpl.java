@@ -22,10 +22,19 @@ public class AutoCompleteTaskMsgDelayTimeStrategyImpl
   @Value("${delay.msg.time.increment}")
   private int delayTimeIncrement;
 
+  /**
+   *
+   * @param bizType
+   * @param orderType
+   * @return
+   */
   @Override
   public int getInitialDelayTimeByOrderType(int bizType, int orderType) {
     if (orderType == OrderType.PF.type()) {
       return pfOrderInitDelayTime;
+    } else if (orderType == OrderType.FX_CAIGOUDAN.type()) {
+      //采购单不下饭短信
+      return -1;
     } else {
       return normalOrderInitDelayTime;
     }

@@ -1,23 +1,32 @@
 package com.youzan.trade.timeout.executor;
 
-import com.youzan.trade.timeout.executor.Executor;
 import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.service.DelayTaskLockService;
+import com.youzan.trade.util.LogUtils;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author apple created at: 15/12/28 下午6:02
  */
-public abstract class AbstractExecutor implements Executor {
+@Slf4j
+public abstract class AbstractExecutor implements Executor, ApplicationContextAware {
 
   @Resource
   private DelayTaskLockService delayTaskLockService;
+
+  private ApplicationContext applicationContext;
 
   @Override
   public void execute(int lockId, TaskHandler taskHandler) {
@@ -40,6 +49,7 @@ public abstract class AbstractExecutor implements Executor {
   }
 
   private void doExecute(TaskHandler taskHandler) {
+    monitorThreadPool();
     List<DelayTask> delayTaskList = getTaskList();
 
     if (!CollectionUtils.isEmpty(delayTaskList)) {
@@ -47,5 +57,16 @@ public abstract class AbstractExecutor implements Executor {
     }
   }
 
+  private void monitorThreadPool() {
+    ThreadPoolTaskExecutor taskExecutor =
+        (ThreadPoolTaskExecutor) applicationContext.getBean("defaultThreadPoolTaskExecutor");
+    LogUtils.info(log, "线程池的queue实时大小: {}", taskExecutor.getThreadPoolExecutor().getQueue().size());
+  }
+
   protected abstract List<DelayTask> getTaskList();
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+  }
 }

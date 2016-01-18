@@ -106,4 +106,82 @@ public interface DelayTaskDAO {
                              @Param("updateTime") Date updateTime);
 
   int closeTaskAhead(DelayTaskDO delayTaskDO);
+
+  /**
+   * 增加delay_end_time
+   *
+   * @param bizType 业务类型
+   * @param bizId 业务ID
+   * @param delayTimeIncrement delay_end_time的增加量,以秒为单位
+   * @param updateTime 更新时间
+   * @return 受影响的行数
+   */
+  int updateDelayEndTime(@Param("bizType") int bizType,
+                         @Param("bizId") String bizId,
+                         @Param("delayTimeIncrement") int delayTimeIncrement,
+                         @Param("updateTime") Date updateTime);
+
+  /**
+   * 根据任务ID, 对于待处理的任务, 锁定任务表示开始处理
+   *
+   * @param taskId 任务ID
+   * @param currentTime 当前时间
+   * @return 受影响的行数
+   */
+  int tryLockByTaskId(@Param("taskId") int taskId,
+                      @Param("currentTime") Date currentTime);
+
+  /**
+   * 根据任务ID, 对于待处理的任务, 强制锁定
+   *
+   * @param taskId 任务ID
+   * @param internalMinutes 间隔时间,单位是分钟
+   * @param currentTime 当前时间
+   * @return 受影响的行数
+   */
+  int forceLockByTaskId(@Param("taskId") int taskId,
+                        @Param("internalMinutes") int internalMinutes,
+                        @Param("currentTime") Date currentTime);
+
+  /**
+   * 根据任务ID, 解锁任务
+   *
+   * @param taskId 任务ID
+   * @param updateTime 更新时间
+   * @return 受影响的行数
+   */
+  int unlockByTaskId(@Param("taskId") int taskId,
+                     @Param("updateTime") Date updateTime);
+
+  /**
+   * 根据任务ID, 对于处于活跃状态的消息任务, 锁定消息任务表示开始处理
+   *
+   * @param taskId 任务ID
+   * @param currentTime 当前时间
+   * @return 受影响的行数
+   */
+  int tryLockMsgByTaskId(@Param("taskId") int taskId,
+                         @Param("currentTime") Date currentTime);
+
+  /**
+   * 根据任务ID, 对于待处理的消息任务, 强制锁定
+   *
+   * @param taskId 任务ID
+   * @param internalMinutes 间隔时间,单位是分钟
+   * @param currentTime 当前时间
+   * @return 受影响的行数
+   */
+  int forceLockMsgByTaskId(@Param("taskId") int taskId,
+                           @Param("internalMinutes") int internalMinutes,
+                           @Param("currentTime") Date currentTime);
+
+  /**
+   * 根据任务ID, 解锁消息任务
+   *
+   * @param taskId 任务ID
+   * @param updateTime 更新时间
+   * @return 受影响的行数
+   */
+  int unlockMsgByTaskId(@Param("taskId") int taskId,
+                        @Param("updateTime") Date updateTime);
 }

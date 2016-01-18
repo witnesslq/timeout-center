@@ -50,4 +50,17 @@ public class SafeServiceImplTest extends TestCase {
                                                 params,
                                                 new TaskResult());
   }
+
+  @Test
+  public void countDownTest(){
+    Map<String, Object> params = Maps.newHashMap();
+    String orderNo = "E1";
+    Integer kdtId =1;
+    params.put("order_no", orderNo);
+    params.put("kdt_id", kdtId);
+    BaseResult<Boolean>
+        result =
+        Client.call("trade.order.countDown.isAllowLaterReceive", params, Boolean.TRUE);
+
+  }
 }

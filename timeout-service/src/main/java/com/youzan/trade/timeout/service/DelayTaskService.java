@@ -1,5 +1,6 @@
 package com.youzan.trade.timeout.service;
 
+import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Safe;
 
@@ -97,7 +98,7 @@ public interface DelayTaskService {
    * @param taskId 超时任务唯一标识
    * @return
    */
-  boolean closeOnSuccess(int taskId);
+  boolean closeOnSuccess(int taskId,CloseReason closeReason);
 
   /**
    * 执行失败, 关闭超时任务, 不再重试
@@ -179,12 +180,43 @@ public interface DelayTaskService {
   boolean resumeTask(DelayTask task, long suspendTime);
 
   /**
-   * 延长任务时间
-   *
-   * @param task 具体任务
-   * @param expendTime 延长时间
-   * @return
+   * 根据业务类型和业务id增加任务到期时间
+   *  @param bizType 业务类型
+   * @param bizId 业务id
+   * @param toDelaySeconds 延长的秒数
    */
-  boolean enlargeTask(DelayTask task, int expendTime);
+  Integer increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId, int toDelaySeconds);
+
+  /**
+   * 根据任务ID锁定任务, 表示任务正在执行
+   *
+   * @param taskId 任务ID
+   * @return 如果操作成功, 返回true, 否则返回false
+   */
+  boolean lockTaskByTaskId(int taskId);
+
+  /**
+   * 根据任务ID解锁任务, 表示任务执行完毕
+   *
+   * @param taskId 任务ID
+   * @return 如果操作成功, 返回true, 否则返回false
+   */
+  boolean unlockTaskByTaskId(int taskId);
+
+  /**
+   * 根据任务ID锁定消息任务, 表示消息任务正在执行
+   *
+   * @param taskId 任务ID
+   * @return 如果操作成功, 返回true, 否则返回false
+   */
+  boolean lockMsgTaskByTaskId(int taskId);
+
+  /**
+   * 根据任务ID解锁消息任务, 表示消息任务执行完毕
+   *
+   * @param taskId 任务ID
+   * @return 如果操作成功, 返回true, 否则返回false
+   */
+  boolean unlockMsgTaskByTaskId(int taskId);
 
 }

@@ -50,10 +50,7 @@ if [ -n "$str" ]; then
 	JAVA_VERSION=`java -version 2>&1 |awk 'NR==1{ gsub(/"/,""); print $3 }'`
 	if [[ "$JAVA_VERSION" > "1.8" ]]; then
 		#JAVA_OPTS="-server -Xms1024m -Xmx1024m -Xss256k -XX:SurvivorRatio=2 -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+HeapDumpOnOutOfMemoryError"
-		JAVA_OPTS="-server -Xms4g -Xmx4g -Xmn2g -XX:SurvivorRatio=2 -Xss256k "
-		          + "-XX:-UseAdaptiveSizePolicy -XX:MaxTenuringThreshold=15 -XX:+DisableExplicitGC "
-		          + "-XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSCompactAtFullCollection "
-		          + "-XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError"
+		JAVA_OPTS="-server -Xms4g -Xmx4g -Xmn2g -XX:SurvivorRatio=2 -Xss256k -XX:-UseAdaptiveSizePolicy -XX:MaxTenuringThreshold=15 -XX:+DisableExplicitGC  -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSCompactAtFullCollection -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError"
 	else
 		JAVA_OPTS="-server -Xms1024m -Xmx1024m -Xmn512m -XX:SurvivorRatio=2 -XX:PermSize=96m -XX:MaxPermSize=256m -Xss256k -XX:-UseAdaptiveSizePolicy -XX:MaxTenuringThreshold=15 -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSCompactAtFullCollection -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError"
 	fi
@@ -67,7 +64,7 @@ SERVICE_OPTS="-Dprops.path=${conf_path} -Dservice.configurationFile=$service_con
 if [ -e $service_configurationFile ]
 then
 
-	MAIN_CLASS="com.youzan.trade.timeout.executor.Main"
+	MAIN_CLASS="com.youzan.trade.timeout.Main"
 
 	for i in $base/lib/*;
 		do CLASSPATH=$i:"$CLASSPATH";

@@ -11,6 +11,7 @@ import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.order.service.DeliveredOrderService;
 import com.youzan.trade.timeout.service.DelayTaskService;
 import com.youzan.trade.timeout.service.AbstractOrderRelatedDelayTimeStrategy;
+import com.youzan.trade.timeout.service.CountDownService;
 import com.youzan.trade.util.LogUtils;
 import com.youzan.trade.util.TimeUtils;
 
@@ -35,6 +36,9 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
 
   @Resource(name = "autoCompleteTaskMsgDelayTaskTimeStrategyImpl")
   private AbstractOrderRelatedDelayTimeStrategy msgDelayTimeStrategy;
+
+  @Resource
+  private CountDownService countDownService;
 
   @Resource
   DelayTaskService delayTaskService;
@@ -126,16 +130,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     task.setCreateTime(current);
     task.setDelayStartTime(TimeUtils.getDateBySeconds(order.getExpressTime()));
 
-    Date msgEndTime = calMsgEndTime(order);
-
-    if (msgEndTime != null) {
-      //默认是要发送通知的
-      task.setMsgEndTime(msgEndTime);
-      task.setMsgStatus(MsgStatus.ACTIVE.code());
-    } else {
-      task.setMsgEndTime(new Date(0));//set default time
-      task.setMsgStatus(MsgStatus.NONE.code());
-    }
+    task = assembleMsgEndTime(order, task);
 
     task.setDelayEndTime(calDelayEndTime(order));
     task.setDelayTimes(Constants.INITIAL_DELAY_TIMES);
@@ -151,14 +146,21 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     return TimeUtils.getDateBySeconds(endTime);
   }
 
-  protected Date calMsgEndTime(Order order) {
-    int endTime = order.getExpressTime() + msgDelayTimeStrategy
-        .getInitialDelayTimeByOrderType(
-            BizType.DELIVERED_ORDER.code(), order.getOrderType());
-    if (endTime < TimeUtils.currentInSeconds()) {
-      return null;
+  protected DelayTask assembleMsgEndTime(Order order, DelayTask task) {
+    if (countDownService.shouldSendMsg(order.getOrderNo(), order.getKdtId())) {
+      int endTime = order.getExpressTime() + msgDelayTimeStrategy
+          .getInitialDelayTimeByOrderType(
+              BizType.DELIVERED_ORDER.code(), order.getOrderType());
+      if (endTime > TimeUtils.currentInSeconds()) {
+        Date msgEndTime = TimeUtils.getDateBySeconds(endTime);
+        task.setMsgEndTime(msgEndTime);
+        task.setMsgStatus(MsgStatus.ACTIVE.code());
+        return task;
+      }
     }
-    return TimeUtils.getDateBySeconds(endTime);
+    task.setMsgEndTime(new Date(0));//set default time
+    task.setMsgStatus(MsgStatus.NONE.code());
+    return task;
   }
 
   protected boolean isSent(Order order) {

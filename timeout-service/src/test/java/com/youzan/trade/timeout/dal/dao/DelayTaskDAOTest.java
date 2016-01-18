@@ -133,5 +133,70 @@ public class DelayTaskDAOTest extends BaseTest {
     int effectNum = delayTaskDAO.close(delayTaskDO);
   }
 
+  @Test
+  public void testUpdateDelayEndTime() throws Exception {
+    int bizType = 26;
+    String bizId = "E20160111191049094573401";
+    int delayTimeIncrement = 5 * 60;
+    Date updateTime = new Date();
 
+    int effectNum = delayTaskDAO.updateDelayEndTime(bizType, bizId, delayTimeIncrement, updateTime);
+    Assert.assertEquals(1, effectNum);
+  }
+
+  @Test
+  public void testTryLockByTaskId() throws Exception {
+    int taskId = 200;
+    Date currentTime = new Date();
+
+    int effectNum = delayTaskDAO.tryLockByTaskId(taskId, currentTime);
+    Assert.assertEquals(1, effectNum);
+  }
+
+  @Test
+  public void testForceLockByTaskId() throws Exception {
+    int taskId = 200;
+    int internalMinutes = 2;
+    Date currentTime = new Date();
+
+    int effectNum = delayTaskDAO.forceLockByTaskId(taskId, internalMinutes, currentTime);
+    Assert.assertEquals(1, effectNum);
+  }
+
+  @Test
+  public void testUnlockByTaskId() throws Exception {
+    int taskId = 200;
+    Date updateTime = new Date();
+
+    int effectNum = delayTaskDAO.unlockByTaskId(taskId, updateTime);
+    Assert.assertEquals(1, effectNum);
+  }
+
+  @Test
+  public void testTryLockMsgByTaskId() throws Exception {
+    int taskId = 200;
+    Date currentTime = new Date();
+
+    int effectNum = delayTaskDAO.tryLockMsgByTaskId(taskId, currentTime);
+    Assert.assertEquals(1, effectNum);
+  }
+
+  @Test
+  public void testForceLockMsgByTaskId() throws Exception {
+    int taskId = 200;
+    int internalMinutes = 2;
+    Date currentTime = new Date();
+
+    int effectNum = delayTaskDAO.forceLockMsgByTaskId(taskId, internalMinutes, currentTime);
+    Assert.assertEquals(1, effectNum);
+  }
+
+  @Test
+  public void testUnlockMsgByTaskId() throws Exception {
+    int taskId = 200;
+    Date updateTime = new Date();
+
+    int effectNum = delayTaskDAO.unlockMsgByTaskId(taskId, updateTime);
+    Assert.assertEquals(1, effectNum);
+  }
 }

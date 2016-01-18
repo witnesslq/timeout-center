@@ -17,12 +17,14 @@
     <modules>
         <module>timeout-service</module>
         <module>timeout-deploy</module>
+        <module>timeout-api</module>
     </modules>
 
     <properties>
+        <timeout-api.version>1.0.0-SNAPSHOT</timeout-api.version>
         <common-model.version>1.0.0-SNAPSHOT</common-model.version>
         <datasource.version>2.1.0-SNAPSHOT</datasource.version>
-        <bootstrap.version>2.0.1-SNAPSHOT</bootstrap.version>
+        <bootstrap.version>2.0.2-SNAPSHOT</bootstrap.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-collections.version>3.2.1</commons-collections.version>
         <lombok.version>1.16.2</lombok.version>
@@ -50,6 +52,20 @@
                 <version>${bootstrap.version}</version>
                 <!--<scope>provided</scope>-->
             </dependency>
+            <dependency>
+                <groupId>com.youzan</groupId>
+                <artifactId>common-model</artifactId>
+                <version>${common-model.version}</version>
+            </dependency>
+
+            <!-- project local dependency -->
+            <dependency>
+                <groupId>com.youzan.trade</groupId>
+                <artifactId>timeout-api</artifactId>
+                <version>${timeout-api.version}</version>
+            </dependency>
+
+
             <!-- apache commons -->
             <dependency>
                 <groupId>commons-lang</groupId>

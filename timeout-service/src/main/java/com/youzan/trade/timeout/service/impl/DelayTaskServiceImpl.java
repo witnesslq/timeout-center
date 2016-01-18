@@ -31,6 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class DelayTaskServiceImpl implements DelayTaskService {
 
+  private static final int LOCK_MAX_INTERNAL_IN_MINUTES = 30;
+
   @Resource
   private DelayTaskDAO delayTaskDAO;
 
@@ -90,13 +92,13 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
-  public boolean closeOnSuccess(int taskId) {
+  public boolean closeOnSuccess(int taskId,CloseReason closeReason) {
     LogUtils.info(log, "超时任务执行成功, 关闭超时任务, taskId: {}", taskId);
 
     DelayTaskDO delayTaskDO = new DelayTaskDO();
     delayTaskDO.setId(taskId);
     delayTaskDO.setStatus(TaskStatus.CLOSED.code());
-    delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
+    delayTaskDO.setCloseReason(closeReason.code());
     delayTaskDO.setUpdateTime(TimeUtils.currentDate());
 
     return delayTaskDAO.close(delayTaskDO) == 1;
@@ -221,6 +223,112 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     return false;
   }
 
+
+  @Override
+  public Integer increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId,
+                                                       int toDelaySeconds) {
+    LogUtils.info(log, "根据业务类型和业务id延长任务到期时间, bizType: {}, bizId: {}", bizType, bizId);
+
+    DelayTask delayTask = getTaskByBizTypeAndBizId(bizType, bizId);
+    if (!canDelayTaskToBeIncreased(delayTask, bizId, bizType)) {
+
+      return null;
+    }
+    // 因为bizType + bizId不构成唯一索引
+    if (delayTaskDAO.updateDelayEndTime(bizType, bizId, toDelaySeconds,
+                                        TimeUtils.currentDate()) > 0) {
+      return calDelayEndTimeAfterIncreasing(toDelaySeconds, delayTask);
+    } else {
+      LogUtils.error(log, "[FAIL]Increase delaytask end time failed.bizId={},bizType={}", bizId,
+                     bizType);
+      return null;
+    }
+  }
+
+  @Override
+  public boolean lockTaskByTaskId(int taskId) {
+    if (tryLockByTaskId(taskId)) {
+      return true;
+    }
+
+    if (forceLockByTaskId(taskId)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private boolean tryLockByTaskId(int taskId) {
+    return delayTaskDAO.tryLockByTaskId(taskId, TimeUtils.currentDate()) == 1;
+  }
+
+  private boolean forceLockByTaskId(int taskId) {
+    return delayTaskDAO.forceLockByTaskId(taskId, LOCK_MAX_INTERNAL_IN_MINUTES,
+                                          TimeUtils.currentDate()) == 1;
+  }
+
+  @Override
+  public boolean unlockTaskByTaskId(int taskId) {
+    return delayTaskDAO.unlockByTaskId(taskId, TimeUtils.currentDate()) == 1;
+  }
+
+  @Override
+  public boolean lockMsgTaskByTaskId(int taskId) {
+    if (tryLockMsgByTaskId(taskId)) {
+      return true;
+    }
+
+    if (forceLockMsgByTaskId(taskId)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private boolean tryLockMsgByTaskId(int taskId) {
+    return delayTaskDAO.tryLockMsgByTaskId(taskId, TimeUtils.currentDate()) == 1;
+  }
+
+  private boolean forceLockMsgByTaskId(int taskId) {
+    return delayTaskDAO.forceLockMsgByTaskId(taskId, LOCK_MAX_INTERNAL_IN_MINUTES,
+                                             TimeUtils.currentDate()) == 1;
+  }
+
+
+
+  @Override
+  public boolean unlockMsgTaskByTaskId(int taskId) {
+    return false;
+  }
+
+  private boolean canDelayTaskToBeIncreased(DelayTask delayTask,String bizId,Integer bizType) {
+    if (delayTask == null) {
+      LogUtils.warn(log, "DelayTask not found.bizId={},bizType={}",bizId,bizType);
+      return false;
+    }
+    if (delayTask.getDelayEndTime() == null) {
+      LogUtils.warn(log, "[IncreaseEndTime]Invalid delayEndTime.bizId={},bizType={}",
+                    delayTask.getBizId(), delayTask.getBizType());
+      return false;
+    }
+    if (delayTask.getStatus() == null || TaskStatus.ACTIVE.code() != delayTask.getStatus()) {
+      LogUtils.warn(log, "[IncreaseEndTime]Invalid task status={},bizId={},bizType={}",
+                    delayTask.getStatus(), delayTask.getBizId(), delayTask.getBizType());
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * 计算延期之后的任务到期时间
+   * @param incrementInDays
+   * @param delayTask
+   * @return
+   */
+  private int calDelayEndTimeAfterIncreasing(int incrementInDays, DelayTask delayTask) {
+    return (int) ((delayTask.getDelayEndTime().getTime() / 1000) + incrementInDays);
+  }
+
   private boolean refreshEndTime(DelayTask task, long suspendedTime) {
     Date endTime = task.getDelayEndTime();
     Date msgEndTime = task.getMsgEndTime();
@@ -243,11 +351,6 @@ public class DelayTaskServiceImpl implements DelayTaskService {
    */
   private boolean isResumable(DelayTask task) {
     return task.getStatus() == TaskStatus.SUSPENDED.code();
-  }
-
-  @Override
-  public boolean enlargeTask(DelayTask task, int expendTime) {
-    return false;
   }
 
 
