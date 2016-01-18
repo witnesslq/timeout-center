@@ -143,4 +143,13 @@ public class DelayTaskDAOTest extends BaseTest {
     int effectNum = delayTaskDAO.updateDelayEndTime(bizType, bizId, delayTimeIncrement, updateTime);
     Assert.assertEquals(1, effectNum);
   }
+
+  @Test
+  public void testTryLockByTaskId() throws Exception {
+    int taskId = 200;
+    Date currentTime = new Date();
+
+    int effectNum = delayTaskDAO.tryLockByTaskId(taskId, currentTime);
+    Assert.assertEquals(1, effectNum);
+  }
 }

@@ -2,7 +2,6 @@ package com.youzan.trade.timeout.handler;
 
 import com.youzan.trade.common.httpclient.constant.ResponseCode;
 import com.youzan.trade.timeout.constants.Constants;
-import com.youzan.trade.timeout.handler.TaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.service.DelayTaskService;
 
@@ -32,15 +31,15 @@ public abstract class AbstractMsgTaskHandler implements TaskHandler {
 
   protected void handleDelayTaskByResultCode(DelayTask delayTask, Integer resultCode) {
     switch (resultCode) {
-      case Constants.SAFE_MSG_TASK_SUCCESS:
+      case Constants.MSG_TASK_SUCCESS:
         handleOnSuccess(delayTask);
         break;
 
-      case Constants.SAFE_MSG_TASK_FAILURE_RETRY:
+      case Constants.MSG_TASK_FAILURE_RETRY:
         handleOnRetry(delayTask);
         break;
 
-      case Constants.SAFE_MSG_TASK_FAILURE_NO_RETRY:
+      case Constants.MSG_TASK_FAILURE_NO_RETRY:
         handleOnNoRetry(delayTask);
         break;
 
