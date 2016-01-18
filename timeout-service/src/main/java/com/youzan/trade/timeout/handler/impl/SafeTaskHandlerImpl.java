@@ -6,6 +6,7 @@ import com.youzan.trade.common.httpclient.constant.ResponseCode;
 import com.youzan.trade.timeout.handler.AbstractTaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.TaskResult;
+import com.youzan.trade.util.LogUtils;
 
 import com.google.common.collect.Maps;
 
@@ -14,9 +15,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author apple created at: 15/10/23 下午8:20
  */
+@Slf4j
 @Component("safeTaskHandlerImpl")
 public class SafeTaskHandlerImpl extends AbstractTaskHandler {
 
@@ -31,6 +35,7 @@ public class SafeTaskHandlerImpl extends AbstractTaskHandler {
      * 如果获取不到,则什么都不做
      */
     if (!delayTaskService.lockTaskByTaskId(delayTask.getId())) {
+      LogUtils.info(log, "处理任务, 获取任务锁失败, taskId: {}", delayTask.getId());
       return;
     }
 

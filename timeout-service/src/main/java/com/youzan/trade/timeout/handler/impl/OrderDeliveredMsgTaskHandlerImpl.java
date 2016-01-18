@@ -6,6 +6,7 @@ import com.youzan.trade.timeout.constants.Constants;
 import com.youzan.trade.timeout.handler.AbstractMsgTaskHandler;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.TaskResult;
+import com.youzan.trade.util.LogUtils;
 
 import com.google.common.collect.Maps;
 
@@ -14,9 +15,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author apple created at: 16/1/4 上午12:29
  */
+@Slf4j
 @Component("orderDeliveredMsgTaskHandlerImpl")
 public class OrderDeliveredMsgTaskHandlerImpl extends AbstractMsgTaskHandler {
 
@@ -30,6 +34,7 @@ public class OrderDeliveredMsgTaskHandlerImpl extends AbstractMsgTaskHandler {
      * 如果获取不到,则什么都不做
      */
     if (!delayTaskService.lockMsgTaskByTaskId(delayTask.getId())) {
+      LogUtils.info(log, "处理消息任务, 获取消息任务锁失败, taskId: {}", delayTask.getId());
       return;
     }
 
