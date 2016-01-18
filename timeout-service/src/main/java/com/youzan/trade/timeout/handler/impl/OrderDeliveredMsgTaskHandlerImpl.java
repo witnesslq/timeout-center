@@ -30,6 +30,7 @@ public class OrderDeliveredMsgTaskHandlerImpl extends AbstractMsgTaskHandler {
   @Async("defaultThreadPoolTaskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
+    long startTime = System.currentTimeMillis();
     /**
      * 先尝试获取锁
      * 如果获取不到,则什么都不做
@@ -65,6 +66,8 @@ public class OrderDeliveredMsgTaskHandlerImpl extends AbstractMsgTaskHandler {
        * 最后释放锁
        */
       delayTaskService.unlockMsgTaskByTaskId(delayTask.getId());
+      LogUtils.info(log, "任务处理共耗时: {} ms, taskId: {}",
+                    System.currentTimeMillis() - startTime, delayTask.getId());
     }
   }
 
