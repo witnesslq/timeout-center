@@ -25,18 +25,33 @@ public class SafeMsgTaskHandlerImpl extends AbstractMsgTaskHandler {
   @Async("defaultThreadPoolTaskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
-    Map<String, Object> params = Maps.newHashMap();
-    generateParamsByDelayTask(delayTask, params);
-
-    BaseResult<TaskResult> result = Client.call(getCallPath(),
-                                                params,
-                                                new TaskResult());
-
-    if (handleDelayTaskByResponseCode(delayTask, result.getCode())) {
+    /**
+     * 先尝试获取锁
+     * 如果获取不到,则什么都不做
+     */
+    if (!delayTaskService.lockMsgTaskByTaskId(delayTask.getId())) {
       return;
     }
 
-    handleDelayTaskByResultCode(delayTask, result.getData().getResultCode());
+    try {
+      Map<String, Object> params = Maps.newHashMap();
+      generateParamsByDelayTask(delayTask, params);
+
+      BaseResult<TaskResult> result = Client.call(getCallPath(),
+                                                  params,
+                                                  new TaskResult());
+
+      if (handleDelayTaskByResponseCode(delayTask, result.getCode())) {
+        return;
+      }
+
+      handleDelayTaskByResultCode(delayTask, result.getData().getResultCode());
+    } finally {
+      /**
+       * 最后释放锁
+       */
+      delayTaskService.unlockMsgTaskByTaskId(delayTask.getId());
+    }
   }
 
   private void generateParamsByDelayTask(DelayTask delayTask, Map<String, Object> params) {

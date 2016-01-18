@@ -1,7 +1,6 @@
 package com.youzan.trade.timeout.handler.impl;
 
 import com.youzan.trade.common.httpclient.BaseResult;
-import com.youzan.trade.common.httpclient.Client;
 import com.youzan.trade.common.httpclient.constant.ResponseCode;
 import com.youzan.trade.timeout.constants.Constants;
 import com.youzan.trade.timeout.handler.AbstractMsgTaskHandler;
@@ -26,26 +25,41 @@ public class OrderDeliveredMsgTaskHandlerImpl extends AbstractMsgTaskHandler {
   @Async("defaultThreadPoolTaskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
-    Map<String, Object> params = Maps.newHashMap();
-    generateParamsByDelayTask(delayTask, params);
+    /**
+     * 先尝试获取锁
+     * 如果获取不到,则什么都不做
+     */
+    if (!delayTaskService.lockMsgTaskByTaskId(delayTask.getId())) {
+      return;
+    }
+
+    try {
+      Map<String, Object> params = Maps.newHashMap();
+      generateParamsByDelayTask(delayTask, params);
     /*
     BaseResult<TaskResult> result = Client.call(getCallPath(),
                                                 params,
                                                 new TaskResult());
                                                 */
-    //start
-    BaseResult<TaskResult> result = new BaseResult<>();
-    result.setCode(ResponseCode.SUCC);
-    TaskResult data = new TaskResult();
-    data.setResultCode(Constants.SAFE_MSG_TASK_SUCCESS);
-    result.setData(data);
-    //end
+      //start
+      BaseResult<TaskResult> result = new BaseResult<>();
+      result.setCode(ResponseCode.SUCC);
+      TaskResult data = new TaskResult();
+      data.setResultCode(Constants.MSG_TASK_SUCCESS);
+      result.setData(data);
+      //end
 
-    if (handleDelayTaskByResponseCode(delayTask, result.getCode())) {
-      return;
+      if (handleDelayTaskByResponseCode(delayTask, result.getCode())) {
+        return;
+      }
+
+      handleDelayTaskByResultCode(delayTask, result.getData().getResultCode());
+    } finally {
+      /**
+       * 最后释放锁
+       */
+      delayTaskService.unlockMsgTaskByTaskId(delayTask.getId());
     }
-
-    handleDelayTaskByResultCode(delayTask, result.getData().getResultCode());
   }
 
   private void generateParamsByDelayTask(DelayTask delayTask, Map<String, Object> params) {
