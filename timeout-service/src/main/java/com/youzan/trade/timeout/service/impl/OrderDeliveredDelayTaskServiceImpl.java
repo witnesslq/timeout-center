@@ -8,7 +8,6 @@ import com.youzan.trade.timeout.api.order.delivered.model.IncreaseDelayTimeReque
 import com.youzan.trade.timeout.constants.BizType;
 import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.constants.ErrorCode;
-import com.youzan.trade.timeout.constants.OrderState;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.service.AbstractOrderRelatedDelayTimeStrategy;
