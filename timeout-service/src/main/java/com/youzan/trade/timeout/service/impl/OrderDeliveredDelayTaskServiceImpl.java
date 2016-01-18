@@ -139,10 +139,7 @@ public class OrderDeliveredDelayTaskServiceImpl implements OrderDeliveredDelayTa
         plainResult.setData(TimeUtils.getSecondFromDate(delayTask.getDelayEndTime()));
       } else {
         //获取默认时间配置
-        LogUtils.warn(log,"[GetEndTime]task not found.bizId={}",orderNo);
-        plainResult.setCode(ErrorCode.TASK_NOT_FOUND);
-        plainResult.setMessage("Task not found");
-        /*Order order = orderService.getOrderByOrderNoAndKdtId(orderNo, kdtId);
+        Order order = orderService.getOrderByOrderNoAndKdtId(orderNo, kdtId);
         if (order == null) {
           LogUtils.error(log, "[GetEndTime]Order not found.orderNo={}", orderNo);
           plainResult.setCode(ErrorCode.ORDER_NOT_FOUND);
@@ -167,7 +164,7 @@ public class OrderDeliveredDelayTaskServiceImpl implements OrderDeliveredDelayTa
           plainResult.setCode(ErrorCode.ORDER_IN_ABNORMAL_STATE);
           plainResult.setMessage("Order is in wrong state.");
           return plainResult;
-        }*/
+        }
       }
     } catch (Exception e) {
       LogUtils.error(log, "[FAIL]订单已发货的延时任务, 获取自动完成时间, 发生异常", e);
