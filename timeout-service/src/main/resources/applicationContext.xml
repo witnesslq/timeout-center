@@ -19,7 +19,7 @@
                           mode="proxy"/>
   <task:scheduler id="threadPoolTaskScheduler" pool-size="10"/>
   <!-- 默认的线程池的配置 -->
-  <task:executor id="defaultThreadPoolTaskExecutor" pool-size="16-32" queue-capacity="8000"
+  <task:executor id="defaultThreadPoolTaskExecutor" pool-size="128-512" queue-capacity="8000"
                  keep-alive="240"
                  rejection-policy="DISCARD" />
 
