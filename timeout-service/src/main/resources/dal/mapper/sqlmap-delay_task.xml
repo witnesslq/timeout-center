@@ -171,4 +171,65 @@
     WHERE biz_type = #{bizType} AND biz_id = #{bizId} AND status = 10
   </update>
 
+  <!-- 任务的锁定, 强制锁定, 解锁 -->
+  <update id="tryLockByTaskId">
+    UPDATE <include refid="tableName" />
+    <set>
+      lock_status = 1,
+      update_time = #{currentTime}
+    </set>
+    WHERE id = #{taskId} AND status = 10 AND delay_end_time &lt; #{currentTime}
+    AND lock_status = 0
+  </update>
+
+  <update id="forceLockByTaskId">
+    UPDATE <include refid="tableName" />
+    <set>
+      lock_status = 1,
+      update_time = #{currentTime}
+    </set>
+    WHERE id = #{taskId} AND status = 10 AND delay_end_time &lt; #{currentTime}
+    AND date_add(update_time, interval #{internalMinutes} minute) &lt; #{currentTime}
+  </update>
+
+  <update id="unlockByTaskId">
+    UPDATE <include refid="tableName" />
+    <set>
+      lock_status = 0,
+      update_time = #{updateTime}
+    </set>
+    WHERE id = #{taskId} AND lock_status = 1
+  </update>
+  <!-- 任务的锁定, 强制锁定, 解锁 -->
+
+  <!-- 消息任务的锁定, 强制锁定, 解锁 -->
+  <update id="tryLockMsgByTaskId">
+    UPDATE <include refid="tableName" />
+    <set>
+      msg_lock_status = 1,
+      update_time = #{currentTime}
+    </set>
+    WHERE id = #{taskId} AND status = 10 AND msg_status = 10 AND msg_end_time &lt; #{currentTime}
+    AND msg_lock_status = 0
+  </update>
+
+  <update id="forceLockMsgByTaskId">
+    UPDATE <include refid="tableName" />
+    <set>
+      msg_lock_status = 1,
+      update_time = #{currentTime}
+    </set>
+    WHERE id = #{taskId} AND status = 10 AND msg_status = 10 AND msg_end_time &lt; #{currentTime}
+    AND date_add(update_time, interval #{internalMinutes} minute) &lt; #{currentTime}
+  </update>
+
+  <update id="unlockMsgByTaskId">
+    UPDATE <include refid="tableName" />
+    <set>
+      msg_lock_status = 0,
+      update_time = #{updateTime}
+    </set>
+    WHERE id = #{taskId} AND msg_lock_status = 1
+  </update>
+
 </mapper>
