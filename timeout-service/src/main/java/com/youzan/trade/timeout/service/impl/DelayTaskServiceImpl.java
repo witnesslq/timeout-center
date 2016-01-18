@@ -31,6 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class DelayTaskServiceImpl implements DelayTaskService {
 
+  private static final int LOCK_MAX_INTERNAL_IN_MINUTES = 30;
+
   @Resource
   private DelayTaskDAO delayTaskDAO;
 
@@ -241,6 +243,62 @@ public class DelayTaskServiceImpl implements DelayTaskService {
                      bizType);
       return null;
     }
+  }
+
+  @Override
+  public boolean lockTaskByTaskId(int taskId) {
+    if (tryLockByTaskId(taskId)) {
+      return true;
+    }
+
+    if (forceLockByTaskId(taskId)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private boolean tryLockByTaskId(int taskId) {
+    return delayTaskDAO.tryLockByTaskId(taskId, TimeUtils.currentDate()) == 1;
+  }
+
+  private boolean forceLockByTaskId(int taskId) {
+    return delayTaskDAO.forceLockByTaskId(taskId, LOCK_MAX_INTERNAL_IN_MINUTES,
+                                          TimeUtils.currentDate()) == 1;
+  }
+
+  @Override
+  public boolean unlockTaskByTaskId(int taskId) {
+    return delayTaskDAO.unlockByTaskId(taskId, TimeUtils.currentDate()) == 1;
+  }
+
+  @Override
+  public boolean lockMsgTaskByTaskId(int taskId) {
+    if (tryLockMsgByTaskId(taskId)) {
+      return true;
+    }
+
+    if (forceLockMsgByTaskId(taskId)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private boolean tryLockMsgByTaskId(int taskId) {
+    return delayTaskDAO.tryLockMsgByTaskId(taskId, TimeUtils.currentDate()) == 1;
+  }
+
+  private boolean forceLockMsgByTaskId(int taskId) {
+    return delayTaskDAO.forceLockMsgByTaskId(taskId, LOCK_MAX_INTERNAL_IN_MINUTES,
+                                             TimeUtils.currentDate()) == 1;
+  }
+
+
+
+  @Override
+  public boolean unlockMsgTaskByTaskId(int taskId) {
+    return false;
   }
 
   private boolean canDelayTaskToBeIncreased(DelayTask delayTask,String bizId,Integer bizType) {

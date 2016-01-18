@@ -187,4 +187,36 @@ public interface DelayTaskService {
    */
   Integer increaseDelayEndTimeByBizTypeAndBizId(int bizType, String bizId, int toDelaySeconds);
 
+  /**
+   * 根据任务ID锁定任务, 表示任务正在执行
+   *
+   * @param taskId 任务ID
+   * @return 如果操作成功, 返回true, 否则返回false
+   */
+  boolean lockTaskByTaskId(int taskId);
+
+  /**
+   * 根据任务ID解锁任务, 表示任务执行完毕
+   *
+   * @param taskId 任务ID
+   * @return 如果操作成功, 返回true, 否则返回false
+   */
+  boolean unlockTaskByTaskId(int taskId);
+
+  /**
+   * 根据任务ID锁定消息任务, 表示消息任务正在执行
+   *
+   * @param taskId 任务ID
+   * @return 如果操作成功, 返回true, 否则返回false
+   */
+  boolean lockMsgTaskByTaskId(int taskId);
+
+  /**
+   * 根据任务ID解锁消息任务, 表示消息任务执行完毕
+   *
+   * @param taskId 任务ID
+   * @return 如果操作成功, 返回true, 否则返回false
+   */
+  boolean unlockMsgTaskByTaskId(int taskId);
+
 }
