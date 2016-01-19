@@ -6,9 +6,6 @@ import com.youzan.trade.timeout.service.DelayTaskLockService;
 import com.youzan.trade.util.LogUtils;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.List;
