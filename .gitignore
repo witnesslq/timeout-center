@@ -1,9 +1,8 @@
 .idea
-timeout-center.iml
 timeout-service/target
 timeout-deploy/target
 
-.idea/*
+*.iml
 .DS_Store
 .settings
 .classpath
@@ -12,9 +11,4 @@ classes
 test-classes
 *.log
 logs
-trade.log
 target
-*.gz
-
-timeout-api/timeout-api.iml
-timeout-deploy/timeout-deploy.iml
