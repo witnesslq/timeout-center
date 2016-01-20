@@ -50,16 +50,6 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   @Override
-  public List<DelayTask> getListWithTimeout(Date timePoint) {
-    return DelayTaskDataTransfer.transfer2TOList(delayTaskDAO.selectListWithTimeout(timePoint));
-  }
-
-  @Override
-  public List<DelayTask> getListWithTimeoutCurrently() {
-    return getListWithTimeout(Calendar.getInstance().getTime());
-  }
-
-  @Override
   public List<DelayTask> getListWithBizTypeAndTimeout(int bizType, Date timePoint, int maxSize) {
     return DelayTaskDataTransfer
         .transfer2TOList(delayTaskDAO.selectListWithBizTypeAndTimeout(bizType, timePoint, maxSize));
@@ -68,16 +58,6 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   @Override
   public List<DelayTask> getListWithBizTypeAndTimeoutCurrently(int bizType, int maxSize) {
     return getListWithBizTypeAndTimeout(bizType, Calendar.getInstance().getTime(), maxSize);
-  }
-
-  @Override
-  public List<DelayTask> getListWithMsgTimeout(Date timePoint) {
-    return DelayTaskDataTransfer.transfer2TOList(delayTaskDAO.selectListWithMsgTimeout(timePoint));
-  }
-
-  @Override
-  public List<DelayTask> getListWithMsgTimeoutCurrently() {
-    return getListWithMsgTimeout(Calendar.getInstance().getTime());
   }
 
   @Override

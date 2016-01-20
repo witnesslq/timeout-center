@@ -43,13 +43,6 @@ public class DelayTaskDAOTest extends BaseTest {
     int effectNum = delayTaskDAO.insert(delayTaskDO);
   }
 
-
-  @Test
-  public void testSelectListWithTimeout() {
-    Date timePoint = new Date();
-    List<DelayTaskDO> delayTaskDOList = delayTaskDAO.selectListWithTimeout(timePoint);
-  }
-
   @Test
   public void testSelectListWithBizTypeAndTimeout() throws Exception {
     int bizType = 10;
@@ -58,12 +51,6 @@ public class DelayTaskDAOTest extends BaseTest {
     List<DelayTaskDO> delayTaskDOs =
         delayTaskDAO.selectListWithBizTypeAndTimeout(bizType, timePoint, maxSize);
     Assert.assertEquals(2, delayTaskDOs.size());
-  }
-
-  @Test
-  public void testSelectListWithMsgTimeout() {
-    Date timePoint = new Date();
-    List<DelayTaskDO> delayTaskDOList = delayTaskDAO.selectListWithMsgTimeout(timePoint);
   }
 
   @Test

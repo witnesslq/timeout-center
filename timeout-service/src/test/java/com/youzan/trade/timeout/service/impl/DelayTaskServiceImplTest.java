@@ -80,23 +80,4 @@ public class DelayTaskServiceImplTest {
     return delayTask;
   }
 
-  @Test
-  public void testGetListWithTimeout() throws Exception {
-    Date timePoint = format.parse("2015-10-20");
-    DelayTaskDO delayTaskDO = generateDelayTaskDO();
-    List<DelayTaskDO> delayTaskDOList = Lists.newArrayList();
-    delayTaskDOList.add(delayTaskDO);
-
-    when(delayTaskDAO.selectListWithTimeout(timePoint)).thenReturn(delayTaskDOList);
-
-    List<DelayTask> delayTaskList = delayTaskService.getListWithTimeout(timePoint);
-
-    Assert.assertEquals(1, delayTaskList.size());
-    Assert.assertEquals(generateDelayTask(), delayTaskList.get(0));
-  }
-
-  @Test
-  public void testGetListWithTimeoutCurrently() throws Exception {
-    delayTaskService.getListWithTimeoutCurrently();
-  }
 }

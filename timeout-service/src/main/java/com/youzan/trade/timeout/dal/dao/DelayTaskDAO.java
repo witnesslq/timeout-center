@@ -28,15 +28,6 @@ public interface DelayTaskDAO {
   List<DelayTaskDO> selectListByBizTypeAndBizId(@Param("bizType") int bizType,
                                                 @Param("bizId") String bizId);
 
-
-  /**
-   * 查询在某个时间点后已经超时的任务列表
-   *
-   * @param timePoint 某个时间点
-   * @return 任务列表
-   */
-  List<DelayTaskDO> selectListWithTimeout(Date timePoint);
-
   /**
    * 查询某个业务在某个时间点后已经超时的任务列表 按业务域区分
    *
@@ -48,14 +39,6 @@ public interface DelayTaskDAO {
   List<DelayTaskDO> selectListWithBizTypeAndTimeout(@Param("bizType") int bizType,
                                                     @Param("timePoint") Date timePoint,
                                                     @Param("maxSize") int maxSize);
-
-  /**
-   * 查询在某个时间点后消息任务已经超时的任务列表
-   *
-   * @param timePoint 某个时间点
-   * @return 任务列表
-   */
-  List<DelayTaskDO> selectListWithMsgTimeout(Date timePoint);
 
   /**
    * 查询某个业务在某个时间点后消息任务已经超时且没有完成的任务列表
