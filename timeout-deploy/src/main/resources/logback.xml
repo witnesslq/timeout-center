@@ -92,8 +92,8 @@
     <!--上传日志到日志平台-->
     <appender name="ERROR_ALARM" class="com.youzan.track.appender.TrackAppender">
         <Filter class="com.youzan.trade.common.logging.ErrLogFilter"/>
-        <app>${application.name}</app> <!--timeout_center-->
-        <type>trade-soa</type>
+        <app>timeout_center</app> <!--timeout_center-->
+        <type>timeout_center</type>
         <pattern>${TRACK_OUTPUT_PATTERN}</pattern>
         <host>${track.log.addr}</host>
     </appender>
