@@ -64,7 +64,7 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor 
         delayTaskService.getTaskByBizTypeAndBizId(BizType.DELIVERED_ORDER.code(), orderNo);
 
     if (orderTask == null) {
-      LogUtils.error(log, "OrderTask not found.safeNo={}", safe.getSafeNo());
+      LogUtils.warn(log, "OrderTask not found.safeNo={}", safe.getSafeNo());
       return true;
     }
 
@@ -84,7 +84,7 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor 
       if (isSuspendable(orderTask, safe)) {
         Order order = orderService.getOrderByOrderNoAndKdtId(orderNo, safe.getKdtId());
         if (order == null) {
-          LogUtils.error(log, "[SuspendTaskFail]Order not found.orderNo={},taskId={}", orderNo,
+          LogUtils.warn(log, "[SuspendTaskFail]Order not found.orderNo={},taskId={}", orderNo,
                          orderTask.getId());
         } else {
           orderSuccessLogService.addOrderSuccessLog(order, safe.getAddTime());
