@@ -13,6 +13,7 @@ import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.service.DelayTaskService;
 import com.youzan.trade.timeout.service.DelayTimeStrategy;
 import com.youzan.trade.timeout.source.Processor;
+import com.youzan.trade.timeout.source.WhiteShopFilter;
 import com.youzan.trade.util.LogUtils;
 import com.youzan.trade.util.TimeUtils;
 
@@ -58,6 +59,10 @@ public class SafeProcessorImpl implements Processor {
 
     if (safe == null) {
       LogUtils.error(log, "Invalid safe message={}", message);
+      return true;
+    }
+
+    if (!WhiteShopFilter.filterKdtId(safe.getKdtId())) {
       return true;
     }
 
