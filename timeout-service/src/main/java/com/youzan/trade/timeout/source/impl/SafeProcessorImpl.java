@@ -49,6 +49,9 @@ public class SafeProcessorImpl implements Processor {
   @Resource
   private TransactionTemplate defaultTxTemplate;
 
+  @Resource
+  private WhiteShopFilter whiteShopFilter;
+
   @Override
   public boolean process(String message) {
     if (message == null) {
@@ -62,7 +65,7 @@ public class SafeProcessorImpl implements Processor {
       return true;
     }
 
-    if (!WhiteShopFilter.filterKdtId(safe.getKdtId())) {
+    if (!whiteShopFilter.filterKdtId(safe.getKdtId())) {
       return true;
     }
 

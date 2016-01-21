@@ -50,6 +50,9 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor 
   @Resource
   OrderService orderService;
 
+  @Resource
+  private WhiteShopFilter whiteShopFilter;
+
   @Override
   public boolean process(String message) {
     if (StringUtils.isBlank(message)) {
@@ -60,7 +63,7 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor 
     Safe safe;
     safe = JSON.parseObject(message, Safe.class);
 
-    if (!WhiteShopFilter.filterKdtId(safe.getKdtId())) {
+    if (!whiteShopFilter.filterKdtId(safe.getKdtId())) {
       return true;
     }
 

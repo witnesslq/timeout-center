@@ -28,6 +28,9 @@ public class DeliveredOrderProcessorImpl implements Processor {
   @Resource(name = "deliveredOrderServiceImpl")
   DeliveredOrderService deliveredOrderService;
 
+  @Resource
+  private WhiteShopFilter whiteShopFilter;
+
   @Override
   public boolean process(String message) {
 
@@ -37,7 +40,7 @@ public class DeliveredOrderProcessorImpl implements Processor {
     }
     Order order = JSON.parseObject(message, Order.class);
 
-    if (!WhiteShopFilter.filterKdtId(order.getKdtId())) {
+    if (!whiteShopFilter.filterKdtId(order.getKdtId())) {
       return true;
     }
 
