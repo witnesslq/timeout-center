@@ -3,6 +3,7 @@ package com.youzan.trade.timeout.service.impl;
 import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.TaskStatus;
+import com.youzan.trade.timeout.constants.TaskStatusContext;
 import com.youzan.trade.timeout.dal.dao.DelayTaskDAO;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.timeout.model.DelayTask;
@@ -52,49 +53,43 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   @Override
   public List<DelayTask> getListWithBizTypeAndTimeout(int bizType, Date timePoint, int maxSize) {
     return DelayTaskDataTransfer
-        .transfer2TOList(delayTaskDAO.selectListWithBizTypeAndTimeout(bizType, timePoint, maxSize));
+        .transfer2TOList(delayTaskDAO.selectListWithBizTypeAndTimeout(bizType,
+                        TaskStatus.ACTIVE.code(), timePoint, maxSize));
   }
 
   @Override
   public List<DelayTask> getListWithBizTypeAndTimeoutCurrently(int bizType, int maxSize) {
-    return getListWithBizTypeAndTimeout(bizType, Calendar.getInstance().getTime(), maxSize);
+    return getListWithBizTypeAndTimeout(bizType, TimeUtils.currentDate(), maxSize);
   }
 
   @Override
   public List<DelayTask> getListWithBizTypeAndMsgTimeout(int bizType, Date timePoint, int maxSize) {
     return DelayTaskDataTransfer.
-        transfer2TOList(delayTaskDAO.selectListWithBizTypeAndMsgTimeout(bizType, timePoint, maxSize));
+        transfer2TOList(delayTaskDAO.selectListWithBizTypeAndMsgTimeout(bizType,
+        TaskStatus.ACTIVE.code(), MsgStatus.ACTIVE.code(), timePoint, maxSize));
   }
 
   @Override
   public List<DelayTask> getListWithBizTypeAndMsgTimeoutCurrently(int bizType, int maxSize) {
-    return getListWithBizTypeAndMsgTimeout(bizType, Calendar.getInstance().getTime(), maxSize);
+    return getListWithBizTypeAndMsgTimeout(bizType, TimeUtils.currentDate(), maxSize);
   }
 
   @Override
   public boolean closeOnSuccess(int taskId,CloseReason closeReason) {
     LogUtils.info(log, "超时任务执行成功, 关闭超时任务, taskId: {}", taskId);
 
-    DelayTaskDO delayTaskDO = new DelayTaskDO();
-    delayTaskDO.setId(taskId);
-    delayTaskDO.setStatus(TaskStatus.CLOSED.code());
-    delayTaskDO.setCloseReason(closeReason.code());
-    delayTaskDO.setUpdateTime(TimeUtils.currentDate());
-
-    return delayTaskDAO.close(delayTaskDO) == 1;
+    return delayTaskDAO.close(taskId, TaskStatus.ACTIVE.code(),
+                              TaskStatus.CLOSED.code(), closeReason.code(),
+                              TimeUtils.currentDate()) == 1;
   }
 
   @Override
   public boolean closeOnNoRetry(int taskId) {
     LogUtils.info(log, "超时任务执行失败, 关闭超时任务, 不再重试, taskId: {}", taskId);
 
-    DelayTaskDO delayTaskDO = new DelayTaskDO();
-    delayTaskDO.setId(taskId);
-    delayTaskDO.setStatus(TaskStatus.CLOSED.code());
-    delayTaskDO.setCloseReason(CloseReason.FAILURE_NO_RETRY.code());
-    delayTaskDO.setUpdateTime(TimeUtils.currentDate());
-
-    return delayTaskDAO.close(delayTaskDO) == 1;
+    return delayTaskDAO.close(taskId, TaskStatus.ACTIVE.code(),
+                              TaskStatus.CLOSED.code(),
+                              CloseReason.FAILURE_NO_RETRY.code(), TimeUtils.currentDate()) == 1;
   }
 
   @Override
@@ -103,7 +98,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
     int delayTimeIncrement = delayTimeStrategy.getNextDelayIncrement(
         delayTaskDAO.selectDelayTimesById(taskId));
-    return delayTaskDAO.updateOnRetry(taskId, delayTimeIncrement, TimeUtils.currentDate()) == 1;
+    return delayTaskDAO.updateOnRetry(taskId, TaskStatus.ACTIVE.code(), delayTimeIncrement, TimeUtils.currentDate()) == 1;
 
   }
 
@@ -111,14 +106,14 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   public boolean closeMsgOnSuccess(int taskId) {
     LogUtils.info(log, "消息任务执行成功并关闭, taskId: {}", taskId);
 
-    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code(), TimeUtils.currentDate()) == 1;
+    return delayTaskDAO.closeMsg(taskId, TaskStatus.ACTIVE.code(), MsgStatus.CLOSED.code(), TimeUtils.currentDate()) == 1;
   }
 
   @Override
   public boolean closeMsgOnNoRetry(int taskId) {
     LogUtils.info(log, "执行消息任务失败, 关闭消息任务, 不再重试, taskId: {}", taskId);
 
-    return delayTaskDAO.closeMsg(taskId, MsgStatus.CLOSED.code(), TimeUtils.currentDate()) == 1;
+    return delayTaskDAO.closeMsg(taskId, TaskStatus.ACTIVE.code(), MsgStatus.CLOSED.code(), TimeUtils.currentDate()) == 1;
   }
 
   @Override
@@ -127,7 +122,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
     int delayTimeIncrement =
         msgDelayTimeStrategy.getNextDelayIncrement(delayTaskDAO.selectDelayTimesById(taskId));
-    return delayTaskDAO.updateMsgOnRetry(taskId, delayTimeIncrement, TimeUtils.currentDate()) == 1;
+    return delayTaskDAO.updateMsgOnRetry(taskId, TaskStatus.ACTIVE.code(), delayTimeIncrement, TimeUtils.currentDate()) == 1;
   }
 
   @Override
@@ -142,7 +137,10 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     delayTaskDO.setUpdateTime(TimeUtils.currentDate());
 
     // 因为不确定对应的延时任务数量
-    return delayTaskDAO.closeTaskAhead(delayTaskDO) >= 0;
+    return delayTaskDAO.closeTaskAhead(bizType, bizId,
+                                       TaskStatus.ACTIVE.code(),
+                                       TaskStatus.CLOSED.code(),
+                                       CloseReason.AHEAD.code(), TimeUtils.currentDate()) >= 0;
   }
 
   @Override
@@ -165,12 +163,10 @@ public class DelayTaskServiceImpl implements DelayTaskService {
 
       Date currentTime = TimeUtils.currentDate();
 
-      return 0 < delayTaskDAO
-          .updateSuspendTime(task.getId(),
-                             TaskStatus.SUSPENDED.code(),
-                             currentTime,
-                             currentTime
-          );
+      return 0 < delayTaskDAO.updateSuspendTime(task.getId(),
+                                                TaskStatus.ACTIVE.code(),
+                                                TaskStatus.SUSPENDED.code(),
+                                                currentTime, currentTime);
     }
     return false;
   }
@@ -216,6 +212,7 @@ public class DelayTaskServiceImpl implements DelayTaskService {
     }
     // 因为bizType + bizId不构成唯一索引
     if (delayTaskDAO.updateDelayEndTime(bizType, bizId, toDelaySeconds,
+                                        TaskStatus.ACTIVE.code(),
                                         TimeUtils.currentDate()) > 0) {
       return calDelayEndTimeAfterIncreasing(toDelaySeconds, delayTask);
     } else {
@@ -239,11 +236,13 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   private boolean tryLockByTaskId(int taskId) {
-    return delayTaskDAO.tryLockByTaskId(taskId, TimeUtils.currentDate()) == 1;
+    return delayTaskDAO.tryLockByTaskId(taskId,
+          TaskStatus.ACTIVE.code(), TimeUtils.currentDate()) == 1;
   }
 
   private boolean forceLockByTaskId(int taskId) {
-    return delayTaskDAO.forceLockByTaskId(taskId, LOCK_MAX_INTERNAL_IN_MINUTES,
+    return delayTaskDAO.forceLockByTaskId(taskId,
+          TaskStatus.ACTIVE.code(), LOCK_MAX_INTERNAL_IN_MINUTES,
                                           TimeUtils.currentDate()) == 1;
   }
 
@@ -266,11 +265,11 @@ public class DelayTaskServiceImpl implements DelayTaskService {
   }
 
   private boolean tryLockMsgByTaskId(int taskId) {
-    return delayTaskDAO.tryLockMsgByTaskId(taskId, TimeUtils.currentDate()) == 1;
+    return delayTaskDAO.tryLockMsgByTaskId(taskId, TaskStatus.ACTIVE.code(), TimeUtils.currentDate()) == 1;
   }
 
   private boolean forceLockMsgByTaskId(int taskId) {
-    return delayTaskDAO.forceLockMsgByTaskId(taskId, LOCK_MAX_INTERNAL_IN_MINUTES,
+    return delayTaskDAO.forceLockMsgByTaskId(taskId,  TaskStatus.ACTIVE.code(), LOCK_MAX_INTERNAL_IN_MINUTES,
                                              TimeUtils.currentDate()) == 1;
   }
 
