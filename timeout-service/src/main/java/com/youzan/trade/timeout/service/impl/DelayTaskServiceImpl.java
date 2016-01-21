@@ -3,7 +3,6 @@ package com.youzan.trade.timeout.service.impl;
 import com.youzan.trade.timeout.constants.CloseReason;
 import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.TaskStatus;
-import com.youzan.trade.timeout.constants.TaskStatusContext;
 import com.youzan.trade.timeout.dal.dao.DelayTaskDAO;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.timeout.model.DelayTask;
@@ -16,7 +15,6 @@ import com.youzan.trade.util.TimeUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
