@@ -40,7 +40,7 @@
         <appender-ref ref="BUSINESS"/>
     </logger>
     <root>
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="consoleAppender"/>
     </root>
 
