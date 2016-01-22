@@ -2,6 +2,7 @@ package com.youzan.trade.timeout.dal.dao;
 
 
 import com.youzan.trade.timeout.constants.CloseReason;
+import com.youzan.trade.timeout.constants.MsgStatus;
 import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.dal.dataobject.DelayTaskDO;
 import com.youzan.trade.util.TimeUtils;
@@ -49,7 +50,7 @@ public class DelayTaskDAOTest extends BaseTest {
     Date timePoint = new Date(115, 7, 1);
     int maxSize = 2;
     List<DelayTaskDO> delayTaskDOs =
-        delayTaskDAO.selectListWithBizTypeAndTimeout(bizType, timePoint, maxSize);
+        delayTaskDAO.selectListWithBizTypeAndTimeout(bizType, TaskStatus.ACTIVE.code(), timePoint, maxSize);
     Assert.assertEquals(2, delayTaskDOs.size());
   }
 
@@ -60,7 +61,7 @@ public class DelayTaskDAOTest extends BaseTest {
     int maxSize = 2;
 
     List<DelayTaskDO> delayTaskDOs =
-        delayTaskDAO.selectListWithBizTypeAndMsgTimeout(bizType, timePoint, maxSize);
+        delayTaskDAO.selectListWithBizTypeAndMsgTimeout(bizType, TaskStatus.ACTIVE.code(), MsgStatus.ACTIVE.code(), timePoint, maxSize);
     Assert.assertEquals(2, delayTaskDOs.size());
   }
 
@@ -73,12 +74,13 @@ public class DelayTaskDAOTest extends BaseTest {
   @Test
   public void testUpdateOnSuccess() {
     DelayTaskDO delayTaskDO = new DelayTaskDO();
-    delayTaskDO.setId(74);
-    delayTaskDO.setStatus(TaskStatus.CLOSED.code());
     delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
     delayTaskDO.setUpdateTime(new Date());
+    int taskId = 74;
 
-    int effectNum = delayTaskDAO.close(delayTaskDO);
+    int effectNum = delayTaskDAO.close(taskId, TaskStatus.ACTIVE.code(),
+                       TaskStatus.CLOSED.code(), CloseReason.SUCCESS.code(),
+                       TimeUtils.currentDate());
   }
 
   @Test
@@ -86,19 +88,18 @@ public class DelayTaskDAOTest extends BaseTest {
     int taskId = 75;
     int delayTimeIncrement = 5 * 60;
 
-    int effectNum = delayTaskDAO.updateOnRetry(taskId, delayTimeIncrement, new Date());
+    int effectNum = delayTaskDAO.updateOnRetry(taskId, TaskStatus.ACTIVE.code(), delayTimeIncrement, new Date());
   }
 
   @Test
   public void testCloseTask() {
-    DelayTaskDO delayTaskDO = new DelayTaskDO();
-    delayTaskDO.setBizType(10);
-    delayTaskDO.setBizId("123");
-    delayTaskDO.setStatus(20);
-    delayTaskDO.setCloseReason(10);
-    delayTaskDO.setUpdateTime(new Date());
+    int bizType = 10;
+    String bizId = "123";
 
-    int effectNum = delayTaskDAO.closeTaskAhead(delayTaskDO);
+    int effectNum = delayTaskDAO.closeTaskAhead(bizType, bizId,
+                                                TaskStatus.ACTIVE.code(),
+                                                TaskStatus.CLOSED.code(),
+                                                CloseReason.AHEAD.code(), TimeUtils.currentDate());
   }
 
   @Test
@@ -106,18 +107,16 @@ public class DelayTaskDAOTest extends BaseTest {
     int taskId = 75;
     int msgStatus = 20;
 
-    int effectNum = delayTaskDAO.closeMsg(taskId, msgStatus, new Date());
+    int effectNum = delayTaskDAO.closeMsg(taskId, TaskStatus.ACTIVE.code(), msgStatus, new Date());
   }
 
   @Test
   public void testClose() {
-    DelayTaskDO delayTaskDO = new DelayTaskDO();
-    delayTaskDO.setId(57);
-    delayTaskDO.setStatus(TaskStatus.CLOSED.code());
-    delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
-    delayTaskDO.setUpdateTime(new Date());
+    int taskId = 57;
 
-    int effectNum = delayTaskDAO.close(delayTaskDO);
+    int effectNum = delayTaskDAO.close(taskId, TaskStatus.ACTIVE.code(),
+                                       TaskStatus.CLOSED.code(), CloseReason.SUCCESS.code(),
+                                       TimeUtils.currentDate());
   }
 
   @Test
@@ -127,7 +126,7 @@ public class DelayTaskDAOTest extends BaseTest {
     int delayTimeIncrement = 5 * 60;
     Date updateTime = new Date();
 
-    int effectNum = delayTaskDAO.updateDelayEndTime(bizType, bizId, delayTimeIncrement, updateTime);
+    int effectNum = delayTaskDAO.updateDelayEndTime(bizType, bizId, TaskStatus.ACTIVE.code(), delayTimeIncrement, updateTime);
     Assert.assertEquals(1, effectNum);
   }
 
@@ -136,7 +135,7 @@ public class DelayTaskDAOTest extends BaseTest {
     int taskId = 200;
     Date currentTime = new Date();
 
-    int effectNum = delayTaskDAO.tryLockByTaskId(taskId, currentTime);
+    int effectNum = delayTaskDAO.tryLockByTaskId(taskId, TaskStatus.ACTIVE.code(), currentTime);
     Assert.assertEquals(1, effectNum);
   }
 
@@ -146,7 +145,7 @@ public class DelayTaskDAOTest extends BaseTest {
     int internalMinutes = 2;
     Date currentTime = new Date();
 
-    int effectNum = delayTaskDAO.forceLockByTaskId(taskId, internalMinutes, currentTime);
+    int effectNum = delayTaskDAO.forceLockByTaskId(taskId, TaskStatus.ACTIVE.code(), internalMinutes, currentTime);
     Assert.assertEquals(1, effectNum);
   }
 
@@ -164,7 +163,7 @@ public class DelayTaskDAOTest extends BaseTest {
     int taskId = 200;
     Date currentTime = new Date();
 
-    int effectNum = delayTaskDAO.tryLockMsgByTaskId(taskId, currentTime);
+    int effectNum = delayTaskDAO.tryLockMsgByTaskId(taskId, TaskStatus.ACTIVE.code(), currentTime);
     Assert.assertEquals(1, effectNum);
   }
 
@@ -174,7 +173,7 @@ public class DelayTaskDAOTest extends BaseTest {
     int internalMinutes = 2;
     Date currentTime = new Date();
 
-    int effectNum = delayTaskDAO.forceLockMsgByTaskId(taskId, internalMinutes, currentTime);
+    int effectNum = delayTaskDAO.forceLockMsgByTaskId(taskId, TaskStatus.ACTIVE.code(), internalMinutes, currentTime);
     Assert.assertEquals(1, effectNum);
   }
 

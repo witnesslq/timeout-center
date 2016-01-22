@@ -3,6 +3,7 @@ package com.youzan.trade.timeout.source.impl;
 import com.youzan.trade.timeout.model.Order;
 import com.youzan.trade.timeout.order.service.DeliveredOrderService;
 import com.youzan.trade.timeout.source.Processor;
+import com.youzan.trade.timeout.source.WhiteShopFilter;
 import com.youzan.trade.util.LogUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -24,6 +25,9 @@ public class OrderFinishedProcessorImpl implements Processor {
   @Resource(name = "deliveredOrderServiceImpl")
   DeliveredOrderService deliveredOrderService;
 
+  @Resource
+  private WhiteShopFilter whiteShopFilter;
+
   @Override
   public boolean process(String message) {
     if (StringUtils.isBlank(message)) {
@@ -31,6 +35,10 @@ public class OrderFinishedProcessorImpl implements Processor {
       return true;
     }
     Order order = JSON.parseObject(message, Order.class);
+
+    if (!whiteShopFilter.filterKdtId(order.getKdtId())) {
+      return true;
+    }
 
     return deliveredOrderService.closeDelayTask(order);
   }
