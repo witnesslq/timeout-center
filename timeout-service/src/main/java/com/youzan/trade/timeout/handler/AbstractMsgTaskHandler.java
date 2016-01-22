@@ -28,7 +28,7 @@ public abstract class AbstractMsgTaskHandler implements TaskHandler {
   @Resource
   protected DelayTaskService delayTaskService;
 
-  @Async("defaultThreadPoolTaskExecutor")
+  @Async("taskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
     long startTime = System.currentTimeMillis();
