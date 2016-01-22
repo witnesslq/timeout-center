@@ -32,6 +32,10 @@
       <groupId>com.youzan.platform</groupId>
       <artifactId>bootstrap</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.youzan.platform</groupId>
+      <artifactId>track-appender</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

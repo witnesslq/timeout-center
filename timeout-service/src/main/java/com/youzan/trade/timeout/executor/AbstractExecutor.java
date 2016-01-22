@@ -6,9 +6,6 @@ import com.youzan.trade.timeout.service.DelayTaskLockService;
 import com.youzan.trade.util.LogUtils;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.List;
@@ -21,12 +18,13 @@ import lombok.extern.slf4j.Slf4j;
  * @author apple created at: 15/12/28 下午6:02
  */
 @Slf4j
-public abstract class AbstractExecutor implements Executor, ApplicationContextAware {
+public abstract class AbstractExecutor implements Executor {
 
   @Resource
   private DelayTaskLockService delayTaskLockService;
 
-  private ApplicationContext applicationContext;
+  @Resource(name = "taskExecutor")
+  private ThreadPoolTaskExecutor taskExecutor;
 
   @Override
   public void execute(int lockId, TaskHandler taskHandler) {
@@ -58,15 +56,10 @@ public abstract class AbstractExecutor implements Executor, ApplicationContextAw
   }
 
   private void monitorThreadPool() {
-    ThreadPoolTaskExecutor taskExecutor =
-        (ThreadPoolTaskExecutor) applicationContext.getBean("defaultThreadPoolTaskExecutor");
-    LogUtils.info(log, "线程池的queue实时大小: {}", taskExecutor.getThreadPoolExecutor().getQueue().size());
+    LogUtils.info(log, "线程池的queue实时大小: {}",
+                  taskExecutor.getThreadPoolExecutor().getQueue().size());
   }
 
   protected abstract List<DelayTask> getTaskList();
 
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
-  }
 }

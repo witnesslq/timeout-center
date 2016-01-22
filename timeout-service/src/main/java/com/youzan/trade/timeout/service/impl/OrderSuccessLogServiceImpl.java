@@ -70,7 +70,7 @@ public class OrderSuccessLogServiceImpl implements OrderSuccessLogService {
     OrderSuccessLog orderSuccessLog = getLatestOrderSuccessLogByOrderNo(order.getOrderNo());
     if (orderSuccessLog == null || orderSuccessLog.getFinishTime() != null) {
       int delayTime = delayTimeStrategy.getInitialDelayTimeByOrderType(
-          BizType.DELIVERED_ORDER.code(), order.getOrderType());
+          BizType.DELIVERED_ORDER.code(), order.getOrderType(), order.getExpressTime());
       int remainTime = order.getExpressTime() + delayTime - safeTime;
       OrderSuccessLog buildOrderSuccessLog = buildOrderSuccessLog(order, remainTime);
       return orderSuccessLogDAO.insert(

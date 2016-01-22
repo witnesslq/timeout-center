@@ -13,6 +13,7 @@ import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.service.DelayTaskService;
 import com.youzan.trade.timeout.service.DelayTimeStrategy;
 import com.youzan.trade.timeout.source.Processor;
+import com.youzan.trade.timeout.source.WhiteShopFilter;
 import com.youzan.trade.util.LogUtils;
 import com.youzan.trade.util.TimeUtils;
 
@@ -48,6 +49,9 @@ public class SafeProcessorImpl implements Processor {
   @Resource
   private TransactionTemplate defaultTxTemplate;
 
+  @Resource
+  private WhiteShopFilter whiteShopFilter;
+
   @Override
   public boolean process(String message) {
     if (message == null) {
@@ -58,6 +62,10 @@ public class SafeProcessorImpl implements Processor {
 
     if (safe == null) {
       LogUtils.error(log, "Invalid safe message={}", message);
+      return true;
+    }
+
+    if (!whiteShopFilter.filterKdtId(safe.getKdtId())) {
       return true;
     }
 
@@ -121,12 +129,12 @@ public class SafeProcessorImpl implements Processor {
 
   private Date calDelayEndTime(Safe safe) {
     return TimeUtils.getDateBySeconds(safe.getRecordTime() + delayTimeStrategy
-        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState(), safe.getRecordTime()));
   }
 
   private Date calMsgEndTime(Safe safe) {
     return TimeUtils.getDateBySeconds(safe.getRecordTime() + msgDelayTimeStrategy
-        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState(), safe.getRecordTime()));
   }
 
   private boolean processOnClose(Safe safe) {

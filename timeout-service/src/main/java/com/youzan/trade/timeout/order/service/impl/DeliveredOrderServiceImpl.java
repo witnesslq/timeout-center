@@ -142,7 +142,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
   protected Date calDelayEndTime(Order order) {
     int endTime = order.getExpressTime() + delayTimeStrategy
         .getInitialDelayTimeByOrderType(
-            BizType.DELIVERED_ORDER.code(), order.getOrderType());
+            BizType.DELIVERED_ORDER.code(), order.getOrderType(), order.getExpressTime());
     return TimeUtils.getDateBySeconds(endTime);
   }
 
@@ -150,7 +150,7 @@ public class DeliveredOrderServiceImpl implements DeliveredOrderService {
     if (countDownService.shouldSendMsg(order.getOrderNo(), order.getKdtId())) {
       int endTime = order.getExpressTime() + msgDelayTimeStrategy
           .getInitialDelayTimeByOrderType(
-              BizType.DELIVERED_ORDER.code(), order.getOrderType());
+              BizType.DELIVERED_ORDER.code(), order.getOrderType(), order.getExpressTime());
       if (endTime > TimeUtils.currentInSeconds()) {
         Date msgEndTime = TimeUtils.getDateBySeconds(endTime);
         task.setMsgEndTime(msgEndTime);

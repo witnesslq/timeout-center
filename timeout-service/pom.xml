@@ -36,6 +36,11 @@
       <groupId>com.youzan</groupId>
       <artifactId>common-model</artifactId>
     </dependency>
+    <!-- monitor -->
+    <dependency>
+      <groupId>com.youzan.platform</groupId>
+      <artifactId>track-appender</artifactId>
+    </dependency>
 
     <!-- apache commons -->
     <dependency>

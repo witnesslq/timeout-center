@@ -12,6 +12,10 @@
     <property name="FW_OUTPUT_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{56} - %msg%n" />
 
+    <!--TRACK日志输出格式-->
+    <property name="TRACK_OUTPUT_PATTERN"
+              value="%X{TRACE_ID} %X{ORDER_NO} %logger{15} - %msg%n" />
+
     <!--日志文件保留最大天数-->
     <property name="MAXDAY" value="10"/>
 
@@ -43,27 +47,6 @@
             <pattern>${BUSINESS_OUTPUT_PATTERN}</pattern>
         </encoder>
     </appender>
-
-    <!--<appender name="BUSINESS_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
-        <!--<File>${LOG_PATH}/trade_err.log</File>-->
-        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
-            <!--&lt;!&ndash; rollover daily &ndash;&gt;-->
-            <!--<fileNamePattern>${LOG_PATH}/trade_err-%d{yyyy-MM-dd}-%i.log.gz-->
-            <!--</fileNamePattern>-->
-            <!--<timeBasedFileNamingAndTriggeringPolicy-->
-                    <!--class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">-->
-                <!--&lt;!&ndash; or whenever the file size reaches 100MB &ndash;&gt;-->
-                <!--<maxFileSize>100MB</maxFileSize>-->
-            <!--</timeBasedFileNamingAndTriggeringPolicy>-->
-            <!--<maxHistory>${MAXDAY}</maxHistory>-->
-        <!--</rollingPolicy>-->
-        <!--<encoder>-->
-            <!--<pattern>${BUSINESS_OUTPUT_PATTERN}</pattern>-->
-        <!--</encoder>-->
-    <!--</appender>-->
-
-
-
 
     <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${LOG_PATH}/sql.log</File>
@@ -104,16 +87,43 @@
         </encoder>
     </appender>
 
-    <appender name="ERROR_MONITOR"
-              class="com.youzan.hawk.collect.log.YouzanExceptionMonitorAppender">
-        <app>${application.name}</app>
-        <url>${application.exception.upload.url}</url>
+
+
+    <!--上传日志到日志平台-->
+    <appender name="ERROR_ALARM" class="com.youzan.track.appender.TrackAppender">
+        <Filter class="com.youzan.trade.common.logging.ErrLogFilter"/>
+        <app>timeout_center</app> <!--timeout_center-->
+        <type>timeout_center</type>
+        <pattern>${TRACK_OUTPUT_PATTERN}</pattern>
+        <host>${track.log.addr}</host>
     </appender>
 
+    <!--For test-->
+    <appender name="BUSINESS_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/timeout-center-err.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_PATH}/timeout-center-err-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>${MAXSIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAXDAY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${BUSINESS_OUTPUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    <!--For test-->
+
     <!-- ************* logger配置 ****************** -->
+
     <logger name="com.youzan.trade" additivity="false">
         <level value="DEBUG"/>
         <appender-ref ref="BUSINESS"/>
+        <appender-ref ref="ERROR_ALARM"/>
     </logger>
 
     <logger name="druid.sql.Statement" additivity="false">
@@ -125,17 +135,12 @@
     <logger name="com.youzan.platform.bootstrap.rest.extension.ResponseHandler"
             additivity="false">
         <level value="ERROR"/>
-        <appender-ref ref="ERROR_MONITOR"/>
         <appender-ref ref="BUSINESS"/>
+        <appender-ref ref="ERROR_ALARM"/>
     </logger>
 
     <root level="${trade.log.level}">
         <appender-ref ref="ROOT"/>
     </root>
 
-    <!--<appender name="trackError" class="com.youzan.track.appender.TrackAppender">-->
-    <!--   <app>${application.name}</app>-->
-    <!--   <type>normal logs</type>-->
-    <!--   <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{56} - %msg%n</pattern>-->
-    <!--</appender>-->
 </configuration>

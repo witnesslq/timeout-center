@@ -55,31 +55,17 @@
     WHERE biz_type = #{bizType} AND biz_id = #{bizId}
   </select>
 
-  <select id="selectListWithTimeout" resultMap="BaseResultMap">
-    SELECT <include refid="Base_Column_List"/>
-    FROM <include refid="tableName" />
-    WHERE status = 10 AND delay_end_time &lt; #{timePoint}
-    LIMIT 100
-  </select>
-
   <select id="selectListWithBizTypeAndTimeout" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
     FROM <include refid="tableName" />
-    WHERE biz_type = #{bizType} AND status = 10 AND delay_end_time &lt; #{timePoint}
+    WHERE biz_type = #{bizType} AND status = #{status} AND delay_end_time &lt; #{timePoint}
     LIMIT #{maxSize}
-  </select>
-
-  <select id="selectListWithMsgTimeout" resultMap="BaseResultMap">
-    SELECT <include refid="Base_Column_List"/>
-    FROM <include refid="tableName" />
-    WHERE status = 10 AND msg_status = 10 AND msg_end_time &lt; #{timePoint}
-    LIMIT 1000
   </select>
 
   <select id="selectListWithBizTypeAndMsgTimeout" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
     FROM <include refid="tableName" />
-    WHERE biz_type = #{bizType} AND status = 10 AND msg_status = 10 AND msg_end_time &lt; #{timePoint}
+    WHERE biz_type = #{bizType} AND status = #{status} AND msg_status = #{msgStatus} AND msg_end_time &lt; #{timePoint}
     LIMIT #{maxSize}
   </select>
 
@@ -92,12 +78,12 @@
   <update id="close">
     UPDATE <include refid="tableName" />
     <set>
-      <if test="status != null">status = #{status},</if>
-      <if test="closeReason != null">close_reason = #{closeReason},</if>
+      status = #{statusTo},
+      close_reason = #{closeReason},
       delay_times = delay_times + 1,
       update_time = #{updateTime}
     </set>
-    WHERE id = #{id} AND status = 10
+    WHERE id = #{id} AND status = #{statusFrom}
   </update>
 
   <update id="updateOnRetry">
@@ -107,7 +93,7 @@
       delay_times = delay_times + 1,
       update_time = #{updateTime}
     </set>
-    WHERE id = #{taskId} AND status = 10
+    WHERE id = #{taskId} AND status = #{status}
   </update>
 
   <update id="closeMsg">
@@ -116,7 +102,7 @@
       msg_status = #{msgStatus},
       update_time = #{updateTime}
     </set>
-    WHERE id = #{taskId} AND status = 10 AND msg_status = 10
+    WHERE id = #{taskId} AND status = #{status} AND msg_status = 10
   </update>
 
   <update id="updateMsgOnRetry">
@@ -125,18 +111,18 @@
       msg_end_time = date_add(msg_end_time, interval #{delayTimeIncrement} second),
       update_time = #{updateTime}
     </set>
-    WHERE id = #{taskId} AND status = 10 AND msg_status = 10
+    WHERE id = #{taskId} AND status = #{status} AND msg_status = 10
   </update>
 
   <update id="updateSuspendTime">
     UPDATE
     <include refid="tableName"/>
     <set>
-      status = #{status},
+      status = #{statusTo},
       suspend_time = #{suspendTime},
       update_time = #{updateTime}
     </set>
-    WHERE id = #{taskId} AND status = 10
+    WHERE id = #{taskId} AND status = #{statusFrom}
   </update>
 
   <update id="updateStatusAndEndTime">
@@ -154,11 +140,11 @@
   <update id="closeTaskAhead">
     UPDATE <include refid="tableName" />
     <set>
-      status = #{status},
+      status = #{statusTo},
       close_reason = #{closeReason},
       update_time = #{updateTime}
     </set>
-    WHERE biz_type = #{bizType} AND biz_id = #{bizId} AND status = 10
+    WHERE biz_type = #{bizType} AND biz_id = #{bizId} AND status = #{statusFrom}
   </update>
 
   <update id="updateDelayEndTime">
@@ -168,7 +154,7 @@
       msg_end_time = date_add(msg_end_time,interval #{delayTimeIncrement} second),
       update_time = #{updateTime}
     </set>
-    WHERE biz_type = #{bizType} AND biz_id = #{bizId} AND status = 10
+    WHERE biz_type = #{bizType} AND biz_id = #{bizId} AND status = #{status}
   </update>
 
   <!-- 任务的锁定, 强制锁定, 解锁 -->
@@ -178,7 +164,7 @@
       lock_status = 1,
       update_time = #{currentTime}
     </set>
-    WHERE id = #{taskId} AND status = 10 AND delay_end_time &lt; #{currentTime}
+    WHERE id = #{taskId} AND status = #{status} AND delay_end_time &lt; #{currentTime}
     AND lock_status = 0
   </update>
 
@@ -188,7 +174,7 @@
       lock_status = 1,
       update_time = #{currentTime}
     </set>
-    WHERE id = #{taskId} AND status = 10 AND delay_end_time &lt; #{currentTime}
+    WHERE id = #{taskId} AND status = #{status} AND delay_end_time &lt; #{currentTime}
     AND date_add(update_time, interval #{internalMinutes} minute) &lt; #{currentTime}
   </update>
 
@@ -209,7 +195,7 @@
       msg_lock_status = 1,
       update_time = #{currentTime}
     </set>
-    WHERE id = #{taskId} AND status = 10 AND msg_status = 10 AND msg_end_time &lt; #{currentTime}
+    WHERE id = #{taskId} AND status = #{status} AND msg_status = 10 AND msg_end_time &lt; #{currentTime}
     AND msg_lock_status = 0
   </update>
 
@@ -219,7 +205,7 @@
       msg_lock_status = 1,
       update_time = #{currentTime}
     </set>
-    WHERE id = #{taskId} AND status = 10 AND msg_status = 10 AND msg_end_time &lt; #{currentTime}
+    WHERE id = #{taskId} AND status = #{status} AND msg_status = 10 AND msg_end_time &lt; #{currentTime}
     AND date_add(update_time, interval #{internalMinutes} minute) &lt; #{currentTime}
   </update>
 
@@ -231,5 +217,6 @@
     </set>
     WHERE id = #{taskId} AND msg_lock_status = 1
   </update>
+  <!-- 消息任务的锁定, 强制锁定, 解锁 -->
 
 </mapper>

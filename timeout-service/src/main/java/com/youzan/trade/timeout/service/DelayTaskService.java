@@ -21,21 +21,6 @@ public interface DelayTaskService {
   boolean save(DelayTask delayTask);
 
   /**
-   * 获取某个时间点已经超时且没有完成的任务
-   *
-   * @param timePoint 某个时间点
-   * @return 任务列表
-   */
-  List<DelayTask> getListWithTimeout(Date timePoint);
-
-  /**
-   * 获取当前已经超时的任务
-   *
-   * @return 任务列表
-   */
-  List<DelayTask> getListWithTimeoutCurrently();
-
-  /**
    * 获取某个业务在某个时间点后已经超时的任务列表
    * 按业务域区分
    *
@@ -55,21 +40,6 @@ public interface DelayTaskService {
    * @return 任务列表
    */
   List<DelayTask> getListWithBizTypeAndTimeoutCurrently(int bizType, int maxSize);
-
-  /**
-   * 获取某个时间点消息任务已经超时且没有完成的任务
-   *
-   * @param timePoint 某个时间点
-   * @return 任务列表
-   */
-  List<DelayTask> getListWithMsgTimeout(Date timePoint);
-
-  /**
-   * 获取当前时间消息任务已经超时且没有完成的任务
-   *
-   * @return 任务列表
-   */
-  List<DelayTask> getListWithMsgTimeoutCurrently();
 
   /**
    * 获取某个业务在某个时间点后消息任务已经超时且没有完成的任务列表

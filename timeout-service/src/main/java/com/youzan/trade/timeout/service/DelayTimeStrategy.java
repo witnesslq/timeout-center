@@ -20,7 +20,8 @@ public interface DelayTimeStrategy {
    * @param bizType 业务类型
    * @param bizId 业务场景唯一id
    * @param bizState 业务所处状态
+   * @param delayStartTime
    * @return
    */
-  int getInitialDelayTime(int bizType, String bizId, int bizState);
+  int getInitialDelayTime(int bizType, String bizId, int bizState, int delayStartTime);
 }

@@ -12,6 +12,7 @@ import com.youzan.trade.timeout.service.OrderSuccessLogService;
 import com.youzan.trade.timeout.service.SafeService;
 import com.youzan.trade.timeout.service.OrderService;
 import com.youzan.trade.timeout.source.Processor;
+import com.youzan.trade.timeout.source.WhiteShopFilter;
 import com.youzan.trade.util.LogUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -47,6 +48,9 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
   @Resource
   OrderService orderService;
 
+  @Resource
+  private WhiteShopFilter whiteShopFilter;
+
   @Override
   public boolean process(String message) {
     if (StringUtils.isBlank(message)) {
@@ -56,6 +60,11 @@ public class DispatchingOrderTaskOnSafeCreateProcessorImpl implements Processor 
 
     Safe safe;
     safe = JSON.parseObject(message, Safe.class);
+
+    if (!whiteShopFilter.filterKdtId(safe.getKdtId())) {
+      return true;
+    }
+
     String orderNo = safe.getOrderNo();
     DelayTask
         orderTask =
