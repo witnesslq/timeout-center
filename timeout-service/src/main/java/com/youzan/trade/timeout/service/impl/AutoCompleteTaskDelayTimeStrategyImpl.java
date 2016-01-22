@@ -41,7 +41,6 @@ public class AutoCompleteTaskDelayTimeStrategyImpl extends AbstractOrderRelatedD
 
   @Override
   public int getNextDelayIncrement(int delayTimes) {
-    // todo : checkArgument
     switch (delayTimes) {
       case 0 : return firstIncrement;
 
@@ -54,7 +53,7 @@ public class AutoCompleteTaskDelayTimeStrategyImpl extends AbstractOrderRelatedD
   }
 
   @Override
-  public int getInitialDelayTime(int bizType, String bizId, int bizState) {
+  public int getInitialDelayTime(int bizType, String bizId, int bizState, int delayStartTime) {
     return 0;
   }
 }

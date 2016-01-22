@@ -8,8 +8,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 
-import static org.junit.Assert.*;
-
 /**
  * @author apple created at: 15/11/15 下午8:49
  */
@@ -28,7 +26,7 @@ public class DelayTimeStrategyImplTest {
 
   @Test
   public void testGetInitialDelayTime() throws Exception {
-    int delayTimeInSeconds = delayTimeStrategy.getInitialDelayTime(10, "W123", 201);
+    int delayTimeInSeconds = delayTimeStrategy.getInitialDelayTime(10, "W123", 201, 1);
     Assert.assertEquals(300, delayTimeInSeconds);
   }
 }

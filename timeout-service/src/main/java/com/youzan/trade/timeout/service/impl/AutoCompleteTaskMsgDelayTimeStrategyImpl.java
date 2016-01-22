@@ -46,7 +46,7 @@ public class AutoCompleteTaskMsgDelayTimeStrategyImpl
   }
 
   @Override
-  public int getInitialDelayTime(int bizType, String bizId, int bizState) {
+  public int getInitialDelayTime(int bizType, String bizId, int bizState, int delayStartTime) {
     return 0;
   }
 }
