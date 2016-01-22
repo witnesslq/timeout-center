@@ -13,33 +13,8 @@ import org.springframework.stereotype.Component;
 @Component("delayTimeStrategyImpl")
 public class DelayTimeStrategyImpl extends AbstractDelayTimeStrategy {
 
-  @Value("${delay.time.increment.first}")
-  private int firstIncrement;
-
-  @Value("${delay.time.increment.second}")
-  private int secondIncrement;
-
-  @Value("${delay.time.increment.third}")
-  private int thirdIncrement;
-
-  @Value("${delay.time.increment.default}")
-  private int defaultIncrement;
-
   @Value("${delay.time.initial}")
   private int initialDelayTime;
-
-  @Override
-  public int getNextDelayIncrement(int delayTimes) {
-    switch (delayTimes) {
-      case 0 : return firstIncrement;
-
-      case 1 : return secondIncrement;
-
-      case 2 : return thirdIncrement;
-
-      default: return defaultIncrement;
-    }
-  }
 
   @Override
   public int getInitialDelayTime(int bizType, String bizId, int bizState, int delayStartTime) {
