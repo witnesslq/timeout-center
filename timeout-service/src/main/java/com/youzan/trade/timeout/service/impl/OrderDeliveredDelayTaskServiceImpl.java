@@ -152,7 +152,7 @@ public class OrderDeliveredDelayTaskServiceImpl implements OrderDeliveredDelayTa
               defaultDelayPeriod =
               autoCompleteTaskDelayTimeStrategy
                   .getInitialDelayTimeByOrderType(BizType.DELIVERED_ORDER.code(),
-                                                  order.getOrderType());
+                                                  order.getOrderType(), expressTime);
           plainResult.setData(defaultDelayPeriod + expressTime);
         } else {
           LogUtils

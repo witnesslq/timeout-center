@@ -5,5 +5,5 @@ package com.youzan.trade.timeout.service;
  */
 public  abstract  class AbstractOrderRelatedDelayTimeStrategy implements DelayTimeStrategy{
 
-  public abstract int getInitialDelayTimeByOrderType(int bizType,int orderType);
+  public abstract int getInitialDelayTimeByOrderType(int bizType, int orderType, int delayStartTime);
 }
