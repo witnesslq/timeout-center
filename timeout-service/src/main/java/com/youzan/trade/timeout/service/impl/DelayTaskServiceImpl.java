@@ -209,13 +209,15 @@ public class DelayTaskServiceImpl implements DelayTaskService {
       return null;
     }
     // 因为bizType + bizId不构成唯一索引
-    if (delayTaskDAO.updateDelayEndTime(bizType, bizId, toDelaySeconds,
-                                        TaskStatus.ACTIVE.code(),
+    if (delayTaskDAO.updateDelayEndTime(bizType, bizId, TaskStatus.ACTIVE.code(),
+                                        toDelaySeconds,
                                         TimeUtils.currentDate()) > 0) {
       return calDelayEndTimeAfterIncreasing(toDelaySeconds, delayTask);
     } else {
-      LogUtils.error(log, "[FAIL]Increase delaytask end time failed.bizId={},bizType={}", bizId,
-                     bizType);
+      LogUtils.error(log,
+                     "[FAIL]Increase delaytask end time failed.bizId={},bizType={},toDelaySeconds={}",
+                     bizId,
+                     bizType, toDelaySeconds);
       return null;
     }
   }
