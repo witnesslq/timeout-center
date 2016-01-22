@@ -26,7 +26,7 @@ public class MsgDelayTimeStrategyImplTest {
 
   @Test
   public void testGetInitialDelayTime() throws Exception {
-    int initialDelayTime = msgDelayTimeStrategy.getInitialDelayTime(10, "W123", 201);
+    int initialDelayTime = msgDelayTimeStrategy.getInitialDelayTime(10, "W123", 201, 1);
     Assert.assertEquals(60, initialDelayTime);
   }
 }

@@ -129,12 +129,12 @@ public class SafeProcessorImpl implements Processor {
 
   private Date calDelayEndTime(Safe safe) {
     return TimeUtils.getDateBySeconds(safe.getRecordTime() + delayTimeStrategy
-        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState(), safe.getRecordTime()));
   }
 
   private Date calMsgEndTime(Safe safe) {
     return TimeUtils.getDateBySeconds(safe.getRecordTime() + msgDelayTimeStrategy
-        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState()));
+        .getInitialDelayTime(BizType.SAFE.code(), safe.getSafeNo(), safe.getState(), safe.getRecordTime()));
   }
 
   private boolean processOnClose(Safe safe) {

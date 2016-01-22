@@ -23,7 +23,7 @@ public class MsgDelayTimeStrategyImpl implements DelayTimeStrategy {
   }
 
   @Override
-  public int getInitialDelayTime(int bizType, String bizId, int bizState) {
+  public int getInitialDelayTime(int bizType, String bizId, int bizState, int delayStartTime) {
     return initialDelayTime;
   }
 }

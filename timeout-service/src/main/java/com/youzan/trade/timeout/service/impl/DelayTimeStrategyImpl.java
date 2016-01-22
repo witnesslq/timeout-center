@@ -1,6 +1,8 @@
 package com.youzan.trade.timeout.service.impl;
 
+import com.youzan.trade.timeout.service.AbstractDelayTimeStrategy;
 import com.youzan.trade.timeout.service.DelayTimeStrategy;
+import com.youzan.trade.util.TimeUtils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -10,39 +12,20 @@ import org.springframework.stereotype.Component;
  * @author apple created at: 15/10/26 下午7:45
  */
 @Component("delayTimeStrategyImpl")
-public class DelayTimeStrategyImpl implements DelayTimeStrategy {
-
-  @Value("${delay.time.increment.first}")
-  private int firstIncrement;
-
-  @Value("${delay.time.increment.second}")
-  private int secondIncrement;
-
-  @Value("${delay.time.increment.third}")
-  private int thirdIncrement;
-
-  @Value("${delay.time.increment.default}")
-  private int defaultIncrement;
+public class DelayTimeStrategyImpl extends AbstractDelayTimeStrategy {
 
   @Value("${delay.time.initial}")
   private int initialDelayTime;
 
+  @Value("${delay.time.initial.spring.2016}")
+  private int initialDelayTimeForSpring2016;
+
   @Override
-  public int getNextDelayIncrement(int delayTimes) {
-    // todo : checkArgument
-    switch (delayTimes) {
-      case 0 : return firstIncrement;
-
-      case 1 : return secondIncrement;
-
-      case 2 : return thirdIncrement;
-
-      default: return defaultIncrement;
+  public int getInitialDelayTime(int bizType, String bizId, int bizState, int delayStartTime) {
+    if (TimeUtils.isInSpring2016(delayStartTime)) {
+      return initialDelayTimeForSpring2016;
     }
-  }
 
-  @Override
-  public int getInitialDelayTime(int bizType, String bizId, int bizState) {
     return initialDelayTime;
   }
 
