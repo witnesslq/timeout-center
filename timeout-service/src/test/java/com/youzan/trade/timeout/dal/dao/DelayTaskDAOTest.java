@@ -42,12 +42,13 @@ public class DelayTaskDAOTest extends BaseTest {
     delayTaskDO.setCreateTime(TimeUtils.getDateBySeconds(1445418123));
 
     int effectNum = delayTaskDAO.insert(delayTaskDO);
+    Assert.assertEquals(1, effectNum);
   }
 
   @Test
   public void testSelectListWithBizTypeAndTimeout() throws Exception {
     int bizType = 10;
-    Date timePoint = new Date(115, 7, 1);
+    Date timePoint = new Date(116, 7, 1);
     int maxSize = 2;
     List<DelayTaskDO> delayTaskDOs =
         delayTaskDAO.selectListWithBizTypeAndTimeout(bizType, TaskStatus.ACTIVE.code(), timePoint, maxSize);
@@ -57,26 +58,23 @@ public class DelayTaskDAOTest extends BaseTest {
   @Test
   public void testSelectListWithBizTypeAndMsgTimeout() throws Exception {
     int bizType = 10;
-    Date timePoint = new Date(115, 7, 1);
+    Date timePoint = new Date(116, 7, 1);
     int maxSize = 2;
 
     List<DelayTaskDO> delayTaskDOs =
         delayTaskDAO.selectListWithBizTypeAndMsgTimeout(bizType, TaskStatus.ACTIVE.code(), MsgStatus.ACTIVE.code(), timePoint, maxSize);
-    Assert.assertEquals(2, delayTaskDOs.size());
+    Assert.assertEquals(1, delayTaskDOs.size());
   }
 
   @Test
   public void testSelectDelayTimesById() {
-    int taskId = 74;
+    int taskId = 322;
     int delayTimes = delayTaskDAO.selectDelayTimesById(taskId);
   }
 
   @Test
   public void testUpdateOnSuccess() {
-    DelayTaskDO delayTaskDO = new DelayTaskDO();
-    delayTaskDO.setCloseReason(CloseReason.SUCCESS.code());
-    delayTaskDO.setUpdateTime(new Date());
-    int taskId = 74;
+    int taskId = 322;
 
     int effectNum = delayTaskDAO.close(taskId, TaskStatus.ACTIVE.code(),
                        TaskStatus.CLOSED.code(), CloseReason.SUCCESS.code(),
@@ -85,14 +83,14 @@ public class DelayTaskDAOTest extends BaseTest {
 
   @Test
   public void testUpdateOnFailure() {
-    int taskId = 75;
+    int taskId = 327;
     int delayTimeIncrement = 5 * 60;
 
     int effectNum = delayTaskDAO.updateOnRetry(taskId, TaskStatus.ACTIVE.code(), delayTimeIncrement, new Date());
   }
 
   @Test
-  public void testCloseTask() {
+  public void testCloseTaskAhead() {
     int bizType = 10;
     String bizId = "123";
 
@@ -104,7 +102,7 @@ public class DelayTaskDAOTest extends BaseTest {
 
   @Test
   public void testCloseMsg() throws Exception {
-    int taskId = 75;
+    int taskId = 327;
     int msgStatus = 20;
 
     int effectNum = delayTaskDAO.closeMsg(taskId, TaskStatus.ACTIVE.code(), msgStatus, new Date());
@@ -112,7 +110,7 @@ public class DelayTaskDAOTest extends BaseTest {
 
   @Test
   public void testClose() {
-    int taskId = 57;
+    int taskId = 327;
 
     int effectNum = delayTaskDAO.close(taskId, TaskStatus.ACTIVE.code(),
                                        TaskStatus.CLOSED.code(), CloseReason.SUCCESS.code(),
@@ -122,7 +120,7 @@ public class DelayTaskDAOTest extends BaseTest {
   @Test
   public void testUpdateDelayEndTime() throws Exception {
     int bizType = 26;
-    String bizId = "E20160111191049094573401";
+    String bizId = "E20151130154923037470698";
     int delayTimeIncrement = 5 * 60;
     Date updateTime = new Date();
 
@@ -132,7 +130,7 @@ public class DelayTaskDAOTest extends BaseTest {
 
   @Test
   public void testTryLockByTaskId() throws Exception {
-    int taskId = 200;
+    int taskId = 327;
     Date currentTime = new Date();
 
     int effectNum = delayTaskDAO.tryLockByTaskId(taskId, TaskStatus.ACTIVE.code(), currentTime);
@@ -141,7 +139,7 @@ public class DelayTaskDAOTest extends BaseTest {
 
   @Test
   public void testForceLockByTaskId() throws Exception {
-    int taskId = 200;
+    int taskId = 327;
     int internalMinutes = 2;
     Date currentTime = new Date();
 
@@ -151,7 +149,7 @@ public class DelayTaskDAOTest extends BaseTest {
 
   @Test
   public void testUnlockByTaskId() throws Exception {
-    int taskId = 200;
+    int taskId = 327;
     Date updateTime = new Date();
 
     int effectNum = delayTaskDAO.unlockByTaskId(taskId, updateTime);
@@ -160,7 +158,7 @@ public class DelayTaskDAOTest extends BaseTest {
 
   @Test
   public void testTryLockMsgByTaskId() throws Exception {
-    int taskId = 200;
+    int taskId = 327;
     Date currentTime = new Date();
 
     int effectNum = delayTaskDAO.tryLockMsgByTaskId(taskId, TaskStatus.ACTIVE.code(), currentTime);
@@ -169,7 +167,7 @@ public class DelayTaskDAOTest extends BaseTest {
 
   @Test
   public void testForceLockMsgByTaskId() throws Exception {
-    int taskId = 200;
+    int taskId = 327;
     int internalMinutes = 2;
     Date currentTime = new Date();
 
@@ -179,7 +177,7 @@ public class DelayTaskDAOTest extends BaseTest {
 
   @Test
   public void testUnlockMsgByTaskId() throws Exception {
-    int taskId = 200;
+    int taskId = 327;
     Date updateTime = new Date();
 
     int effectNum = delayTaskDAO.unlockMsgByTaskId(taskId, updateTime);

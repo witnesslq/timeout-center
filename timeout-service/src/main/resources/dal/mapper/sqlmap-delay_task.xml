@@ -83,7 +83,7 @@
       delay_times = delay_times + 1,
       update_time = #{updateTime}
     </set>
-    WHERE id = #{id} AND status = #{statusFrom}
+    WHERE id = #{taskId} AND status = #{statusFrom}
   </update>
 
   <update id="updateOnRetry">

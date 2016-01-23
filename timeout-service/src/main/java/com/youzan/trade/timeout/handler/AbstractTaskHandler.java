@@ -33,6 +33,7 @@ public abstract class AbstractTaskHandler implements TaskHandler {
   @Async("taskExecutor")
   @Override
   public void handle(DelayTask delayTask) {
+    LogUtils.info(log, "开始处理任务, taskId: {}", delayTask.getId());
     long startTime = System.currentTimeMillis();
     /**
      * 先尝试获取锁
