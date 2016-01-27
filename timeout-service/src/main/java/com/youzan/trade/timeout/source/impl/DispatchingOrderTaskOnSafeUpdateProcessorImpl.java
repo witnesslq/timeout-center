@@ -82,13 +82,13 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor 
       //恢复
       OrderSuccessLog
           orderSuccessLog =
-          calculateSuspendedPeriod(safe.getOrderNo(), safe.getUpdateTime());
+          getSuspendedPeriodUpdatedOrderSuccessLog(safe.getOrderNo(), safe.getUpdateTime());
       if (orderSuccessLog != null && orderSuccessLog.getSuspendedPeriod() > 0) {
         delayTaskService.resumeTask(orderTask, orderSuccessLog.getSuspendedPeriod()*1000L);
         orderSuccessLogService.updateFinishTimeAndSuspendedPeriod(orderSuccessLog);
       } else {
         LogUtils
-            .error(log, "OrderSuccesLog not found or invalid suspendPeriod={},safeNo={}", 0,
+            .error(log, "OrderSuccessLog not found or invalid suspendPeriod={},safeNo={}", 0,
                    safe.getSafeNo());
       }
     } else {
@@ -106,7 +106,8 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor 
     return true;
   }
 
-  private OrderSuccessLog calculateSuspendedPeriod(String orderNo, Integer finishTime) {
+  private OrderSuccessLog getSuspendedPeriodUpdatedOrderSuccessLog(String orderNo,
+                                                                   Integer finishTime) {
     if (finishTime == null || finishTime < 0) {
       LogUtils.error(log, "finish time should be positive.orderNo={},finishTime={}", orderNo,
                      finishTime);
