@@ -98,7 +98,7 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor 
           LogUtils.warn(log, "[SuspendTaskFail]Order not found.orderNo={},taskId={}", orderNo,
                          orderTask.getId());
         } else {
-          orderSuccessLogService.addOrderSuccessLog(order, safe.getAddTime());
+//          orderSuccessLogService.addOrderSuccessLog(order, safe.getAddTime());
           delayTaskService.suspendTask(orderTask);
         }
       }
