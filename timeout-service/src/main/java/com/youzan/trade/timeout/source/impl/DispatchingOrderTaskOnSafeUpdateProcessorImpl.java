@@ -5,6 +5,7 @@ import com.youzan.trade.timeout.constants.SafeState;
 import com.youzan.trade.timeout.constants.TaskStatus;
 import com.youzan.trade.timeout.model.DelayTask;
 import com.youzan.trade.timeout.model.Order;
+import com.youzan.trade.timeout.model.OrderSuccessLog;
 import com.youzan.trade.timeout.model.Safe;
 import com.youzan.trade.timeout.order.service.DeliveredOrderService;
 import com.youzan.trade.timeout.service.DelayTaskService;
@@ -79,15 +80,16 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor 
 
     if (isFinished(safe)) {
       //恢复
-      if (orderSuccessLogService.updateFinishTime(safe.getOrderNo(), safe.getUpdateTime())) {
-        long suspendPeriod = orderSuccessLogService.getSuspendedPeriod(safe.getOrderNo(),
-                                                                       orderTask.getDelayEndTime()
-                                                                           .getTime());
-        if (suspendPeriod <= 0) {
-          LogUtils
-              .error(log, "Invalid suspendPeriod={},safeNo={}", suspendPeriod, safe.getSafeNo());
-        }
-        delayTaskService.resumeTask(orderTask, suspendPeriod);
+      OrderSuccessLog
+          orderSuccessLog =
+          calculateSuspendedPeriod(safe.getOrderNo(), safe.getUpdateTime());
+      if (orderSuccessLog != null && orderSuccessLog.getSuspendedPeriod() > 0) {
+        delayTaskService.resumeTask(orderTask, orderSuccessLog.getSuspendedPeriod()*1000L);
+        orderSuccessLogService.updateFinishTimeAndSuspendedPeriod(orderSuccessLog);
+      } else {
+        LogUtils
+            .error(log, "OrderSuccesLog not found or invalid suspendPeriod={},safeNo={}", 0,
+                   safe.getSafeNo());
       }
     } else {
       if (isSuspendable(orderTask, safe)) {
@@ -102,6 +104,24 @@ public class DispatchingOrderTaskOnSafeUpdateProcessorImpl implements Processor 
       }
     }
     return true;
+  }
+
+  private OrderSuccessLog calculateSuspendedPeriod(String orderNo, Integer finishTime) {
+    if (finishTime == null || finishTime < 0) {
+      LogUtils.error(log, "finish time should be positive.orderNo={},finishTime={}", orderNo,
+                     finishTime);
+      return null;
+    }
+    OrderSuccessLog
+        orderSuccessLog =
+        orderSuccessLogService.getLatestOrderSuccessLogByOrderNo(orderNo);
+    if (orderSuccessLog == null) {
+      return orderSuccessLog;
+    }
+    orderSuccessLog.setFinishTime(finishTime);
+    orderSuccessLog
+        .setSuspendedPeriod(orderSuccessLog.getFinishTime() - orderSuccessLog.getCreateTime());
+    return orderSuccessLog;
   }
 
   private boolean isSuspendable(DelayTask orderTask, Safe safe) {
